@@ -1,0 +1,19 @@
+2016-11-16 23:00:19,371 apscheduler.threadpool INFO     Started thread pool with 0 core threads and 20 maximum threads
+2016-11-16 23:00:19,372 apscheduler.scheduler INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2016-11-16 23:00:19,372 apscheduler.scheduler INFO     Added job "start_engine (trigger: cron[second='0,15,30,45'], next run at: 2016-11-16 23:00:30)" to job store "default"
+2016-11-16 23:00:19,372 apscheduler.scheduler INFO     Scheduler started
+2016-11-16 23:00:30,004 apscheduler.scheduler INFO     Running job "start_engine (trigger: cron[second='0,15,30,45'], next run at: 2016-11-16 23:00:45)" (scheduled at 2016-11-16 23:00:30)
+2016-11-16 23:00:30,410 root         INFO     Observations downloading.
+2016-11-16 23:00:31,327 apscheduler.scheduler ERROR    Job "start_engine (trigger: cron[second='0,15,30,45'], next run at: 2016-11-16 23:00:45)" raised an exception
+Traceback (most recent call last):
+  File "/Users/norbertgyenge/anaconda/lib/python2.7/site-packages/apscheduler/scheduler.py", line 512, in _run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "cron_engine.py", line 43, in start_engine
+    rt = e.engine(datetime.now(), os.path.dirname(os.path.abspath(__file__)), logger)
+  File "/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/engine/engine.py", line 22, in engine
+    AR_summary = srs.get_srs(raw_observations, path)
+  File "/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/engine/srs.py", line 24, in get_srs
+    srs_ftp.ftp_srs(fname)
+  File "/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/engine/ssc/get_data/srs_ftp.py", line 24, in ftp_srs
+    ftp.retrbinary('RETR '+fname, open(fname, 'wb').write)
+IOError: [Errno 2] No such file or directory: '/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Cataloguesdata/srs/0101SRS.txt'

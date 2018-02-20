@@ -1,0 +1,306 @@
+#fixedheader
+    {
+        position:fixed;
+        top:0px;
+        left:0px;
+        width:100%;
+        padding:0px;
+        background-image: url("/static/bg3.png");
+    }
+
+#wrap_header
+    {
+        width:1100px;
+        margin: auto;
+        font-size:10px;
+    }
+
+.logo
+    {
+        height:50px;
+        padding:0px 10px 0px 0px;
+    }
+
+.color
+    {
+        color: #d36e35;
+        font-size: 14px;
+        display:inline;
+    }
+
+.verticalLine
+    {
+        padding:10px 0px 0px 10px;
+       
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 22px;
+        color: #f3f3f3;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+    }
+
+#topmenu
+    {
+        float: right;
+    }
+
+.icon_im
+    {
+        width:25px;
+    }
+
+#topmenu li
+    {
+        display:inline;
+    }
+
+#topmenu a
+    {
+        float:left;
+        text-decoration:none;
+        padding:0px 15px 0px 15px;
+        text-align:center;
+    }
+
+.hover01 figure img {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+}
+.hover01 figure:hover img {
+    -webkit-transform: scale(1.3);
+    transform: scale(1.3);
+}
+
+#topmenu a, #topmenu a:visited, #topmenu a:active
+{
+  color: #f3f3f3; 
+}
+
+#topmenu a:hover
+{
+  color: #f3f3f3;
+
+}
+
+#topmenu .active a, #topmenu .active a:visited, #topmenu .active a:active
+{
+  color: #f3f3f3;
+
+}
+
+
+
+.button:hover
+{
+  background: #06D85F;
+}
+
+.overlay
+{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 1s;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.overlay:target
+{
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 700px;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 700px){
+  .popup{
+    width: 70%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+body
+    {
+        background-color: #e9ebee;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+
+#wrapper_body
+    {
+        background-color: #e9ebee;
+        padding: 70px 10px 0px 15px;
+        margin: auto;
+        width: 1000px;
+        height: 100%;
+    }
+
+/* ----------------------QUERY TABLE PROPERTIES*/
+
+#wrapper_table
+    {
+        margin: 10px auto 0;
+        overflow-y:scroll;
+        overflow-x:scroll;
+        table-layout:fixed;
+        float: right;
+        width: 810px;
+        height: 300px;
+    }
+
+#wrapper_table table
+    {
+        background-color: white;
+        font-size: 12px;
+        line-height: 3px;
+    }   
+
+#wrapper_table th
+    {
+        font-variant: small-caps;
+        text-align: left;
+        color: #333333;
+        font-weight: bold;
+        padding: 10px 15px;
+    }
+
+#wrapper_table td
+    {
+        padding: 10px 8px;
+        transition: all 1000ms;
+    }
+
+/* ----------------------QUERY TABLE PROPERTIES*/
+
+#wrapper_plot
+    {
+        margin: 10px auto 0;
+        background-color: white;
+        float: right;
+        width: 810px;
+        height: 300px;
+    }
+
+#wrapper_sql
+    {
+        background-color: white;
+        width: 810px;
+        float: right;
+    }
+
+#wrapper_sql_info
+    {
+        margin: 10px auto 0;
+        background-color: white;
+        width: 810px;
+        float: right;
+        font-size: 12px;
+    }
+
+#wrapper_image
+    {
+        margin: 10px auto 0;
+        background-color: white;
+        width: 810px;
+        float: right;
+        font-size: 12px;
+    }
+
+/* ---------------------- MENU PROPERTIES*/
+
+#side_menu
+    {
+        position: fixed;
+    }
+
+#wrapper_menu
+    {
+        background-color: #e9ebee;
+        width: 170px;
+    }
+
+#wrapper_menu table
+    {
+        background-color: #e9ebee;
+        font-size: 12px;
+        line-height:18px;
+    }   
+
+#wrapper_menu th
+    {
+        font-variant: small-caps;
+        text-align: left;
+        color: #666666;
+        font-weight: bold;
+    }
+
+#wrapper_menu td
+    {
+        transition: all 1000ms;
+    }
+
+/* ---------------------- MENU PROPERTIES*/
+
+.mytext
+    {
+        color: #ff0000;
+        width:600px;
+        height:20px;
+        font-weight: bold;
+    }
+
+
+
+
+tbody:hover tr:hover td
+    {
+        color: #ff0000;
+    }

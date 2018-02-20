@@ -1,0 +1,161 @@
+<html>
+	<!-- Use CSS -->
+	<head>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+		{{ js_resources|safe }}
+        {{ css_resources|safe }}
+		{{ div|safe }}
+	</head>
+
+    <body>
+
+		<div id="fixedheader">
+			<div id="wrap_header">
+				<img class='logo' src="/static/logo.png">
+					<div class="verticalLine">database</div>
+					<div class="color">tools</div>
+
+				<ul id="topmenu">
+
+					<li><a href="#data"><img src="static/i_database.png" class='icon_im'><br>Database</a></li>
+		  			<li><a href="#stat"><img src="static/i_statistics.png" class='icon_im'><br>Statistics</a></li>
+		  			<li><a href="#"><img src="static/i_download.png" class='icon_im'><br>Download</a></li>
+					<li><a href="#"><img src="static/i_ftp.png" class='icon_im'><br>FTP access</a></li>
+					<li><a href="#"><img src="static/i_home.png" class='icon_im'><br>Home</a></li>
+
+				</ul>
+
+			</div>
+		</div>
+
+    	<div id = "wrapper_body">
+
+    		<!-- SQLite query -->	
+	    	<div id="wrapper_sql">	
+				<form method="post">
+					<input type=text name=sql_cmd value= "{{ sql }}" class="mytext">
+					<input type=submit value=Execute>
+				</form>
+			</div>
+			<!-- SQLite query -->
+
+
+    		<!-- SQLite query info -->	
+	    	<div id="wrapper_sql_info">
+				Query information<br>
+				Number of rows: {{ info[0] }} | 
+				Number of columns: {{ info[1] }} | 
+				Number of active regions: {{ info[0] }} | 
+				Timespan: {{ info[0] }} | 
+			</div>
+			<!-- SQLite query info -->
+
+    		<!-- AR image -->	
+	    	<div id="wrapper_image">
+		    	<iframe src="/static/fasz.png" frameborder="0" scrolling="yes" width="810px" height="438px" name="imgbox" id="imgbox"></iframe>
+			</div>
+			<!-- AR image -->
+
+	    	<!-- SQLite query table -->	
+			<div id = "wrapper_table">						
+				<table>
+					<thead>
+						<tr>
+							{%for name in header%}
+								<th> {{ name }} </th>
+							{% endfor %}
+						</tr>
+					</thead>
+
+					<tbody>
+						{%for row in table%}
+						    <tr>
+						    	{%for item in row%}
+						      		<td>{{ item }}</td>
+						      	{% endfor %}
+						    </tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+	    	<!-- SQLite query table -->
+
+	    	<!-- Plot -->
+	   		<div id="wrapper_plot">	
+	    		{{ script|safe }}
+	    	</div>
+	    	<!-- Plot -->
+
+	    	<!-- Menu -->
+		    <div id = "side_menu">
+		    	<div id = "wrapper_menu">
+			    	<table>
+
+			 			<tr> <th>Quick query</th> </tr>
+			  			<tr><td>Date</td></tr>
+			  			<tr><td>Dataset</td></tr>
+			    		<tr><td>Active Region</td></tr>
+
+					</table>
+		    	</div>
+
+		    	<br>
+
+		    	<div id = "wrapper_menu">
+			    	<table>
+
+			 			<tr> <th>Data Downloand</th> </tr>
+			  			<tr><td>SQLlite</td></tr>
+			    		<tr><td>HDF5</td></tr>
+			    		<tr><td>CSV</td></tr>
+			    		<tr><td>TXT</td></tr>
+
+					</table>
+		    	</div>
+
+		    	<br>
+
+		    	<div id = "wrapper_menu">
+			    	<table>
+
+			    	 	<tr> <th>Create Plot</th> </tr>
+			  			<tr><td>Histogram</td></tr>
+
+						<tr><td> x:
+							<form method="post">
+								<select name=test>
+									{%for name in header%}
+										<option value="{{ name }}"> {{ name }} </option>
+									{% endfor %}
+								</select>
+								
+								<input type=submit value=Execute>
+
+							</form>
+						</td></tr>
+			    		<tr><td>2d histogram</td></tr>
+			    		<tr><td>Scatter plot</td></tr>
+			    		<tr><td>Line plot</td></tr>
+			    		<tr><td>3d Scatter</td></tr>
+
+					</table>
+		    	</div>
+
+		    	<br>
+
+		    	<div id = "wrapper_menu">
+			    	<table>
+
+			    	 	<tr> <th>Statistics</th> </tr>
+			  			<tr><td>Basic</td></tr>
+			  			<tr><td>Auto-correlation</td></tr>
+			  			<tr><td>Cross-correlation</td></tr>
+			  			<tr><td>Furier-analysis</td></tr>
+					</table>
+		    	</div>
+	    	</div>
+	    	<!-- Menu -->
+		</div>
+    </body>
+
+</html>
