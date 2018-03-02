@@ -25,7 +25,7 @@ def standard_multitype_ini(observations):
 
 		if obs.detector == 'HMI':
 			# Replace np.nan-s with zero for rotating 
-			obs.data = np.nan_to_num(obs.data)
+			obs._data = np.nan_to_num(obs.data)
 
 			# Rotate the observations
 			obs = obs.rotate()

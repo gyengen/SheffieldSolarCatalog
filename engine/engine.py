@@ -46,7 +46,7 @@ def engine(start_time, path, logger):
 
 # FOR TESTING ONLY
 start_time = time.time()
-path = '/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/'
+path = '/Users/norbertgyenge/Research/SSC_py/Sheffield-Solar-Catalog/'
 rt = engine(start_time, path, 0)
 logging.info('Running time', rt)
 print rt
