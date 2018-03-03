@@ -49,10 +49,12 @@ def limb_darkening_correct(observation, limb_cut=True):
 		raise ValueError("The wavelength of the observation must be between 4000 and 15000 A.")
 
 	observation = c.copy(observation)
+
 	wavelength = observation.wavelength.value
-	x_center, y_center = observation.data_to_pixel(0*u.arcsec, 0*u.arcsec)
 	x_dim, y_dim = observation.dimensions.x.value, observation.dimensions.y.value
-	radius = observation.rsun_obs.value / observation.scale.x.value
+	x_center = observation.reference_pixel[0].value
+	y_center = observation.reference_pixel[1].value
+	radius = observation.rsun_obs.value / observation.scale[0].value
 
 	a = np.array([-8.9829751, 0.0069093916, -1.8144591e-6, 2.2540875e-10,
 				  -1.3389747e-14, 3.0453572e-19])
@@ -65,9 +67,9 @@ def limb_darkening_correct(observation, limb_cut=True):
 	ul = sum(a * wavelength)
 	vl = sum(b * wavelength)
 
-	x_grid, y_grid = np.mgrid[0:int(x_dim), 0:int(y_dim)]
-	x_2 = (x_grid - x_center.value) ** 2
-	y_2 = (y_grid - y_center.value) ** 2
+	x_grid, y_grid = np.mgrid[0: int(x_dim), 0: int(y_dim)]
+	x_2 = (x_grid - x_center) ** 2
+	y_2 = (y_grid - y_center) ** 2
 
 	dist_grid = np.sqrt(x_2 + y_2)
 	dist_grid = dist_grid / radius
@@ -76,7 +78,7 @@ def limb_darkening_correct(observation, limb_cut=True):
 	e2 = vl * (np.cos(np.arcsin(dist_grid)) ** 2)
 	limbfilt = e1 + e2
 
-	observation.data = observation.data / limbfilt
+	observation._data = observation.data / limbfilt
 
 	if limb_cut is True:
 		observation.data[dist_grid > 1] = np.nan

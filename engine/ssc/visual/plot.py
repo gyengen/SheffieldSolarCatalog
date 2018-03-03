@@ -213,7 +213,7 @@ def AR_plot(sub, contour, AR_summary, obs_type):
 
 
     # Resample your data grid by a factor of 1 sigma using gaussian smoothing.
-    sub.data = scipy.ndimage.gaussian_filter(sub.data, sigma=(1, 1), order=0)
+    sub._data = scipy.ndimage.gaussian_filter(sub.data, sigma=(1, 1), order=0)
 
     # Set up the qoutput image size, 16:9 ratio, dpi = 600: print quality
     fig = plt.figure(figsize=(12,12*0.5625), dpi=1000, facecolor="#eff0f4", edgecolor='#535353')
@@ -225,7 +225,7 @@ def AR_plot(sub, contour, AR_summary, obs_type):
     im = sub.plot(axes=arc_arc)
 
     # Create the latitude / longitude grid
-    sub.draw_grid(axes=arc_arc, grid_spacing= 5 * u.deg, color='black') 
+    #sub.draw_grid(axes=arc_arc, grid_spacing= 5 * u.deg, color='black') 
 
     # Defien the new axes for pix-pix contour.
     pix_pix = fig.add_axes(arc_arc.get_position(), frameon=False)

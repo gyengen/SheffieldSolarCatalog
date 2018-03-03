@@ -1,6 +1,7 @@
 from astropy.wcs.utils import wcs_to_celestial_frame
 from astropy.coordinates import SkyCoord
 from astropy.table import Table, Column
+from sunpy.coordinates import frames
 from astropy import units as u
 from datetime import datetime
 import numpy as np
@@ -52,12 +53,12 @@ def SRS_final(obs, AR):
 	------
 		AR - Final form of the SRS data'''
 
-	c = obs.pixel_to_data(np.array(AR['X'], dtype=int) * u.pix,
-						  np.array(AR['Y'], dtype=int) * u.pix)
+	c = obs.pixel_to_world(np.array(AR['X'], dtype=int) * u.pix,
+						   np.array(AR['Y'], dtype=int) * u.pix)
 
 	# Update SRS table wirh two new columns
-	AR.add_column(Column(np.round(c[1].value), name='Y2'))
-	AR.add_column(Column(np.round(c[0].value), name='X2'))
+	AR.add_column(Column(np.round(c.Tx.value), name='Y2'))
+	AR.add_column(Column(np.round(c.Ty.value), name='X2'))
 
 	AR['B'].unit, AR['Lcm'].unit, AR['Lo'].unit  = u.deg, u.deg, u.deg
 	AR['X'].unit, AR['Y'].unit = u.pix, u.pix
@@ -90,11 +91,8 @@ def SRS_coordinate_transform(obs, AR):
 	b = np.array(AR['B'], dtype=int)
 
 	# Coordinate converting using SkyCoord
-	c = SkyCoord(lcm * u.deg, b * u.deg, frame = 'heliographic_stonyhurst',
-				 dateobs = obs.date, B0 = obs.meta['CRLT_OBS'] * u.deg, L0 = 0 * u.deg)
-
-	c = c.helioprojective
-	c = obs.data_to_pixel(c.Tx, c.Ty)
+	c = SkyCoord(lcm * u.deg, b * u.deg, frame = frames.HeliographicStonyhurst, obstime = obs.date)
+	c = obs.world_to_pixel(c)
 
 	# Update SRS table wirh two new columns
 	AR.add_column(Column(np.round(c[1].value), name='Y'))

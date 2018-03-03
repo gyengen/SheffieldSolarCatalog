@@ -29,7 +29,7 @@ def engine(start_time, path, logger):
 	# Module 4: active region recognition, using sunspot groups
 	AR_summary = arr.active_region_recognition(initialized_observations, AR_summary)
 	logging.info('Active region recognition.')
-
+	
 	# Module 5: Sunspot groups contours
 	s_contours = fea.sunspot_contours(initialized_observations, AR_summary)
 	logging.info('Sunspot groups contours.')

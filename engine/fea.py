@@ -1,3 +1,5 @@
+from astropy.coordinates import SkyCoord
+from sunpy.coordinates import frames
 from astropy import units as u
 from ssc.feature import*
 from ssc.visual import*
@@ -35,7 +37,10 @@ def sunspot_contours(initialized_observations, AR_summary, mpix=5):
         dx = [active_region['box_x1'], active_region['box_x2']] * u.arcsec
         dy = [active_region['box_y1'], active_region['box_y2']] * u.arcsec
 
-        c_sub = continuum_img.submap(dx, dy)
+        bl = SkyCoord(dx[0], dy[0], frame=frames.Helioprojective)
+        tr = SkyCoord(dx[1], dy[1], frame=frames.Helioprojective)
+
+        c_sub = continuum_img.submap(bl, tr)
 
         # Scaleing and normalization
         c_sub = util.scaling_ic(c_sub)
@@ -96,8 +101,11 @@ def sunspot_data(initialized_observations, AR_summary, s_contours, o_type):
         dx = [AR_summary[i]['box_x1'], AR_summary[i]['box_x2']] * u.arcsec
         dy = [AR_summary[i]['box_y1'], AR_summary[i]['box_y2']] * u.arcsec
 
+        bl = SkyCoord(dx[0], dy[0], frame=frames.Helioprojective)
+        tr = SkyCoord(dx[1], dy[1], frame=frames.Helioprojective)
+
         # Define the submap
-        sub = img.submap(dx, dy)
+        sub = img.submap(bl, tr)
 
         # NOAA number of the group
         NOAA = int(AR_summary[i]['Nmbr']) + 10000

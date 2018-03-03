@@ -15,7 +15,7 @@ def Sunspot_coordinates(photosphere_full, dx, dy, spot):
     Parameters
     ----------
         photosphere_full - Fits image.
-        dx, dy - REgion of interest box coordinate
+        dx, dy - Region of interest box coordinate
         spot - Masked submap.
 
     Returns
@@ -35,14 +35,16 @@ def Sunspot_coordinates(photosphere_full, dx, dy, spot):
     # The origo of the coordinate system is the left bottom corner.
     y_on_cut, x_on_cut = ndimage.measurements.center_of_mass(spot)
 
-    # Restore the region of interest box corner coordinate in pi.xels
-    x_on_im, y_on_im = photosphere_full.data_to_pixel(dx[0], dy[0])
+    # Restore the region of interest box corner coordinate in pixels
+    x_on_im = dx[0] / photosphere_full.scale[0]
+    y_on_im = dy[0] / photosphere_full.scale[1]
 
     # Estimate the spot's coordinate in pixels
     x, y = (x_on_cut * u.pix) + x_on_im, (y_on_cut * u.pix) + y_on_im
 
-    # Converrt the spot's coordinate in arcsecs
-    Solar_X, Solar_Y = photosphere_full.pixel_to_data(x, y)
+    # Convert the spot's coordinate in arcsecs
+    c = photosphere_full.pixel_to_world(x, y)
+    Solar_X, Solar_Y = c.Tx, c.Ty
 
     # Polar coordinates
     r = np.sqrt(pow(Solar_X.value, 2) + pow(Solar_Y.value, 2)) * u.arcsec

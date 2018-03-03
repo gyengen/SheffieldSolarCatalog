@@ -3,7 +3,7 @@ import numpy as np
 
 def solar_limb(observation):
 	'''
-	This procedure cut off the limb.
+	This procedure cuts off the limb.
 
 	Parameters
 	----------
@@ -13,16 +13,16 @@ def solar_limb(observation):
 	-------
 		observation - Sunpy map object'''
 
-	# Centre of the solar disk.
-	a, b = observation.data_to_pixel(0*u.arcsec, 0*u.arcsec)
-	a, b = int(a.value), int(b.value)
-
 	# Dimensions of the observation.
 	n, m = observation.dimensions.x, observation.dimensions.y
 	n, m = int(n.value), int(m.value)
 
+	# Centre of the solar disk.
+	a = observation.reference_pixel[0].value
+	b = observation.reference_pixel[1].value
+
 	# Radius of the sun in pixels.
-	r = observation.rsun_obs.value / observation.scale.x.value
+	r = observation.rsun_obs.value / ((observation.scale[0].value + observation.scale[1].value) / 2) 
 	r = int(r)
 
 	# Create a grid and mask
