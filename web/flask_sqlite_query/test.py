@@ -9,7 +9,8 @@ from bokeh.resources import INLINE
 restore = "SELECT * FROM magnetogram_sunspot"
 # DATABASE = '/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/database/sql/ssc_sql.db'
 # DATABASE = 'E:/PythonDocs/SheffieldSolarCatalog/database/sql/ssc_sql.db'
-DATABASE = '/Users/kevin/Documents/myProject/SolarCatalog_Kevin/web/flask_sqlite_query/static/database/sql/ssc_sql.db'
+# DATABASE = '/Users/kevin/Documents/myProject/SolarCatalog_Kevin/web/flask_sqlite_query/static/database/sql/ssc_sql.db'
+DATABASE = 'static/database/sql/ssc_sql.db'
 
 
 sd=''
@@ -199,4 +200,4 @@ def query():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="143.167.4.88")
