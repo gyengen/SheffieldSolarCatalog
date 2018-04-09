@@ -1,17 +1,20 @@
-from flask import Flask, render_template, request, g
 from utility import Create_table, Create_live_plot, Query_info
+from flask import Flask, render_template, request, g
 from utility import Create_table, Query_info
-import sqlite3
-import numpy as np
-import json
+from gevent.pywsgi import WSGIServer
 from bokeh.resources import INLINE
+from gevent import monkey
+import numpy as np
+import sqlite3
+import json
+
+monkey.patch_all()
 
 restore = "SELECT * FROM magnetogram_sunspot"
 # DATABASE = '/Users/norbertgyenge/Research/SSC_py/Sheffield_Solar_Catalogues/database/sql/ssc_sql.db'
 # DATABASE = 'E:/PythonDocs/SheffieldSolarCatalog/database/sql/ssc_sql.db'
 # DATABASE = '/Users/kevin/Documents/myProject/SolarCatalog_Kevin/web/flask_sqlite_query/static/database/sql/ssc_sql.db'
 DATABASE = 'static/database/sql/ssc_sql.db'
-
 
 sd=''
 ed=''
@@ -200,4 +203,13 @@ def query():
 
 
 if __name__ == "__main__":
-    app.run(host="143.167.4.88")
+
+    #Define the IP address
+    ip = '143.167.4.88'
+
+    # use gevent WSGI server instead of the Flask
+    http = WSGIServer((ip, 5000), app.wsgi_app)
+
+    # TODO gracefully handle shutdown
+    http.serve_forever()
+
