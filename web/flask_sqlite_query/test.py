@@ -51,7 +51,7 @@ def teardown_request(exception):
 
 @app.route('/')
 def index():    
-    return render_template('index.html')
+    return render_template('index2.html')
 
 @app.route('/help.html')
 def help():    
@@ -206,6 +206,7 @@ if __name__ == "__main__":
 
     #Define the IP address
     ip = '143.167.4.88'
+    ip = ''
 
     # use gevent WSGI server instead of the Flask
     http = WSGIServer((ip, 5000), app.wsgi_app)

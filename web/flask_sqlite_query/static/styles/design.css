@@ -1,70 +1,224 @@
 /* -----------------------------------------------------------Main Page PROPERTIES*/
 
-#index_body{
-    background-image: url("/static/Solar storms via Core Nebula.png");
-/*    opacity: 0.9;
-    filter:alpha(opacity=90);*/
-    background-size: cover;
-/*    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;*/ 
-    padding: 70px 10px 0px 0px;
-    width: 100%;
-    height: 100%;
-    /*float: left;*/
+.anchor{
+  display: block;
+  height: 400px; /*same height as header*/
+  margin-top: -400px; /*same height as header*/
+  visibility: hidden;
 }
 
-#index_welcome{
-    width: 40%;
-    height: 75%;
-    color: white;
-    position: fixed;
-    overflow: hidden;
-    margin-top: 4%; 
-/*    margin-left: 17%; */
+.space {
+    margin-bottom: 250px;
 }
 
-#index_welcome_1{
-    width: 40%;
-    height: 20%;
-    font-size: 10vh;
-    text-align: center;
-    float: left;
-    margin-bottom: 2%;
-    margin-left: 25%;
-    display: none;
-}
+.paragraph
+    {
+        width:70%;
+        background-repeat: no-repeat;
+        text-align: justify;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        font-size: 17px;
+        margin: auto;
+    }
 
-#index_welcome_2{
-    width: 100%;
-    height: 20%;
-    font-size: 6vh;
-    text-align: center;
-    float: left;
-    margin-left: 1%;
-    display: none;
-}
+.welcome_header
+    {
+        display:inline-block;
+        width:100%;
+        background-repeat: no-repeat;
+        position: fixed;
+        text-align: center;
+        z-index: 2;
+        background-image: url("/static/bg.png");
+        background-size: 1000px 1000px;
+        background-position: center; 
+        background-repeat: no-repeat;
+        background-color: black;
+        padding-top: 70px;
+    }
 
-#index_welcome_3{
-    width: 50%;
-    height: 20%;
-    font-size: 5vh;
-    text-align: center;
-    float: left;
-    margin-top: 25%;
-    margin-left: 25%;
-    display: none;
-}
+.welcome_header h1
+    {
 
-#index_welcome_3:hover{
-    font-size: 6vh;
-}
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 500;
+        font-size: 43px;
+        display:inline;
+        letter-spacing: 5px;
+        vertical-align: super;
+        line-height: 300%;
+        text-align: center;
+        color: white;
+    }
 
-a:link {text-decoration: underline; color: white;}
-a:visited {text-decoration: underline; color: white;}
-a:hover {text-decoration:none;}
+.welcome_header h2
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 30px;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        color: white;
+    }
 
-/*a:active {text-decoration:none;}*/
+.welcome_header h3
+    {
+        font-size: 18px;
+        font-weight: 300;
+        color: #d7dadd;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        background:#002542;
+        padding: 10px 10px 10px 10px;
+    }
+
+.welcome_index
+    {
+        display:inline-block;
+        width:100%;
+        background-repeat: no-repeat;
+        text-align: center;
+        overflow-y: hidden;
+        margin-top: 450px;
+    }
+
+.welcome_index h1
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 500;
+        font-size: 43px;
+        display:inline;
+        letter-spacing: 5px;
+        vertical-align: super;
+        line-height: 300%;
+        text-align: center;
+        color: white;
+    }
+
+.welcome_index h2
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 30px;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        color: white;
+    }
+
+.welcome_index h3
+    {
+        font-size: 18px;
+        font-weight: 300;
+        color: #d7dadd;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        background:#002542;
+        padding: 10px 10px 10px 10px;
+    }
+
+.welcome_index h4
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 30px;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        margin-top: 50px;
+        content: "A";
+        display: block;
+        margin-bottom: 1em;
+    }
+
+
+.welcome_index h5
+    {
+        text-align: center;
+        font-style: italic;
+    }
+
+.welcome_index h6
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 30px;
+        display:inline;
+        letter-spacing: 1px;
+        vertical-align: super;
+        text-align: center;
+        margin-top: 0px;
+        content: "A";
+        display: block;
+        margin-bottom: 1em;
+    }
+
+.welcome_index table
+    {
+        text-align:center; 
+        margin-left:auto; 
+        margin-right:auto; 
+        width: 75%;
+        margin-top: 50px;
+    }
+
+.welcome_index tr
+    {
+        border: none;
+    }
+
+.welcome_index th:not(:last-child)
+    {
+        border-right: solid 1px; 
+    }
+
+
+
+.welcome_icon
+    {
+        height:50px;
+        padding:0px 0px 0px 0px;
+    }
+
+.welcome_photo
+    {
+        padding:10px 0px 0px 0px;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 200;
+        font-size: 16px;
+    }
+
+.welcome_photo_p
+    {
+        height:70px;
+    }
+
+.welcome_logo
+    {
+        height:40px;
+        display:inline-block;
+    }
+
+.welcome_logo
+    {
+
+text-align: justify;
+    }
+
+
+
+
+
+
 
 /* -----------------------------------------------------------Main Page PROPERTIES*/
 #fixedheader
@@ -80,6 +234,7 @@ a:hover {text-decoration:none;}
         overflow:hidden;
         z-index: 5;
     }
+
 
 #wrap_header
     {
@@ -101,6 +256,7 @@ a:hover {text-decoration:none;}
         height:50px;
         padding:0px 10px 0px 0px;
     }
+
 .color
     {
         color: #d36e35;
@@ -611,7 +767,6 @@ body
         width:600px;
         font-weight: bold;
     }
-
 
 
 
