@@ -580,14 +580,13 @@ body
         font-size: 12px;
     }
 
-#wrapper_image
-    {
-        background-color: #e9ebee;
-        width: 60%;
-        height: 70%;
-        float: left;
-        font-size: 12px;
-    }
+#wrapper_image {
+    background-color: #e9ebee;
+    width: 50%;
+    height: 70%;
+    float: left;
+    font-size: 12px;
+}
 
 #image{
     width: 100%;

@@ -1,0 +1,1 @@
+Search.setIndex({docnames:["start"],envversion:52,filenames:["start.rst"],objects:{},objnames:{},objtypes:{},terms:{index:0,modul:0,page:0,search:0},titles:["Welcome to SSC\u2019s documentation!"],titleterms:{document:0,indic:0,ssc:0,tabl:0,welcom:0}})
