@@ -15,12 +15,12 @@
 
 .wy-side-nav-search
     {
-         background-color: #001f3b !important;
+         background-color: #001f3b;
     }
 
  .wy-menu-vertical .caption-text
     {
-        color : #eaebec;
+        color : #f0f0f0;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 300;
         font-size: 14px;
@@ -28,16 +28,19 @@
 
 .wy-menu-vertical a
     {
-        color : #eaebec;
+        color : #f0f0f0;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 300;
         font-size: 14px;
+
     }
 
 html, body, h1, h2, h3, h4, h5, h6
     {
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 300;
+        color : black;
+        background-color: #f0f0f0;
     }
  
 

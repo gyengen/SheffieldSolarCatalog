@@ -23,8 +23,7 @@
 def setup(app):
     app.add_stylesheet('theme_overrides.css')
 
-
-project = u''
+project = u'Documentation'
 copyright = u'2018, Norbert Gyenge'
 author = u'Norbert Gyenge'
 
@@ -89,11 +88,8 @@ html_theme_options = {
     'canonical_url': '',
     'analytics_id': '',
     'logo_only': True,
-    'display_version': True,
+    'display_version': False,
     'prev_next_buttons_location': 'bottom',
-    'collapse_navigation': True,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
 }
 
 html_logo = "_static/logo.png"

@@ -8,15 +8,10 @@ Welcome to SSC's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
    
    content/our_mission
-   content/quickstart
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   content/solar_features
+   content/webpage
+   content/installation
+   content/methodology
+   content/functions
