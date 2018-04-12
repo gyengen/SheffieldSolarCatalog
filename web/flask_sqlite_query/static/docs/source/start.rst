@@ -9,7 +9,9 @@ Welcome to SSC's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
+   
+   content/our_mission
+   content/quickstart
 
 
 Indices and tables

@@ -1,0 +1,45 @@
+
+ .wy-nav-side
+    {
+        position: fixed;
+        background: #001f3b;
+        z-index: 200;
+    }
+
+.section
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+.wy-side-nav-search
+    {
+         background-color: #001f3b !important;
+    }
+
+ .wy-menu-vertical .caption-text
+    {
+        color : #eaebec;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+.wy-menu-vertical a
+    {
+        color : #eaebec;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+html, body, h1, h2, h3, h4, h5, h6
+    {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 300;
+    }
+ 
+
+
+
