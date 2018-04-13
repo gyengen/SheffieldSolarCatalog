@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from utility import Create_table, Create_live_plot, Query_info
 from flask import Flask, render_template, request, g
 from utility import Create_table, Query_info
@@ -431,6 +430,5 @@ if __name__ == "__main__":
 
     # TODO gracefully handle shutdown
     http.serve_forever()
-
->>>>>>> 867a01cb11b289629825eb7130f070a99fd34cc9
+    
     # app.run()
