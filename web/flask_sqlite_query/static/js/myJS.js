@@ -26,7 +26,7 @@ function changeImage(number){
 function showmore(){
   document.getElementById("filter_menu_showmore").style.display="block";
   document.getElementById("show_button").style.display="none";
-  document.getElementById("filter_menu").style.height=450;
+  document.getElementById("filter_menu").style.height=460;
   document.getElementById("side_menu").style.top="10%";
 }
 
@@ -37,22 +37,34 @@ function hide(){
   document.getElementById("side_menu").style.top="20%";
 }
 
- function changeType(){     
-    var type = $("#sunspot_type").val();
-    if (type == "magnetogram") {
-      $("[name='attributes']").prop("checked",true); 
-      $("[class='magnetogram']").removeAttr("disabled");
-      $("[class='magnetogram']").prop("checked",true);
-      $("[class='continuum']").prop("disabled",'disabled');
-      $("[class='continuum']").removeAttr("checked");
-    }
-    else if (type == "continuum") {
-      $("[name='attributes']").prop("checked",true); 
-      $("[class='continuum']").removeAttr("disabled");
-      $("[class='continuum']").prop("checked",true);
-      $("[class='magnetogram']").prop("disabled",'disabled');
-      $("[class='magnetogram']").removeAttr("checked");
-    }
+function change_sunspot_type(){     
+  var type = $("#sunspot_type").val();
+  if (type == "magnetogram") {
+    $("[name='attributes']").prop("checked",true); 
+    $("[class='magnetogram']").removeAttr("disabled");
+    $("[class='magnetogram']").prop("checked",true);
+    $("[class='continuum']").prop("disabled",'disabled');
+    $("[class='continuum']").removeAttr("checked");
+  }
+  else if (type == "continuum") {
+    $("[name='attributes']").prop("checked",true); 
+    $("[class='continuum']").removeAttr("disabled");
+    $("[class='continuum']").prop("checked",true);
+    $("[class='magnetogram']").prop("disabled",'disabled');
+    $("[class='magnetogram']").removeAttr("checked");
+  }
+};
+
+function change_plot_type(){
+  var type = $("#plot_type").val();
+  if (type == "scatter_2d") {
+    $(".wrapper_menu_2").css("height","140px");
+    $(".scatter_2d_plot").addClass("plot_menu_shown")
+  }
+  else{
+    $(".wrapper_menu_2").css("height","90px");
+    $(".scatter_2d_plot").removeClass("plot_menu_shown");
+  }
 };
 
  $(function(){     

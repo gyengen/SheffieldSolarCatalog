@@ -74,6 +74,7 @@
 			    	<div id = "filter_menu">
 			    		<form method="POST">
 							<table>
+								<tr><th>Query</th></tr>
 								<tr>
 									<td>
 										<p>&nbspFrom:&nbsp</p>
@@ -102,7 +103,7 @@
 										<p>Type:&nbsp</p>
 									</td>
 									<td>
-										<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="changeType();">
+										<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="change_sunspot_type();">
 											{%if sunspot_type == 'magnetogram_sunspot' %}
 											<option value="magnetogram" selected="selected">Magnetogram</option>
 											<option value="continuum">Continuum</option>
@@ -284,26 +285,33 @@
 			    	<div class = "wrapper_menu_2">
 				    	<form method="post">
 				    	<table name="test" id="test">
-				    	 	<tr><th>Create Plot</th> </tr>
-				  			<tr><td>Histogram</td></tr>
-				  			<tr><td>Scatter plot</td></tr>
-				    		<tr><td>Line plot</td></tr>
-				  			<tr><td>2d Scatter</td></tr>
-				  			<tr>
-								<td> x: </td>
-								<td>
-									<select name="x">
-										{%for name in header%}
-										{%if name == x%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>	
+				    	 	<tr><a id="create_plot"></a><th>Create Plot</th></a></tr>
+				    	 	<tr>
+				    	 		<td> Plot Type: </td>
+				    	 		<td>
+						    	 	<select name="plot_type" id="plot_type" onchange="change_plot_type();">
+						    	 		<option value="histogram">Histogram</option>
+						    	 		<option value="line">Line plot</option>
+						    	 		<option value="scatter_2d">2D Scatter</option>
+						    	 		<option value="scatter_3d">3D Scatter</option>
+						    	 	</select>
+				  				</td>
+				  			</tr>
+				  			<tr class="plot_menu scatter_2d_plot">
+									<td> x: </td>
+									<td>
+										<select name="x">
+											{%for name in header%}
+											{%if name == x%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
 							</tr>
-							<tr>
+							<tr class="plot_menu scatter_2d_plot">
 								<td> y: </td>
 								<td>
 									<select name="y">
@@ -322,7 +330,6 @@
 									<input id="static_execute" type="submit" value="Execute">
 								</td>
 							</tr>
-				    		<tr><td>3d Scatter</td></tr>
 						</table>
 						</form>
 			    	</div>
