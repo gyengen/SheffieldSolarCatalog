@@ -3,6 +3,7 @@ from bokeh.plotting import figure,show,output_file
 import numpy as np
 from bokeh.embed import components
 # from bokeh.charts import Bar
+TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
 
 def p_key_remover(table):
     ''' Delete the last column of the table. The last one contains the
@@ -173,46 +174,70 @@ def Query_info(table):
     return info
 
 
-# def Create_live_plot(table, header, hist):
+def Create_live_histogram_plot(table, header, hist, weight):
 
-#     t = np.array(table)
-#     hist_test = t.T[header.index(hist)]
-
-#     histv, edges = np.histogram(hist_test, density=False, bins=10)
-
-#     # must give a vector of images
-#     p = Bar(histv, plot_width=800, plot_height=300)
-#     script, div = components(p)
-
-#     return script, div
-
-def Create_live_plot(table, header, x, y):
-
-# N = 10
-# x = np.random.random(size=N)
-# y = np.random.random(size=N)
-    colors = []
     t = np.array(table)
-    x = t.T[header.index(x)]
-    y = t.T[header.index(y)]
-    for index in xrange(0,len(x)-1):
-        colors.append('#7800e2')
-    # radii = np.random.random(size=N) * 1.5
-    radii = max(x)/100
-    print radii
-    # colors = [
-    #     "#%02x%02x%02x" % (int(r), int(g), 150) for r, g in zip(x, y)
-    # ]
+    hist = t.T[header.index(hist)]
 
-    TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+    if weight == 'None':
+        histv, edges = np.histogram(hist, density=False)
+
+    else:
+        weight = t.T[header.index(weight)]
+        histv, edges = np.histogram(hist, weights=weight, density=False)
 
     p = figure(tools=TOOLS)
 
-    p.scatter(x, y, radius=radii,
-              fill_color=colors, fill_alpha=0.6,
-              line_color=None)
+    p.quad(top=histv, bottom=0, left=edges[:-1], right=edges[1:],
+        fill_color="#036564", line_color="#033649")
 
     script, div = components(p)
-    # output_file("color_scatter.html", title="color_scatter.py example")
-    # show(p)  # open a browser
+
+    return script, div
+
+def Create_live_2D_scatter_plot(table, header, x, y, c, s):
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+
+    t = np.array(table)
+
+    x = t.T[header.index(x)]
+    y = t.T[header.index(y)]
+
+    if c == 'None':
+        colors = ['#7800e2'] * len(x)
+
+    else:
+        c = t.T[header.index(c)]
+        colors = ["#%02x%02x%02x" % (int(r), int(g), int(b))
+                  for r, g, b, _ in 255*plt.cm.viridis(mpl.colors.Normalize()(c))]
+
+    print x,y,s,c
+    normalise_axis = (abs(max(x) - min(x)) + abs(max(y) - min(y))) / 100
+
+    if s == 'None':
+        radii = normalise_axis / 5
+
+    else:
+        s = t.T[header.index(s)]
+        scaling = (s - min(s)) / (max(s) - min(s))
+        radii = normalise_axis / 2 * scaling
+
+    p = figure(tools=TOOLS)
+    p.circle(x, y, radius=radii, fill_color=colors, fill_alpha=0.75)
+    script, div = components(p)
+
+    return script, div
+
+def Create_live_2D_line_plot(table, header, xl, yl):
+
+    t = np.array(table)
+
+    xl = t.T[header.index(xl)]
+    yl = t.T[header.index(yl)]
+
+    p = figure(tools=TOOLS)
+    p.line(xl, yl)
+    script, div = components(p)
+
     return script, div

@@ -218,7 +218,7 @@ a:hover {text-decoration:none;}
 
 .button:hover
 {
-  background: #06D85F;
+  background: #e97e26;
 }
 
 .overlay
@@ -229,7 +229,7 @@ a:hover {text-decoration:none;}
   left: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.7);
-  transition: opacity 1s;
+  transition: opacity 200ms;
   visibility: hidden;
   opacity: 0;
 }

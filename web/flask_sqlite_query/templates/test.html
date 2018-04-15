@@ -20,7 +20,7 @@
 			<div id="wrap_header">
 				<a href="/">
 					<div class='logo'>
-						<img class="logo_pic" src="/static/logo.png">
+						<img class="logo_pic" src="/static/logos/ssc.png">
 						<div class="verticalLine">database</div>
 						<div class="color">tools</div>
 					</div>
@@ -30,10 +30,9 @@
 		</div>
 		<div id="topmenu">
 			<ul>
-				<li id="reset_button"><a><img src="static/i_reset.png" class='icon_im'><br>Reset</a></li>
-				<li id="database_button"><a><img src="static/i_database.png" class='icon_im'><br>Query</a></li>
-	  			<li id="statistics_button"><a><img src="static/i_statistics.png" class='icon_im'><br>Create Plot</a></li>
-	  			<li><a id="download_button"><img src="static/i_download.png" class='icon_im'><br>Download</a>
+				<li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
+	  			<li id="statistics_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Create Plot</a></li>
+	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
 	  				<ul>
 	  					<li>
 	  						<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='database/sql/ssc_sql.db') }}')">SQLlite</button>
@@ -49,9 +48,23 @@
 	  					</li>
 	  				</ul>
 	  			</li>
-				<li><a href=""><img src="static/i_ftp.png" class='icon_im'><br>FTP access</a></li>
-				<li id="help_button"><a href=""><img src="static/i_help.png" class='icon_im'><br>Help</a></li>
-				<li><a href=""><img src="static/i_home.png" class='icon_im'><br>Home</a></li>
+				<li><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>FTP access</a></li>
+
+				<li><a class="button" href="#popup1" >
+					<img src="static/icons/help.png" class='icon_im'><br>Help
+						<div id="popup1" class="overlay">
+							<div class="popup">
+								<h2>Quickhelp</h2><br>
+								What is it? how to use it? examples.
+								<a class="close" href="#">&times;</a>
+								<div class="content"> <a href="#data"></a></div>
+							</div>
+						</div>
+				</a></li>
+
+
+				<li id="reset_button"><a><img src="static/icons/redo.png" class='icon_im'><br>Reset</a></li>
+				<li><a href=""><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
 
 			</ul>
 		</div>
@@ -290,17 +303,81 @@
 				    	 		<td> Plot Type: </td>
 				    	 		<td>
 						    	 	<select name="plot_type" id="plot_type" onchange="change_plot_type();">
+						    	 		<option value="None">Please Select</option>
 						    	 		<option value="histogram">Histogram</option>
 						    	 		<option value="line">Line plot</option>
-						    	 		<option value="scatter_2d">2D Scatter</option>
-						    	 		<option value="scatter_3d">3D Scatter</option>
+						    	 		<option value="scatter_2d">Scatter Plot</option>
 						    	 	</select>
 				  				</td>
 				  			</tr>
+
+				  			<tr class="plot_menu histogram_plot">
+									<td> Values: </td>
+									<td>
+										<select name="v">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+							<tr class="plot_menu histogram_plot">
+								<td> Weights: </td>
+								<td>
+									<select name="w">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == w%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>
+
+				  			<tr class="plot_menu line_plot">
+									<td> X-axis: </td>
+									<td>
+										<select name="xl">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == xl%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+							<tr class="plot_menu line_plot">
+								<td> Y-axis: </td>
+								<td>
+									<select name="yl">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == yl%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>
+
 				  			<tr class="plot_menu scatter_2d_plot">
-									<td> x: </td>
+									<td> X-axis: </td>
 									<td>
 										<select name="x">
+											<option value=None> None </option>
 											{%for name in header%}
 											{%if name == x%}
 												<option value="{{ name }}" selected="selected"> {{ name }} </option>
@@ -312,9 +389,10 @@
 									</td>
 							</tr>
 							<tr class="plot_menu scatter_2d_plot">
-								<td> y: </td>
+								<td> Y-axis: </td>
 								<td>
 									<select name="y">
+										<option value=None> None </option>
 										{%for name in header%}
 										{%if name == y%}
 											<option value="{{ name }}" selected="selected"> {{ name }} </option>
@@ -325,6 +403,38 @@
 									</select>
 								</td>	
 							</tr>
+
+							<tr class="plot_menu scatter_2d_plot">
+								<td> Color: </td>
+								<td>
+									<select name="c">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == c%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>		
+
+							<tr class="plot_menu scatter_2d_plot">
+								<td> Marker Size: </td>
+								<td>
+									<select name="s">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == s%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>	
 							<tr>
 								<td>
 									<input id="static_execute" type="submit" value="Execute">

@@ -55,16 +55,39 @@ function change_sunspot_type(){
   }
 };
 
-function change_plot_type(){
-  var type = $("#plot_type").val();
-  if (type == "scatter_2d") {
-    $(".wrapper_menu_2").css("height","140px");
-    $(".scatter_2d_plot").addClass("plot_menu_shown")
-  }
-  else{
-    $(".wrapper_menu_2").css("height","90px");
-    $(".scatter_2d_plot").removeClass("plot_menu_shown");
-  }
+function change_plot_type()
+{
+   var type = $("#plot_type").val();
+   if (type == "scatter_2d")
+      {
+         $(".wrapper_menu_2").css("height","140px");
+         $(".scatter_2d_plot").addClass("plot_menu_shown")
+      }
+  else
+      {
+         $(".wrapper_menu_2").css("height","90px");
+         $(".scatter_2d_plot").removeClass("plot_menu_shown");
+      }
+  if (type == "histogram")
+      {
+         $(".wrapper_menu_2").css("height","140px");
+         $(".histogram_plot").addClass("plot_menu_shown")
+      }
+  else
+      {
+         $(".wrapper_menu_2").css("height","90px");
+         $(".histogram_plot").removeClass("plot_menu_shown");
+      }
+  if (type == "line")
+      {
+         $(".wrapper_menu_2").css("height","140px");
+         $(".line_plot").addClass("plot_menu_shown")
+      }
+  else
+      {
+         $(".wrapper_menu_2").css("height","90px");
+         $(".line_plot").removeClass("plot_menu_shown");
+      } 
 };
 
  $(function(){     
