@@ -665,7 +665,7 @@ tbody:hover tr:hover td
         background-position: center; 
         background-repeat: no-repeat;
         background-color: black;
-        padding-top: 70px;
+        padding-top: 40px;
     }
 
 .welcome_header h1
@@ -704,6 +704,7 @@ tbody:hover tr:hover td
         vertical-align: super;
         text-align: center;
         background:#002542;
+        border-radius: 15px;
         padding: 10px 10px 10px 10px;
     }
 
@@ -714,7 +715,7 @@ tbody:hover tr:hover td
         background-repeat: no-repeat;
         text-align: center;
         overflow-y: hidden;
-        margin-top: 450px;
+        margin-top: 400px;
     }
 
 .welcome_index h1
@@ -883,8 +884,9 @@ text-align: justify;
 
 .logo_pic
     {
-        height:50px;
-        padding:0px 10px 0px 0px;
+        height:40px;
+        padding:5px 5px 0px 0px;
+
     }
 
 .color

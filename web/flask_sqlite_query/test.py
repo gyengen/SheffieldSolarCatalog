@@ -1,4 +1,4 @@
-from utility import Create_table, Create_live_2D_scatter_plot,Create_live_histogram_plot, Create_live_2D_line_plot, Query_info
+from utility import Create_table, Create_live_2D_scatter_plot,Create_live_histogram_plot, Create_live_2D_line_plot, Query_info, keyword_check
 from flask import Flask, render_template, request, g
 from utility import Create_table, Query_info
 from gevent.pywsgi import WSGIServer
@@ -63,7 +63,6 @@ def query():
     # Save the previous SQL command
     global restore,sd,ed,sunspot_type,sql_cmd,data,st,et,columns,attributes,sql_attr,sql_head,block_status,header_all,header1,header2,columns_all,header2_1,header2_2,x,y
 
-
     # Check the request method
     if request.method == 'POST':
         if 'sunspot_type' in request.form:
@@ -74,6 +73,7 @@ def query():
             et = request.form['end_time']
             order = request.form['order_by']
             attributes = request.values.getlist('attributes')
+
             block_status = [1,len(attributes)]
             # set sql head
             if len(attributes) == 0:
@@ -92,8 +92,6 @@ def query():
                 sunspot_type = "magnetogram_sunspot"
             elif sunspot_type == 'continuum':
                 sunspot_type = "continuum_sunspot"
-
-
 
             if sd != '' and ed != '' :
                 if st != '' and et != '' :
@@ -126,18 +124,9 @@ def query():
         # if 'sql_cmd' not in request.form:
         #     sql_cmd = restore
 
-        if "x" in request.form:
-            # hist = request.form['test']
-            hist = True
-
-
-        if "x" not in request.form:
-            hist = False
-
     else:
         sql_cmd = "SELECT * FROM magnetogram_sunspot"
         sql_attr = '*'
-        hist = False
 
     # Send the query to sqlite
     sql_table = g.db.execute(sql_cmd)
@@ -180,58 +169,64 @@ def query():
 
     info = Query_info(table)
 
-    if len(request.form)!=0 and request.form['plot_type'] == 'line':            
+    form = request.form
+    if keyword_check(request.form, 'plot_type') is True:
 
-        xl = request.form['xl']
-        yl = request.form['yl']
+        if request.form['plot_type'] == 'line':            
 
-        script, div = Create_live_2D_line_plot(table, header, xl,yl)
-        js_resources = INLINE.render_js()
-        css_resources = INLINE.render_css()
-        plot_status = 1
+            xl = request.form['xl']
+            yl = request.form['yl']
 
-        return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                               header=header, sql=sql_cmd, script=script,plot_status=plot_status,
-                               js_resources=js_resources, data=data,xl=xl,yl=yl,
-                               css_resources=css_resources,columns=columns,
-                               div=div, info=info, sd=sd, ed=ed,st=st,et=et,
-                               sunspot_type=sunspot_type,block_status=block_status)
+            script, div = Create_live_2D_line_plot(table, header, xl,yl)
+            js_resources = INLINE.render_js()
+            css_resources = INLINE.render_css()
+            plot_status = 1
 
-    if len(request.form)!=0 and request.form['plot_type'] == 'scatter_2d':            
+            return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   js_resources=js_resources, data=data,xl=xl,yl=yl,
+                                   css_resources=css_resources,columns=columns,
+                                   div=div, info=info, sd=sd, ed=ed,st=st,et=et,
+                                   sunspot_type=sunspot_type,block_status=block_status)
 
-        x = request.form['x']
-        y = request.form['y']
-        s = request.form['s']
-        c = request.form['c']
+        elif request.form['plot_type'] == 'scatter_2d':            
 
-        script, div = Create_live_2D_scatter_plot(table, header, x,y,c,s)
-        js_resources = INLINE.render_js()
-        css_resources = INLINE.render_css()
-        plot_status = 1
+            x = request.form['x']
+            y = request.form['y']
+            s = request.form['s']
+            c = request.form['c']
 
-        return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                               header=header, sql=sql_cmd, script=script,plot_status=plot_status,
-                               js_resources=js_resources, data=data,x=x,y=y,c=c,s=s,
-                               css_resources=css_resources,columns=columns,
-                               div=div, info=info, sd=sd, ed=ed,st=st,et=et,
-                               sunspot_type=sunspot_type,block_status=block_status)
+            script, div = Create_live_2D_scatter_plot(table, header, x,y,c,s)
+            js_resources = INLINE.render_js()
+            css_resources = INLINE.render_css()
+            plot_status = 1
 
-    if len(request.form)!=0 and request.form['plot_type'] == 'histogram':            
+            return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   js_resources=js_resources, data=data,x=x,y=y,c=c,s=s,
+                                   css_resources=css_resources,columns=columns,
+                                   div=div, info=info, sd=sd, ed=ed,st=st,et=et,
+                                   sunspot_type=sunspot_type,block_status=block_status)
 
-        v = request.form['v']
-        w = request.form['w']
-        
-        script, div = Create_live_histogram_plot(table, header, v, w)
-        js_resources = INLINE.render_js()
-        css_resources = INLINE.render_css()
-        plot_status = 1
+        elif request.form['plot_type'] == 'histogram':            
 
-        return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                               header=header, sql=sql_cmd, script=script,plot_status=plot_status,
-                               js_resources=js_resources, data=data,v=v,w=w,
-                               css_resources=css_resources,columns=columns,
-                               div=div, info=info, sd=sd, ed=ed,st=st,et=et,
-                               sunspot_type=sunspot_type,block_status=block_status)
+            v = request.form['v']
+            w = request.form['w']
+            density = request.form['histogram_den']
+            fit = request.form['histogram_fit']
+            color = request.form['histogram_col']
+            
+            script, div = Create_live_histogram_plot(table, header, v, w, density, fit, color)
+            js_resources = INLINE.render_js()
+            css_resources = INLINE.render_css()
+            plot_status = 1
+
+            return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   js_resources=js_resources, data=data,v=v,w=w, density = density, fit = fit, color = color,
+                                   css_resources=css_resources,columns=columns,
+                                   div=div, info=info, sd=sd, ed=ed,st=st,et=et,
+                                   sunspot_type=sunspot_type,block_status=block_status)
 
     return render_template('test.html', table=table,data=data,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                            header=header, sql=sql_cmd, info=info,columns=columns,

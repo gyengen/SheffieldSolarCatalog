@@ -2,7 +2,8 @@ import math
 from bokeh.plotting import figure,show,output_file
 import numpy as np
 from bokeh.embed import components
-# from bokeh.charts import Bar
+from scipy import stats
+
 TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
 
 def p_key_remover(table):
@@ -174,23 +175,82 @@ def Query_info(table):
     return info
 
 
-def Create_live_histogram_plot(table, header, hist, weight):
+def Create_live_histogram_plot(table, header, hist, weight, density, fit, color):
+    '''This funciton generates a histogram
+
+    Parameters
+    ----------
+        table - Query table, list
+        header - 
+        hist - 
+        weight - 
+        density -
+        fit -
+        color - 
+
+    Returns
+    -------
+        array - list of the basic information of the input table'
+    '''
 
     t = np.array(table)
     hist = t.T[header.index(hist)]
 
+    if density == 'Yes' or fit != 'None':
+        density = True
+    else:
+        density = False
+
     if weight == 'None':
-        histv, edges = np.histogram(hist, density=False)
+        histv, edges = np.histogram(hist, density=density)
 
     else:
         weight = t.T[header.index(weight)]
-        histv, edges = np.histogram(hist, weights=weight, density=False)
+        histv, edges = np.histogram(hist, weights=weight, density=density)
 
+    if fit != 'None':
+        # find minimum and maximum of xticks, so we know
+        # where we should compute theoretical distribution
+        xmin, xmax = min(edges), max(edges)  
+        lnspc = np.linspace(xmin, xmax, 1000)
+
+        # lets try the normal distribution first
+        if fit == 'Normal':
+            
+            # get mean and standard deviation 
+            m, s = stats.norm.fit(hist)
+
+            # now get theoretical values in our interval
+            pdf_fit = stats.norm.pdf(lnspc, m, s) 
+
+        if fit == 'Gamma':
+
+            # Parameters for gamma distribution
+            ag,bg,cg = stats.gamma.fit(hist)  
+
+            # Fit the histogram
+            pdf_fit = stats.gamma.pdf(lnspc, ag, bg,cg) 
+
+        if fit == 'Beta':
+
+            # Parameters for Beta distribution
+            ab,bb,cb,db = stats.beta.fit(hist) 
+
+            # Fit 
+            pdf_fit = stats.beta.pdf(lnspc, ab, bb,cb, db) 
+
+    # Plot window initialisation
     p = figure(tools=TOOLS)
 
+    # plot the histogram
     p.quad(top=histv, bottom=0, left=edges[:-1], right=edges[1:],
-        fill_color="#036564", line_color="#033649")
+        fill_color=color, line_color=color)
 
+    # plot the fit
+    if fit != 'None':
+        p.line(lnspc, pdf_fit)
+
+    # Bokeh script
     script, div = components(p)
 
     return script, div
@@ -241,3 +301,26 @@ def Create_live_2D_line_plot(table, header, xl, yl):
     script, div = components(p)
 
     return script, div
+
+def keyword_check(form, string):
+    '''Check the keyword in the request form.request
+
+    Parameters
+    ----------
+        form - request.form from Flask
+        key - keyword in the form
+    Returns
+    -------
+        boolean - True if the keyword is present.'
+    '''
+
+    for keyword in form:
+        if str(keyword) == string: 
+            return True
+    
+    return False
+
+
+
+
+
