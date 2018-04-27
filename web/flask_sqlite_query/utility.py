@@ -285,14 +285,21 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
 
     return script, div
 
+def delete_nonetype_in_rows(data):
+    new_data = []
+    for x in data:
+        if x != None:
+            new_data.append(x)
+    return new_data
+
 def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 
     t = np.array(table)
 
-    x = t.T[header.index(x_index)]
-    y = t.T[header.index(y_index)]
+    x = delete_nonetype_in_rows(t.T[header.index(x_index)])
+    y = delete_nonetype_in_rows(t.T[header.index(y_index)])
 
     if c == 'None':
         colors = ['#7800e2'] * len(x)

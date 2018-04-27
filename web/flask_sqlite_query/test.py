@@ -182,9 +182,10 @@ def query():
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
+            plot_type = "Line Plot"
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,plot_type=plot_type,
                                    js_resources=js_resources, data=data,xl=xl,yl=yl, line_col = line_col,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
@@ -201,9 +202,10 @@ def query():
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
+            plot_type = "Scatter Plot"
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,plot_type=plot_type,
                                    js_resources=js_resources, data=data,x=x,y=y,c=c,s=s,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
@@ -221,9 +223,10 @@ def query():
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
+            plot_type = "Histogram Plot"
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,plot_type=plot_type,
                                    js_resources=js_resources, data=data,v=v, density = density, fit = fit, color = color, bin_n=bin_n,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
@@ -239,9 +242,10 @@ def query():
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
+            plot_type = "Bivariate Histogram"
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
-                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,plot_type=plot_type,
                                    js_resources=js_resources, data=data,biv_v=biv_v, biv_w=biv_w, biv_w_bin=biv_w_bin,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
