@@ -1,4 +1,4 @@
-from utility import Create_table, Create_live_2D_scatter_plot,Create_live_histogram_plot, Create_live_2D_line_plot, Query_info, keyword_check
+from utility import Create_table, Create_live_2D_scatter_plot,Create_live_histogram_plot, Create_live_2D_line_plot, Query_info, keyword_check, Create_live_bivariate_histogram_plot
 from flask import Flask, render_template, request, g
 from utility import Create_table, Query_info
 from gevent.pywsgi import WSGIServer
@@ -176,15 +176,16 @@ def query():
 
             xl = request.form['xl']
             yl = request.form['yl']
+            line_col = request.form['line_col']
 
-            script, div = Create_live_2D_line_plot(table, header, xl,yl)
+            script, div = Create_live_2D_line_plot(table, header, xl,yl, line_col)
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                                    header=header, sql=sql_cmd, script=script,plot_status=plot_status,
-                                   js_resources=js_resources, data=data,xl=xl,yl=yl,
+                                   js_resources=js_resources, data=data,xl=xl,yl=yl, line_col = line_col,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
                                    sunspot_type=sunspot_type,block_status=block_status)
@@ -211,22 +212,41 @@ def query():
         elif request.form['plot_type'] == 'histogram':            
 
             v = request.form['v']
-            w = request.form['w']
             density = request.form['histogram_den']
             fit = request.form['histogram_fit']
             color = request.form['histogram_col']
+            bin_n = request.form['histogram_bin']
             
-            script, div = Create_live_histogram_plot(table, header, v, w, density, fit, color)
+            script, div = Create_live_histogram_plot(table, header, v, density, fit, bin_n, color)
             js_resources = INLINE.render_js()
             css_resources = INLINE.render_css()
             plot_status = 1
 
             return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                                    header=header, sql=sql_cmd, script=script,plot_status=plot_status,
-                                   js_resources=js_resources, data=data,v=v,w=w, density = density, fit = fit, color = color,
+                                   js_resources=js_resources, data=data,v=v, density = density, fit = fit, color = color, bin_n=bin_n,
                                    css_resources=css_resources,columns=columns,
                                    div=div, info=info, sd=sd, ed=ed,st=st,et=et,
                                    sunspot_type=sunspot_type,block_status=block_status)
+
+        elif request.form['plot_type'] == 'biv_hist':            
+
+            biv_v = request.form['biv_v']
+            biv_w = request.form['biv_w']
+            biv_w_bin = request.form['biv_w_bin']
+            
+            script, div = Create_live_bivariate_histogram_plot(table, header, biv_v, biv_w, biv_w_bin)
+            js_resources = INLINE.render_js()
+            css_resources = INLINE.render_css()
+            plot_status = 1
+
+            return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
+                                   header=header, sql=sql_cmd, script=script,plot_status=plot_status,
+                                   js_resources=js_resources, data=data,biv_v=biv_v, biv_w=biv_w, biv_w_bin=biv_w_bin,
+                                   css_resources=css_resources,columns=columns,
+                                   div=div, info=info, sd=sd, ed=ed,st=st,et=et,
+                                   sunspot_type=sunspot_type,block_status=block_status)
+
 
     return render_template('test.html', table=table,data=data,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                            header=header, sql=sql_cmd, info=info,columns=columns,

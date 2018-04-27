@@ -78,6 +78,24 @@ function change_plot_type()
          $(".wrapper_menu_2").css("height","90px");
          $(".histogram_plot").removeClass("plot_menu_shown");
       }
+      
+      
+      
+  if (type == "biv_hist")
+      {
+         $(".wrapper_menu_2").css("height","140px");
+         $(".biv_histogram_plot").addClass("plot_menu_shown")
+      }
+  else
+      {
+         $(".wrapper_menu_2").css("height","90px");
+         $(".biv_histogram_plot").removeClass("plot_menu_shown");
+      }
+      
+      
+      
+      
+      
   if (type == "line")
       {
          $(".wrapper_menu_2").css("height","140px");

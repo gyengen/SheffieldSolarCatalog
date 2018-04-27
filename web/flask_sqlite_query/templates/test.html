@@ -301,8 +301,10 @@
 				    	 		<td> Plot Type: </td>
 				    	 		<td>
 						    	 	<select name="plot_type" id="plot_type" onchange="change_plot_type();">
-						    	 		<option value="None">Please Select</option>
+						    	 		<option value="none">Please Select</option>
 						    	 		<option value="histogram">Histogram</option>
+						    	 		<option value="kde">Kernel Density Estimation</option>
+						    	 		<option value="biv_hist">Bivariate Histogram</option>
 						    	 		<option value="line">Line plot</option>
 						    	 		<option value="scatter_2d">Scatter Plot</option>
 						    	 	</select>
@@ -323,22 +325,6 @@
 											{% endfor %}
 										</select>
 									</td>
-							</tr>
-
-							<tr class="plot_menu histogram_plot">
-								<td> Weights: </td>
-								<td>
-									<select name="w">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == w%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>	
 							</tr>
 
 							<tr class="plot_menu histogram_plot">
@@ -366,11 +352,68 @@
 								<td> Color: </td>
 								<td>
 									<select name="histogram_col">
+										<option value=#022440> Blue </option>
 										<option value=black> Black </option>
-										<option value=red> Red </option>
+										<option value=darkred> Red </option>
+										<option value=gold> Yellow </option>
+										<option value=green> Green </option>
 									</select>
 								</td>	
 							</tr>
+
+							<tr class="plot_menu histogram_plot">
+								<td> Bin number: </td>
+								<td>
+									<input name="histogram_bin" type="number" value="20">
+								</td>	
+							</tr>
+
+
+
+
+
+				  			<tr class="plot_menu biv_histogram_plot">
+									<td> Values 1: </td>
+									<td>
+										<select name="biv_v">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+
+				  			<tr class="plot_menu biv_histogram_plot">
+									<td> Values 2: </td>
+									<td>
+										<select name="biv_w">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+
+							<tr class="plot_menu biv_histogram_plot">
+								<td> Bin Size: </td>
+								<td>
+									<input name="biv_w_bin" type="number" value="20">
+								</td>	
+							</tr>
+
+
+
+
 
 
 				  			<tr class="plot_menu line_plot">
@@ -400,6 +443,19 @@
 											<option value="{{ name }}"> {{ name }} </option>
 										{% endif %}
 										{% endfor %}
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu line_plot">
+								<td> Color: </td>
+								<td>
+									<select name="line_col">
+										<option value=#022440> Blue </option>
+										<option value=black> Black </option>
+										<option value=darkred> Red </option>
+										<option value=gold> Yellow </option>
+										<option value=green> Green </option>
 									</select>
 								</td>	
 							</tr>
