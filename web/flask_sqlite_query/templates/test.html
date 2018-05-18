@@ -3,15 +3,17 @@
 	<head>
 		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
 		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
 		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
 		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
-	    <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+	    <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
 	    <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
 	    <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
-	    {{ script|safe }}
+		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		{{ js_resources|safe }}
         {{ css_resources|safe }}
+
 		<title>{{ sql }}</title>
 	</head>
 
@@ -68,14 +70,75 @@
 		</div>
 
     	<div id = "wrapper_body">
-    		<!-- SQLite query info -->	
-	    	<div id="wrapper_sql_info">
-				Query information<br>
-				Number of rows: {{ info[0] }} | 
-				Number of columns: {{ info[1] }} | 
-				Number of active regions: {{ info[0] }} | 
-				Timespan: {{ info[0] }} | 
+
+			<form method="POST">
+
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="myModalLabel">
+								Set Values
+							</h4>
+						</div>
+						<div class="modal-body">
+							<div id="type1_header">
+								<table cellpadding="5" style="font-size: 15">
+									<tr>
+										<th></th>
+										<th style="text-align: center;">Minimum</th>
+										<th></th>
+										<th style="text-align: center;">Maximum</th>
+									</tr>
+									{% for num in range(5,21) %}
+									<tr>
+										<td>{{ header_all_1[num] }}: </td>
+										<td align="center">
+											<input type="text" name="values_min" class="value_input" value="{{ values_min[num] }}">
+										</td>
+										<td>~</td>
+										<td align="center">
+											<input type="text" name="values_max" class="value_input" value="{{ values_max[num] }}">
+										</td>
+									</tr>
+									{% endfor %}
+								</table>
+							</div>
+
+							<div id="type2_header">
+								<table cellpadding="5" style="font-size: 15">
+									<tr>
+										<th></th>
+										<th style="text-align: center;">Minimum</th>
+										<th></th>
+										<th style="text-align: center;">Maximum</th>
+									</tr>
+									{% for num in range(5,21) %}
+									<tr>
+										<td>{{ header_all_2[num] }}: </td>
+										<td align="center">
+											<input type="text" name="values_min" class="value_input" value="{{ values_min[num] }}">
+										</td>
+										<td>~</td>
+										<td align="center">
+											<input type="text" name="values_max" class="value_input" value="{{ values_max[num] }}">
+										</td>
+									</tr>
+									{% endfor %}
+								</table>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
 			</div>
+
 			<!-- SQLite query info -->
 		    <!-- Menu -->
 		    <div id = "side_menu">
@@ -83,7 +146,6 @@
 		    	<div class = "wrapper_menu">
 		    		<!-- Filter -->
 			    	<div id = "filter_menu">
-			    		<form method="POST">
 							<table>
 								<tr><th>Query</th></tr>
 								<tr>
@@ -145,7 +207,7 @@
 									</td>
 								</tr>
 							</table>
-							<table width="100%">
+							<table width="98%">
 								{% for num in range(0,5,2) %}
 								<tr>
 									<td>
@@ -173,7 +235,7 @@
 							</table>
 
 							<div id="filter_menu_showmore">
-								<table width="100%">
+								<table width="98%">
 									{% for num in range(0,9,2) %}
 									<tr>
 										<td>
@@ -268,7 +330,14 @@
 							</div>
 							<button type="button" onclick="showmore()" id="show_button">Show More</button>
 
-							<table width="100%" style="margin-top: 5px;">
+
+							
+							<table width="98%" style="margin-top: 5px;">
+								<tr>
+									<td colspan="3">
+										<button type="button" style="width: 50%;" data-toggle="modal" data-target="#myModal">Set Values</button>
+									</td>
+								</tr>
 								<tr>
 									<td>
 										<button type="button" id="selectall_button">Select All</button>	
@@ -528,19 +597,14 @@
 								</td>
 							</tr>
 						</table>
-						</form>
 			    	</div>
-<!-- 			    	<div class = "wrapper_menu_3">
-				    	<table>
-				    	 	<tr> <th>Statistics</th> </tr>
-				  			<tr><td>Basic</td></tr>
-				  			<tr><td>Auto-correlation</td></tr>
-				  			<tr><td>Cross-correlation</td></tr>
-				  			<tr><td>Furier-analysis</td></tr>
-						</table>
-			    	</div> -->
 	    		</div>
 	    	</div>
+
+	    	{% for div_frame in div_frame_list %}
+				{{ div_frame|safe }}
+			{% endfor %}
+	    	</form>
 	    	<!-- Menu -->
 
     		<!-- SQLite query -->	
@@ -557,10 +621,10 @@
 				</div>
 			</div> -->
     		<!-- AR image -->	
-	    	<div id="wrapper_image">
+	    	<div class="draggable_window" id="wrapper_image">
 	    		<div class="windowBar" id = "wrapper_image_windowBar">
-		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
 		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
+		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
 		    		<div class="windowTitle">
 		    			<p>Image</p>
 		    		</div>
@@ -575,25 +639,28 @@
 		    	{%endif%}
 			</div>
 			
-			<div id="bokeh_plot">
+			<!-- <div id="bokeh_plot">
 				<div class="windowBar" id = "bokeh_plot_windowBar">
+					<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="bokeh_plot_minimum_button"></div>
-		    		<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
 		    		<div class="windowTitle">
 		    			<p>{{ plot_type }}</p>
 		    		</div>
 		    	</div>
 				<div id="figure">{{ div|safe }}</div>
-			</div>
+			</div> -->
+			
+			
+
 			
 			<!-- {{ script }} -->
 			<!-- AR image -->
 
-			<div id="wrapper_table_block">
+			<div class="draggable_window" id="wrapper_table_block">
 				<!-- control button -->
 				<div class="windowBar" id = "wrapper_table_windowBar">
+					<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="wrapper_table_minimum_button"></div>
-		    		<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
 		    		<div class="windowTitle">
 		    			<p>Data Table</p>
 		    		</div>
@@ -628,13 +695,33 @@
 					<!-- SQLite query table -->
 				</div>
 			</div>
-	    	<!-- Plot -->
-<!-- 	   		<div id="wrapper_plot">	
-	    		{{ script|safe }}
-	    	</div> -->
-	    	<!-- Plot -->
+	    	<div id="message_log">
+	    		<div id="message_log_bar"></div>
+	    		<h3>Message Log</h3>
+	    		<!-- SQLite query info -->	
+		    	<div class="message_log_messages">
+		    		<strong>Query information</strong><br>
+		    		<div style="color: blue;">
+						<p>Number of rows: {{ info[0] }}</p> 
+						<p>Number of columns: {{ info[1] }}</p> 
+						<p>Number of active regions: {{ info[0] }}</p> 
+						<p>Timespan: {{ info[0] }}</p> 
+					</div>
+				</div>
+
+				<div class="message_log_messages">
+					{% if error_message != '' %}
+						<strong>Error Message</strong><br>
+						<div style="color: red;">
+							{{ error_message|safe }}
+						</div>
+					{% else %}
+						No error message.
+					{% endif %}
+				</div>
+	    	</div>
 		</div>
-		
+
 		<div id="fixedWindowBar">
 			<div class ="window1" id="a">
 				<p>Image</p>
@@ -642,13 +729,21 @@
 			<div class ="window1" id="b">
 				<p>Data Table</p>
 			</div>
-			<div class ="window1" id="c">
+			<!-- <div class ="window1" id="c">
 				<p>{{ plot_type }}</p>
-			</div>
+			</div> -->
+			{% for div_minimize_block in div_minimize_block_list %}
+				{{ div_minimize_block|safe }}
+			{% endfor %}
 		</div>
 
 		<div class="fixedfooter"><p>© The University of Sheffield</p></div>
     </body>
+
+    {% for bokeh_script in bokeh_script_list %}
+			{{ bokeh_script|safe }}
+	{% endfor %}
+
     <script>
     	laydate.render({
 		    elem: '#sd'
@@ -697,7 +792,6 @@
     <script>
     	$(function(){
     		if ({{plot_status}}==1) {
-    			$('#bokeh_plot').css('display','block');
     			$('#wrapper_image').css('display','none');
     			$('#a').css('display','table')
     			$('#wrapper_table_block').css('bottom','0').css('display','none');
@@ -705,4 +799,23 @@
     		}
     	});
     </script>
+    <script type="text/javascript">
+		$(document).ready(function(){
+		  $("#wrapper_image_windowBar").mousedown(function(){
+		  	  $("#wrapper_image").css('z-index','4');
+			  // $(".draggable_window").css('z-index','2');
+		  });
+		  $("#wrapper_table_windowBar").mousedown(function(){
+		  	  $("#wrapper_table_block").css('z-index','4');
+			  // $(".draggable_window").css('z-index','2');
+		  });
+		  $("#wrapper_image_windowBar").mouseleave(function(){
+		  	  $("#wrapper_image").css('z-index','2');
+		  	  $("#wrapper_table_block").css('z-index','2');
+		  });
+		  $("#wrapper_table_windowBar").mouseleave(function(){
+		  	  $("#wrapper_table_block").css('z-index','2');
+		  });
+		});
+	</script>
 </html>

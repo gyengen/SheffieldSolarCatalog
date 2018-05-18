@@ -8,9 +8,9 @@
     display: table-row;
 }
 
-.windowBar_shown{
+/*.windowBar_shown{
     z-index: 100;
-}
+}*/
 
 .windowBar{
     width: 100%;
@@ -35,11 +35,27 @@
 }
 
 .minimum_button{
-    background-color: green;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    background-color: #29d62a;
+}
+
+.minimum_button:hover{
+    background-image: url("/static/icons/minimize.png");
+    background-size: cover;
 }
 
 .close_button{
-    background-color: red;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    background-color: #f34747;
+}
+
+.close_button:hover{
+    background-image: url("/static/icons/close.png");
+    background-size: cover;
 }
 
 #fixedWindowBar{
@@ -386,7 +402,7 @@ text-align: justify;
         position: fixed;
         height: 60px;
         right: 0;
-        top: 0;
+        top: 5px;
         z-index: 10;
         font-size: 12px;
     }
@@ -562,9 +578,11 @@ body
 
 #wrapper_body
     {
-        background-color: #e9ebee;
+        /*background-color: #e9ebee;*/
+        background-image: url("/static/sununleashes.png");
+        background-size: contain;
         padding: 0;
-        margin-top: 60px;
+        margin-top: 50px;
         width: 100%;
         height: 100%;
     }
@@ -610,6 +628,7 @@ body
     border-top-left-radius: 10px;
     min-width: 400px;
     min-height: 300px;
+    z-index: 2;
 }
 
 
@@ -678,18 +697,6 @@ body
         margin:auto;
     }*/
 
-#wrapper_sql_info
-    {
-        margin: 0;
-        background-color: #e9ebee;
-        width: 90%;
-        height: 5%;
-        float: left;
-        top: 60px;
-        left: 0;
-        font-size: 12px;
-    }
-
 #wrapper_image
     {
         background-color: #e9ebee;
@@ -699,6 +706,7 @@ body
         font-size: 12px;
         border-top-right-radius: 10px;
         border-top-left-radius: 10px;
+        z-index: 2;
     }
 
 #image{
@@ -707,13 +715,13 @@ body
     float: left;
 }
 
-#bokeh_plot{
+.bokeh_plot{
     position: absolute;
     width: 600px;
-    height: 630px;
+    height: 340px;
     left: 25%;
     top: 15%;
-    display: none;
+    z-index: 2;
 }
 
 #figure{
@@ -751,7 +759,7 @@ body
     {
         position: fixed;
         left: 2px;
-        width: 320px;
+        width: 290px;
         top: 20%;
         left: -330px;
         background-color: rgba(0,0,0,0);
@@ -766,15 +774,15 @@ body
 
 .wrapper_menu
     {
-        border:1px solid blue;
-        background-color: #e9ebee;
+        background-color: rgba(233, 235, 238, 0.7);
         width: 290px;
         float: left;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
 .wrapper_menu table
     {
-        background-color: #e9ebee;
         font-size: 12px;
         line-height:18px;
         float: left;
@@ -875,6 +883,64 @@ body
     margin: 0;
 }
 
+.value_input{
+    text-align: center;
+    width: 80%;
+}
+
+#type2_header{
+    display: none;
+}
+
+#message_log{
+    width: 250px;
+    height: 100%;
+    background-color: rgba(255,255,255,0.6);
+    position: absolute;
+    right: 0px;
+    z-index: 4;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+#message_log_bar{
+    margin: 0;
+    width: 20px;
+    height: 100%;
+    background-color: rgba(16,137,224,0.6);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    float: left;
+    cursor: pointer;
+}
+
+#message_log_bar:hover{
+    background-color: #0b71bb;
+    cursor: pointer;
+}
+
+#message_log h3{
+    width: 230px;
+    float: left;
+    color: #012e4e;
+    text-align: center;
+}
+
+#message_log p{
+    margin: 0;
+}
+
+.message_log_messages
+    {
+        width: 220px;
+        max-height: 45%;
+        float: left;
+        margin-top: 20px;
+        margin-left: 10px;
+        font-size: 12px;
+        overflow: scroll
+    }
+
 /* ---------------------- MENU PROPERTIES*/
 .mytext
     {
@@ -888,5 +954,4 @@ body
 tbody:hover tr:hover td
     {
         color: #ff0000;
-/*>>>>>>> 867a01cb11b289629825eb7130f070a99fd34cc9*/
     }
