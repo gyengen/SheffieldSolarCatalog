@@ -410,4 +410,4 @@ if __name__ == "__main__":
 
     # TODO gracefully handle shutdown
     http.serve_forever()
-    # app.run()
+    app.run()
