@@ -154,19 +154,21 @@ $(function () {
 
 $(function () {
   $('#statistics_button').click(function () {
-    if ($(this).hasClass('table-close')) {
-      $(this).removeClass('table-close');
-      $('#wrapper_table_block').css('top','auto');
-      $('#wrapper_table_block').animate({
-        bottom: '-90%'
-      });
-    } else {
-      $(this).addClass('table-close');
-      $('#wrapper_table_block').css('top','auto');
-      $('#wrapper_table_block').animate({
-        bottom: '0'
-      });
-    }
+      if ($('#wrapper_table_block').hasClass('table-minimized')==false) {
+      if ($(this).hasClass('table-close')) {
+        $(this).removeClass('table-close');
+        $('#wrapper_table_block').css('top','auto');
+        $('#wrapper_table_block').animate({
+          bottom: '-90%'
+        });
+      } else {
+        $(this).addClass('table-close');
+        $('#wrapper_table_block').css('top','auto');
+        $('#wrapper_table_block').animate({
+          bottom: '0'
+        });
+      }
+  }
   })
 });
 
@@ -259,24 +261,26 @@ $(function(){
 
   $('#wrapper_table_minimum_button').click(function(){
     $('#wrapper_table_block').css('display','none');
-    $('#b').css('display','table')
+    $('#b').css('display','table');
+    $('#wrapper_table_block').addClass('table-minimized')
   });
   $('#b').click(function(){
     $('#wrapper_table_block').css('display','block');
     $('#b').css('display','none')
+    $('#wrapper_table_block').removeClass('table-minimized')
   });
   $('#wrapper_table_close_button').click(function(){
      $('#wrapper_table_block').css('display','none');
   });
 
-  $('#bokeh_plot_minimum_button').click(function(){
-    $('#bokeh_plot').css('display','none');
-    $('#c').css('display','table')
-  })
-  $('#c').click(function(){
-    $('#bokeh_plot').css('display','block');
-    $('#c').css('display','none')
-  })
+  // $('#bokeh_plot_minimum_button').click(function(){
+  //   $('#bokeh_plot').css('display','none');
+  //   $('#c').css('display','table')
+  // })
+  // $('#c').click(function(){
+  //   $('#bokeh_plot').css('display','block');
+  //   $('#c').css('display','none')
+  // })
 });
 
 $(function () {

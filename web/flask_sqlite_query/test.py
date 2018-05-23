@@ -402,12 +402,12 @@ def query():
 
 if __name__ == "__main__":
 
-    # #Define the IP address
-    # ip = '143.167.4.88'
+    #Define the IP address
+    ip = '143.167.4.88'
 
-    # # use gevent WSGI server instead of the Flask
-    # http = WSGIServer((ip, 5000), app.wsgi_app)
+    # use gevent WSGI server instead of the Flask
+    http = WSGIServer((ip, 5000), app.wsgi_app)
 
-    # # TODO gracefully handle shutdown
-    # http.serve_forever()
-    app.run()
+    # TODO gracefully handle shutdown
+    http.serve_forever()
+    # app.run()
