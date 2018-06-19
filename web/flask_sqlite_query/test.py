@@ -83,7 +83,7 @@ def query():
     # Get the whole header in the complete table
     table_all_1, header_all_1 = Create_table(g.db.execute("SELECT * FROM magnetogram_sunspot"))
     table_all_2, header_all_2 = Create_table(g.db.execute("SELECT * FROM continuum_sunspot"))
-
+    statistic_height = 0
     # Check the request method
     if request.method == 'POST':
         #clear the error message
@@ -98,8 +98,10 @@ def query():
             order = request.form['order_by']
             sql_values = ' '
             attributes = request.values.getlist('attributes')
-            values_min = request.values.getlist('values_min')
-            values_max = request.values.getlist('values_max')
+            values_min_magnetogram = request.values.getlist('values_min_magnetogram')
+            values_max_magnetogram = request.values.getlist('values_max_magnetogram')
+            values_min_continuum = request.values.getlist('values_min_continuum')
+            values_max_continuum = request.values.getlist('values_max_continuum')
 
             block_status = [1,len(attributes)]
             # set sql head
@@ -119,9 +121,13 @@ def query():
             if sunspot_type == 'magnetogram':
                 sunspot_type = "magnetogram_sunspot"
                 header_all = header_all_1
+                values_min = values_min_magnetogram
+                values_max = values_max_magnetogram
             elif sunspot_type == 'continuum':
                 sunspot_type = "continuum_sunspot"
                 header_all = header_all_2
+                values_min = values_min_continuum
+                values_max = values_max_continuum
 
             #set the range of attributes in the query
             for number in range(5,len(header_all)-1):
@@ -190,12 +196,20 @@ def query():
     try:
         sql_table = g.db.execute(sql_cmd)
     except Exception as e:
-        error_message = error_message + "<p> -- Error happened when retrieving data.<br>" + e.message + "</p><br>"
+        error_message = error_message + "<p> -- Error happened when retrieving data.<br></p><br>"
         sql_cmd = sql_head+sunspot_type+order_info
         sql_table = g.db.execute(sql_cmd)
     
     table, header = Create_table(sql_table)
-    
+
+    try:
+        columns = len(table[0])
+    except Exception as e:
+        error_message = error_message + "<p> -- No data detected based on your filer.<br></p><br>"
+        sql_cmd = sql_head+sunspot_type+order_info
+        sql_table = g.db.execute(sql_cmd)
+        table, header = Create_table(sql_table)
+        columns = len(table[0])
 
     # Divide header into two parts
     header1 = []
@@ -214,9 +228,6 @@ def query():
         if index >= 16:
             header2_2.append(header_all_2[index])
 
-    columns = len(table[0])
-    # columns_all = len(table_all_1[0])
-
     # Create data for downloading
     data=[]
     data=data+header
@@ -227,6 +238,12 @@ def query():
         data = data+new_row
 
     data = json.dumps(data)
+
+    try:
+        statistic_height = len(table) * 26 + 43
+    except Exception as e:
+        statistic_height = 0
+    
 
     info = Query_info(table)
 
@@ -316,7 +333,7 @@ def query():
 
         if plot_status == 1:
             div_frame = ''' 
-                            <div class="bokeh_plot draggable_window" id = "'''+str(plot_times)+'''">
+                            <div class="bokeh_plot draggable_window z-position" id = "'''+str(plot_times)+'''">
                             <input type="hidden" name="bokeh" id = "plot'''+str(plot_times)+'''" value = "'''+str(plot_times)+'''">
                                 <div class="windowBar" id = "bokeh_plot_windowBar">
                                     <div class="control_buttons close_button" id="bokeh_plot_close_button'''+str(plot_times)+'''"></div>
@@ -389,14 +406,14 @@ def query():
         return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                                header=header, sql=sql_cmd, bokeh_script_list=new_bokeh_script_list,plot_status=plot_status,plot_type=plot_type,
                                js_resources=js_resources, data=data,biv_v=biv_v, biv_w=biv_w, biv_w_bin=biv_w_bin,error_message=error_message,
-                               css_resources=css_resources,columns=columns,values_min = values_min,values_max=values_max,
+                               css_resources=css_resources,columns=columns,values_min = values_min,values_max=values_max,statistic_height = statistic_height,
                                div=div, info=info, sd=sd, ed=ed,st=st,et=et,header_all_1=header_all_1,header_all_2=header_all_2,
                                sunspot_type=sunspot_type,block_status=block_status,div_frame_list=new_div_frame_list,div_minimize_block_list=new_div_minimize_block_list)
 
 
     return render_template('test.html', table=table,data=data,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                            header=header, sql=sql_cmd, info=info,columns=columns,values_min = values_min,values_max=values_max,error_message=error_message,
-                           sd=sd,ed=ed,st=st,et=et,sunspot_type=sunspot_type,header_all_1=header_all_1,header_all_2=header_all_2,
+                           sd=sd,ed=ed,st=st,et=et,sunspot_type=sunspot_type,header_all_1=header_all_1,header_all_2=header_all_2,statistic_height = statistic_height,
                            block_status=block_status)
 
 

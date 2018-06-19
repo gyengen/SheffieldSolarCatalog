@@ -111,7 +111,6 @@ function change_plot_type()
          $(".line_plot").removeClass("plot_menu_shown");
       } 
 };
-
  $(function(){     
     $("#selectall_button").click(function(){
       var type = $("#sunspot_type").val();
@@ -272,15 +271,6 @@ $(function(){
   $('#wrapper_table_close_button').click(function(){
      $('#wrapper_table_block').css('display','none');
   });
-
-  // $('#bokeh_plot_minimum_button').click(function(){
-  //   $('#bokeh_plot').css('display','none');
-  //   $('#c').css('display','table')
-  // })
-  // $('#c').click(function(){
-  //   $('#bokeh_plot').css('display','block');
-  //   $('#c').css('display','none')
-  // })
 });
 
 $(function () {
@@ -297,4 +287,17 @@ $(function () {
       });
     }
   })
+});
+
+$(function() {
+  $(".z-position").mousedown(function(){
+    $(".z-position").removeClass("top-position");
+    $(this).addClass("top-position");
+  });
+});
+
+$(function(){
+  $('#filter-clear').click(function(){
+    $("[class='value_input']").val('0');
+  });
 });

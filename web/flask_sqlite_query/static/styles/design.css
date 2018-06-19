@@ -14,7 +14,7 @@
 
 .windowBar{
     width: 100%;
-    height: 30px;
+    height: 20px;
     cursor: all-scroll;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -25,8 +25,8 @@
 
 .control_buttons{
     background-color: white;
-    height: 24px;
-    width: 24px;
+    height: 14px;
+    width: 14px;
     margin-top: 3px;
     margin-bottom: 3px;
     margin-left: 10px;
@@ -39,24 +39,30 @@
     -webkit-border-radius: 50px;
     border-radius: 50px;
     background-color: #29d62a;
-}
-
-.minimum_button:hover{
+    color: white;
     background-image: url("/static/icons/minimize.png");
     background-size: cover;
 }
+
+/*.minimum_button:hover{
+    background-image: url("/static/icons/minimize.png");
+    background-size: cover;
+}*/
 
 .close_button{
     -moz-border-radius: 50px;
     -webkit-border-radius: 50px;
     border-radius: 50px;
     background-color: #f34747;
-}
-
-.close_button:hover{
+    color: white;
     background-image: url("/static/icons/close.png");
     background-size: cover;
 }
+
+/*.close_button:hover{
+    background-image: url("/static/icons/close.png");
+    background-size: cover;
+}*/
 
 #fixedWindowBar{
     position:fixed;
@@ -352,7 +358,7 @@ text-align: justify;
         padding-bottom: 5px;
         background-image: url("/static/bg3.png");
         overflow:hidden;
-        z-index: 5;
+        z-index: 100
     }
 
 
@@ -403,7 +409,7 @@ text-align: justify;
         height: 60px;
         right: 0;
         top: 5px;
-        z-index: 10;
+        z-index: 101;
         font-size: 12px;
     }
 
@@ -626,12 +632,10 @@ body
     position: fixed;
     left: 15%;
     bottom: -90%;
-    border:1px solid black;
+    /*border:1px solid black;*/
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
-    min-width: 400px;
-    min-height: 300px;
-    z-index: 2;
+    min-width: 230px;
 }
 
 
@@ -709,7 +713,6 @@ body
         font-size: 12px;
         border-top-right-radius: 10px;
         border-top-left-radius: 10px;
-        z-index: 2;
     }
 
 #image{
@@ -724,7 +727,6 @@ body
     height: 340px;
     left: 25%;
     top: 15%;
-    z-index: 2;
 }
 
 #figure{
@@ -766,7 +768,7 @@ body
         top: 20%;
         left: -330px;
         background-color: rgba(0,0,0,0);
-        z-index: 105;
+        z-index: 100;
     }
 
 #filter_menu{
@@ -901,7 +903,7 @@ body
     background-color: rgba(255,255,255,0.6);
     position: absolute;
     right: 0px;
-    z-index: 4;
+    z-index: 100;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
@@ -943,7 +945,9 @@ body
         font-size: 12px;
         overflow: scroll
     }
-
+.top-position{
+    z-index: 51;
+}
 /* ---------------------- MENU PROPERTIES*/
 .mytext
     {

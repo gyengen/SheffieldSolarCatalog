@@ -50,16 +50,16 @@
 	  			</li>
 				<li><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>FTP access</a></li>
 
-				<li><a class="button" href="#popup1" >
+				<li><a href="" data-toggle="modal" data-target="#help-modal">
 					<img src="static/icons/help.png" class='icon_im'><br>Help
-						<div id="popup1" class="overlay">
+						<!-- <div id="popup1" class="overlay">
 							<div class="popup">
 								<h2>Quickhelp</h2><br>
 								What is it? how to use it? examples.
 								<a class="close" href="#">&times;</a>
 								<div class="content"> <a href="#data"></a></div>
 							</div>
-						</div>
+						</div> -->
 				</a></li>
 
 
@@ -97,11 +97,11 @@
 									<tr>
 										<td>{{ header_all_1[num] }}: </td>
 										<td align="center">
-											<input type="text" name="values_min" class="value_input" value="{{ values_min[num] }}">
+											<input type="text" name="values_min_magnetogram" class="value_input" value="{{ values_min[num-5] }}">
 										</td>
 										<td>~</td>
 										<td align="center">
-											<input type="text" name="values_max" class="value_input" value="{{ values_max[num] }}">
+											<input type="text" name="values_max_magnetogram" class="value_input" value="{{ values_max[num-5] }}">
 										</td>
 									</tr>
 									{% endfor %}
@@ -120,15 +120,40 @@
 									<tr>
 										<td>{{ header_all_2[num] }}: </td>
 										<td align="center">
-											<input type="text" name="values_min" class="value_input" value="{{ values_min[num] }}">
+											<input type="text" name="values_min_continuum" class="value_input" value="{{ values_min[num-5] }}">
 										</td>
 										<td>~</td>
 										<td align="center">
-											<input type="text" name="values_max" class="value_input" value="{{ values_max[num] }}">
+											<input type="text" name="values_max_continuum" class="value_input" value="{{ values_max[num-5] }}">
 										</td>
 									</tr>
 									{% endfor %}
 								</table>
+							</div>
+						</div>
+						<!-- data-dismiss="modal" -->
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" id="filter-clear">Clear</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+			<!-- Help Modal-->
+			<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="help-modal-label">
+								This is a header!
+							</h4>
+						</div>
+						<div class="modal-body">
+							<div id="type1_header">
+								<h6>This is content</h6>
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -138,7 +163,6 @@
 					</div><!-- /.modal-content -->
 				</div><!-- /.modal -->
 			</div>
-
 			<!-- SQLite query info -->
 		    <!-- Menu -->
 		    <div id = "side_menu">
@@ -270,7 +294,7 @@
 											{% if header2_1[num] in header %}
 												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num] }}" checked="checked" />
 											{% else %}
-												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num] }}"/>
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num] }}" disabled="disabled"/>
 											{% endif %}
 										</td>
 										{% if (5//2 == (5-1)//2) and (num != 4) %}
@@ -281,7 +305,7 @@
 											{% if header2_1[num+1] in header %}
 												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num+1] }}" checked="checked" />
 											{% else %}
-												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num+1] }}"/>
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ header2_1[num+1] }}" disabled="disabled"/>
 											{% endif %}
 										</td>
 										{% else %}
@@ -298,7 +322,7 @@
 										</td>
 										<td>
 											{% if header2_2[num] in header %}
-												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num] }}" checked="checked" disabled="disabled" />
+												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num] }}" checked="checked" />
 											{% else %}
 												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num] }}" disabled="disabled"/>
 											{% endif %}
@@ -309,7 +333,7 @@
 										</td>
 										<td>
 											{% if header2_2[num+1] in header %}
-												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num+1] }}" checked="checked" disabled="disabled" />
+												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num+1] }}" checked="checked" />
 											{% else %}
 												<input type="checkbox" name="attributes" class="continuum" value="{{ header2_2[num+1] }}" disabled="disabled" />
 											{% endif %}
@@ -320,11 +344,7 @@
 										{% endif %}
 									</tr>
 									{% endfor %}
-									<!-- <tr>
-										<td>
-											<input type=submit value="Execute">		
-										</td>
-									</tr> -->						
+									<input type="hidden" onload="change_sunspot_type()">					
 								</table>
 								<button type="button" onclick="hide()" id="hide_button">Hide</button>
 							</div>
@@ -621,7 +641,7 @@
 				</div>
 			</div> -->
     		<!-- AR image -->	
-	    	<div class="draggable_window" id="wrapper_image">
+	    	<div class="draggable_window z-position" id="wrapper_image">
 	    		<div class="windowBar" id = "wrapper_image_windowBar">
 		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
@@ -656,7 +676,7 @@
 			<!-- {{ script }} -->
 			<!-- AR image -->
 
-			<div class="draggable_window" id="wrapper_table_block">
+			<div class="draggable_window z-position" id="wrapper_table_block">
 				<!-- control button -->
 				<div class="windowBar" id = "wrapper_table_windowBar">
 					<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
@@ -799,23 +819,31 @@
     		}
     	});
     </script>
-    <script type="text/javascript">
-		$(document).ready(function(){
-		  $("#wrapper_image_windowBar").mousedown(function(){
-		  	  $("#wrapper_image").css('z-index','4');
-			  // $(".draggable_window").css('z-index','2');
-		  });
-		  $("#wrapper_table_windowBar").mousedown(function(){
-		  	  $("#wrapper_table_block").css('z-index','4');
-			  // $(".draggable_window").css('z-index','2');
-		  });
-		  $("#wrapper_image_windowBar").mouseleave(function(){
-		  	  $("#wrapper_image").css('z-index','2');
-		  	  $("#wrapper_table_block").css('z-index','2');
-		  });
-		  $("#wrapper_table_windowBar").mouseleave(function(){
-		  	  $("#wrapper_table_block").css('z-index','2');
-		  });
-		});
-	</script>
+    <script>
+    	$(function(){
+    		if ("{{sunspot_type}}"=="magnetogram_sunspot") {
+			    $("#type1_header").css("display","block");
+				$("#type2_header").css("display","none");
+    		}
+    		else if ("{{sunspot_type}}"=="continuum_sunspot"){
+    			$("#type2_header").css("display","block");
+    			$("#type1_header").css("display","none");
+    		}
+    	});
+    	$(function(){
+    		if ({{statistic_height}} != 0) {
+			  	if ({{statistic_height}} < 600) {
+			    	$("#wrapper_table_block").css("height","{{statistic_height}}");
+    			}else{
+    				$("#wrapper_table_block").css("height","600");
+    			}
+    		}
+    	});
+    	$(function(){
+    		if ("{{error_message}}" == '') {
+			    $("#message_log").css("right","-230px");
+			    $("#message_log_bar").addClass('table-close');
+    		}
+    	});
+    </script>
 </html>
