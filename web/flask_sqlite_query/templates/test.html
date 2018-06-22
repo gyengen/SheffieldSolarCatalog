@@ -168,8 +168,9 @@
 		    <div id = "side_menu">
 		    	
 		    	<div class = "wrapper_menu">
+		    		
 		    		<!-- Filter -->
-			    	<div id = "filter_menu">
+			    	<div id = "filter_menu" class="top=position">
 							<table>
 								<tr><th>Query</th></tr>
 								<tr>
@@ -234,7 +235,7 @@
 							<table width="98%">
 								{% for num in range(0,5,2) %}
 								<tr>
-									<td>
+									<td width="105px">
 										{{ header1[num] }} 
 									</td>
 									<td>
@@ -355,7 +356,9 @@
 							<table width="98%" style="margin-top: 5px;">
 								<tr>
 									<td colspan="3">
-										<button type="button" style="width: 50%;" data-toggle="modal" data-target="#myModal">Set Values</button>
+										<button type="button" style="width: 50%;margin-left: 20%;margin-bottom: 10px;" data-toggle="modal" data-target="#myModal">
+											Set Values
+										</button>
 									</td>
 								</tr>
 								<tr>

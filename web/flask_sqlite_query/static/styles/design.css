@@ -584,11 +584,11 @@ body
 
 #wrapper_body
     {
-        background-image: url(/static/bg.png);
+        /*background-image: url(/static/bg.png);*/
         background-size: 1000px 1000px;
         background-position: center;
         background-repeat: no-repeat;
-        background-color: black;
+        background-color: #e9ebee;
         /* background-size: contain; */
         padding: 0;
         margin-top: 50px;
@@ -637,8 +637,6 @@ body
     border-top-left-radius: 10px;
     min-width: 230px;
 }
-
-
 
 #wrapper_table_info{
     width: 100%;
@@ -768,13 +766,14 @@ body
         top: 20%;
         left: -330px;
         background-color: rgba(0,0,0,0);
-        z-index: 100;
+        /*z-index: 100;*/
     }
 
 #filter_menu{
     width: 290px;
     height: 205px;
     margin-top: 5px;
+    margin-left: 10px;
 }
 
 .wrapper_menu
@@ -862,6 +861,7 @@ body
     width: 290px;
     height: 90px;
     margin-top: 5px;
+    margin-left: 10px;
 }
 
 .wrapper_menu_3{
