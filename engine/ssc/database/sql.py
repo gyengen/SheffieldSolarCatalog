@@ -153,7 +153,7 @@ def sunspot_continuum_table(row):
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:
-            print 'Continuum: UNIQUE constraint failed'
+            print('Continuum: UNIQUE constraint failed')
 
     if str(row[2]) is 'magnetogram':
         create_sunspot_magnetogram_table(c)
@@ -164,7 +164,7 @@ def sunspot_continuum_table(row):
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:
-            print 'Magnetogram UNIQUE constraint failed'
+            print('Magnetogram UNIQUE constraint failed')
 
     # Save (commit) the changes
     c.commit()

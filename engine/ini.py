@@ -21,7 +21,7 @@ def standard_multitype_ini(observations):
 
 	for obs in observations: 
 
-		print obs.date, obs.detector, obs.measurement, '\nImage De-Rotation'
+		#print obs.date, obs.detector, obs.measurement, '\nImage De-Rotation'
 
 		if obs.detector == 'HMI':
 			# Replace np.nan-s with zero for rotating 
@@ -32,22 +32,22 @@ def standard_multitype_ini(observations):
 
 			# Limb darkening correction, only HIM white lighe image
 			if obs.measurement == 'continuum':
-				print 'Limb darkening correction'
+				#print 'Limb darkening correction'
 				obs = dark_limb.limb_darkening_correct(obs, limb_cut=False)
 
 			# Longitudinal magnetic field to Bz estimation. Slow procedure, we need a faster solution (12 secs)
 			if obs.measurement == 'magnetogram':
-				print 'Bz estimation'
-				#obs = blbz.LOS2Bz(obs)
+				#print 'Bz estimation'
+				obs = blbz.LOS2Bz(obs)
 
 			# Cut the limb and replace outlimb region with np.nan
-			print 'Limb cut'
+			#print 'Limb cut'
 			obs = cut.solar_limb(obs)
 
 		if obs.detector == 'AIA':
 			# Processes a level 1 AIAMap into a level 1.5 AIAMap
 
-			print 'AIA lev1 to lev1.5'
+			#print 'AIA lev1 to lev1.5'
 			obs = sunpy.instr.aia.aiaprep(obs)
 
 		# Append the new maps

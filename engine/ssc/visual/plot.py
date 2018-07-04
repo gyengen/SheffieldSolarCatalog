@@ -180,7 +180,7 @@ def path_define(date, AR_summary, obs_type):
     # Find the parent directory
     path = os.path.abspath(os.path.join(path, os.pardir))
 
-    print obs_type, str(int(AR_summary['Nmbr']) + 10000)
+    #print obs_type, str(int(AR_summary['Nmbr']) + 10000)
     filename = 'AR_' + str(int(AR_summary['Nmbr']) + 10000) + '_' + obs_type
     filename = filename + str(date[0]) + '_' + str(date[1]).split('.')[0]
     filename = filename + '.png'

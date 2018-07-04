@@ -25,7 +25,7 @@ def active_region_recognition(initialized_observations, AR_summary):
 	continuum_index  = util.index(initialized_observations, 'continuum')
 	continuum_img = initialized_observations[continuum_index]
 
-	print continuum_img.date, continuum_img.detector, continuum_img.measurement
+	print(continuum_img.date, continuum_img.detector, continuum_img.measurement)
 
 	# SRS coordinate transformation heliographics to pixel
 	AR_summary = srs.SRS_coordinate_transform(continuum_img, AR_summary)
