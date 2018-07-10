@@ -31,7 +31,7 @@
 		<div id="topmenu">
 			<ul>
 				<li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
-	  			<li id="statistics_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Create Plot</a></li>
+	  			<li id="statistics_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Statistic</a></li>
 	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
 	  				<ul>
 	  					<li>
@@ -168,7 +168,7 @@
 		    <div id = "side_menu">
 		    	
 		    	<div class = "wrapper_menu">
-		    		
+
 		    		<!-- Filter -->
 			    	<div id = "filter_menu" class="top=position">
 							<table>
@@ -624,9 +624,17 @@
 	    		</div>
 	    	</div>
 
-	    	{% for div_frame in div_frame_list %}
-				{{ div_frame|safe }}
+	    	{% for num in range(list_length) %}
+	    		<div style="position: relative;top: {{ position_top[num] }}px;left: {{ position_left[num] }}px;">
+					{{ div_frame_list[num]|safe }}
+				</div>
 			{% endfor %}
+
+	    	<!-- {% for div_frame in div_frame_list %}
+	    		<div>
+					{{ div_frame|safe }}
+				</div>
+			{% endfor %} -->
 	    	</form>
 	    	<!-- Menu -->
 

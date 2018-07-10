@@ -45,6 +45,9 @@ div_frame_list = []
 div_minimize_block_list = []
 bokeh_script_list = []
 bokeh_index_list = []
+list_length = 0
+position_left = []
+position_top = []
 
 # message = ''    #some useful message for user
 
@@ -78,8 +81,8 @@ def query():
 
     # Save the previous SQL command
     global restore,sd,ed,sunspot_type,sql_cmd,data,st,et,columns,attributes,sql_attr,sql_head,block_status,header_all,header1,header2,header2_1,header2_2,x,y
-    global values_min,values_max,sql_values,error_message,plot_times,div_frame_list,div_minimize_block_list,bokeh_script_list,bokeh_index_list
-
+    global values_min,values_max,sql_values,error_message,plot_times,div_frame_list,div_minimize_block_list,bokeh_script_list,bokeh_index_list,list_length
+    global position_top,position_left
     # Get the whole header in the complete table
     table_all_1, header_all_1 = Create_table(g.db.execute("SELECT * FROM magnetogram_sunspot"))
     table_all_2, header_all_2 = Create_table(g.db.execute("SELECT * FROM continuum_sunspot"))
@@ -151,13 +154,19 @@ def query():
                         error_message = error_message + "<p> -- Wrong input when setting attributes. ("+ header_all[number] +">> minimum:  "+ min_value +", maximum:  "+ max_value +")</p><br>"
             
             sql_values = sql_values + "END"
-            sql_values = sql_values.replace("AND END","")
+            if sql_values == " END":
+                sql_values = sql_values.replace(" END","")
+            else:
+                sql_values = sql_values.replace("AND END","")
+
+            if sql_values != '':
+                sql_values = " AND " + sql_values
 
             if sd != '' and ed != '' :
                 if st != '' and et != '' :
-                    sql_cmd = sql_head + sunspot_type+" WHERE DATE_OBS >= '"+sd+"' AND "+"Time_obs >= '"+st+"' AND " +"DATE_OBS <= '"+ed+"' AND " + "Time_obs <= '"+et+"'" + sql_values + order_info
+                    sql_cmd = sql_head + sunspot_type+" WHERE ((DATE_OBS > '"+sd+"' AND DATE_OBS <'"+ed+"') OR (DATE_OBS='"+sd+"' AND Time_obs>'"+st+"' AND DATE_OBS <'"+ed+"') OR (DATE_OBS>'"+sd+"' AND Time_obs<'"+et+"' AND DATE_OBS='"+ed+"'))"+ sql_values + order_info
                 elif st == '' and et != '' :
-                    sql_cmd = sql_head + sunspot_type+" WHERE DATE_OBS >= '"+sd+"' AND " +"DATE_OBS <= '"+ed+"' AND " + "Time_obs <= '"+et+"'" + sql_values + order_info
+                    sql_cmd = sql_head + sunspot_type+" WHERE DATE_OBS >= '"+sd+"' AND DATE_OBS <='"+ed+"' AND Time_obs <= '"+et+"'" + sql_values + order_info
                 elif st != '' and et == '' :
                     sql_cmd = sql_head + sunspot_type+" WHERE DATE_OBS >= '"+sd+"' AND " +"Time_obs >= '"+st+"' AND " + "DATE_OBS <= '"+ed+"'" + sql_values + order_info
                 elif st == '' and et == '' :
@@ -173,7 +182,7 @@ def query():
                 elif et == '' :
                     sql_cmd = sql_head + sunspot_type+" WHERE DATE_OBS <= '"+ed+"'" + sql_values + order_info
             else:
-                if sql_values == ' ' or sql_values == ' END':
+                if sql_values == '' or sql_values == ' END':
                     sql_cmd = sql_head+sunspot_type+order_info
                 else:
                     sql_cmd = sql_head+sunspot_type+ " WHERE " +sql_values+order_info
@@ -192,6 +201,9 @@ def query():
         sql_attr = '*'
 
     sql_table = []
+
+    print sql_cmd
+
     # Send the query to sqlite
     try:
         sql_table = g.db.execute(sql_cmd)
@@ -398,33 +410,47 @@ def query():
                         break
 
         else:
-            new_div_frame_list = new_div_frame_list.append(div_frame_list[len(div_frame_list)-1])
-            new_div_minimize_block_list = new_div_minimize_block_list.append(div_minimize_block_list[len(div_minimize_block_list)-1])
-            new_bokeh_script_list = new_bokeh_script_list.append(bokeh_script_list[len(bokeh_script_list)-1])
+            if len(div_frame_list) != 0:
+                new_div_frame_list = new_div_frame_list.append(div_frame_list[len(div_frame_list)-1])
+                new_div_minimize_block_list = new_div_minimize_block_list.append(div_minimize_block_list[len(div_minimize_block_list)-1])
+                new_bokeh_script_list = new_bokeh_script_list.append(bokeh_script_list[len(bokeh_script_list)-1])
                 
+        list_length = len(div_frame_list)
+        if list_length != 0:
+            position_left = []
+            position_top = []
+            for x in range(0,list_length):
+                l = 100 + 20 * x
+                t = 20 * x
+                position_left.append(l)
+                position_top.append(t)
+        print list_length
+        print position_left
+        print position_top
 
         return render_template('test.html', table=table,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                                header=header, sql=sql_cmd, bokeh_script_list=new_bokeh_script_list,plot_status=plot_status,plot_type=plot_type,
                                js_resources=js_resources, data=data,biv_v=biv_v, biv_w=biv_w, biv_w_bin=biv_w_bin,error_message=error_message,
                                css_resources=css_resources,columns=columns,values_min = values_min,values_max=values_max,statistic_height = statistic_height,
-                               div=div, info=info, sd=sd, ed=ed,st=st,et=et,header_all_1=header_all_1,header_all_2=header_all_2,
-                               sunspot_type=sunspot_type,block_status=block_status,div_frame_list=new_div_frame_list,div_minimize_block_list=new_div_minimize_block_list)
+                               div=div, info=info, sd=sd, ed=ed,st=st,et=et,header_all_1=header_all_1,header_all_2=header_all_2,list_length=list_length,
+                               sunspot_type=sunspot_type,block_status=block_status,div_frame_list=new_div_frame_list,div_minimize_block_list=new_div_minimize_block_list,
+                               position_top=position_top,position_left=position_left)
 
 
     return render_template('test.html', table=table,data=data,header1=header1,header2=header2,header2_1=header2_1,header2_2=header2_2,
                            header=header, sql=sql_cmd, info=info,columns=columns,values_min = values_min,values_max=values_max,error_message=error_message,
                            sd=sd,ed=ed,st=st,et=et,sunspot_type=sunspot_type,header_all_1=header_all_1,header_all_2=header_all_2,statistic_height = statistic_height,
-                           block_status=block_status)
+                           block_status=block_status,list_length=list_length,position_top=position_top,position_left=position_left)
 
 
 if __name__ == "__main__":
 
-    #Define the IP address
-    ip = '143.167.4.88'
+    # #Define the IP address
+    # ip = '143.167.4.88'
 
-    # use gevent WSGI server instead of the Flask
-    http = WSGIServer((ip, 5000), app.wsgi_app)
+    # # use gevent WSGI server instead of the Flask
+    # http = WSGIServer((ip, 5000), app.wsgi_app)
 
-    # TODO gracefully handle shutdown
-    http.serve_forever()
+    # # TODO gracefully handle shutdown
+    # http.serve_forever()
     app.run()
