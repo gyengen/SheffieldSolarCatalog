@@ -1,1 +1,1 @@
-# Sheffield-Solar-Catalog
+# Sheffield Solar Catalogue (SSC)
