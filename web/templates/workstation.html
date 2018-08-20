@@ -1,0 +1,860 @@
+<html>
+	<!-- Use CSS -->
+	<head>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
+		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+	    <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+	    <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+	    <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		{{ att_plot.js_resources|safe }}
+        {{ att_plot.css_resources|safe }}
+
+	<title>SSC - Workstation</title>
+	</head>
+
+    <body>
+		<div id="fixedheader">
+			<div id="wrap_header">
+				<a href="/">
+					<div class='logo'>
+						<img class="logo_pic" src="/static/logos/ssc.png">
+					</div>
+				</a>
+
+			</div>
+		</div>
+		<div id="topmenu">
+			<ul>
+				<li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
+	  			<li id="statistics_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Statistic</a></li>
+	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
+	  				<ul>
+	  					<li>
+	  						<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='database/sql/ssc_sql.db') }}')">SQLlite</button>
+	  					</li>
+	  					<li>
+	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.h5',{{ att.data }})">HDF5</button>
+	  					</li>
+	  					<li>
+	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.csv',{{ att.data }})">CSV</button>
+	  					</li>
+	  					<li>
+	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.txt',{{ att.data }})">TXT</button>
+	  					</li>
+	  				</ul>
+	  			</li>
+				<li><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>FTP access</a></li>
+
+				<li><a href="" data-toggle="modal" data-target="#help-modal">
+					<img src="static/icons/help.png" class='icon_im'><br>Help
+						<!-- <div id="popup1" class="overlay">
+							<div class="popup">
+								<h2>Quickhelp</h2><br>
+								What is it? how to use it? examples.
+								<a class="close" href="#">&times;</a>
+								<div class="content"> <a href="#data"></a></div>
+							</div>
+						</div> -->
+				</a></li>
+
+
+				<li id="reset_button"><a><img src="static/icons/redo.png" class='icon_im'><br>Reset</a></li>
+				<li><a href=""><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
+
+			</ul>
+		</div>
+
+    	<div id = "wrapper_body">
+
+			<form method="POST">
+
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="myModalLabel">
+								Set Values
+							</h4>
+						</div>
+						<div class="modal-body">
+							<div id="type1_header">
+								<table cellpadding="5" style="font-size: 15">
+									<tr>
+										<th></th>
+										<th style="text-align: center;">Minimum</th>
+										<th></th>
+										<th style="text-align: center;">Maximum</th>
+									</tr>
+									{% for num in range(5,21) %}
+									<tr>
+										<td>{{ header_all_1[num] }}: </td>
+										<td align="center">
+											<input type="text" name="values_min_magnetogram" class="value_input" value="{{ att.values_min[num-5] }}">
+										</td>
+										<td>~</td>
+										<td align="center">
+											<input type="text" name="values_max_magnetogram" class="value_input" value="{{ att.values_max[num-5] }}">
+										</td>
+									</tr>
+									{% endfor %}
+								</table>
+							</div>
+
+							<div id="type2_header">
+								<table cellpadding="5" style="font-size: 15">
+									<tr>
+										<th></th>
+										<th style="text-align: center;">Minimum</th>
+										<th></th>
+										<th style="text-align: center;">Maximum</th>
+									</tr>
+									{% for num in range(5,21) %}
+									<tr>
+										<td>{{ header_all_2[num] }}: </td>
+										<td align="center">
+											<input type="text" name="values_min_continuum" class="value_input" value="{{ att.values_min[num-5] }}">
+										</td>
+										<td>~</td>
+										<td align="center">
+											<input type="text" name="values_max_continuum" class="value_input" value="{{ att.values_max[num-5] }}">
+										</td>
+									</tr>
+									{% endfor %}
+								</table>
+							</div>
+						</div>
+						<!-- data-dismiss="modal" -->
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" id="filter-clear">Clear</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+			<!-- Help Modal-->
+			<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title" id="help-modal-label">
+								This is a header!
+							</h4>
+						</div>
+						<div class="modal-body">
+							<div id="type1_header">
+								<h6>This is content</h6>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+			<!-- SQLite query info -->
+		    <!-- Menu -->
+		    <div id = "side_menu">
+		    	
+		    	<div class = "wrapper_menu">
+
+		    		<!-- Filter -->
+			    	<div id = "filter_menu" class="top=position">
+							<table>
+								<tr><th>Query</th></tr>
+								<tr>
+									<td>
+										<p>&nbspFrom:&nbsp</p>
+									</td>
+									<td>
+										<input type="text" name="start_date" id="sd" style="text-align: center;width: 100px" value="{{ att.sd }}">
+									</td>
+									<td>
+										<input type="text" name="start_time" id="st" style="text-align: center;width: 100px" value="{{ att.st }}">
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<p>&nbsp To &nbsp</p>
+									</td>
+									<td>
+										<input type="text" name="end_date" id="ed" style="text-align: center;width: 100px" value="{{ att.ed }}">
+									</td>
+									<td>
+										<input type="text" name="end_time" id="et" style="text-align: center;width: 100px" value="{{ att.et }}">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Type:&nbsp</p>
+									</td>
+									<td>
+										<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="change_sunspot_type();">
+											{%if att.sunspot_type == 'magnetogram_sunspot' %}
+											<option value="magnetogram" selected="selected">Magnetogram</option>
+											<option value="continuum">Continuum</option>
+											{%elif att.sunspot_type == 'continuum_sunspot' %}
+											<option value="magnetogram">Magnetogram</option>
+											<option value="continuum" selected="selected">Continuum</option>
+											{% else %}
+											<option value="magnetogram">Magnetogram</option>
+											<option value="continuum">Continuum</option>
+											{% endif %} 
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Sorted by: &nbsp</p>
+									</td>
+									<td>
+										<select name="order_by">
+											{%for name in header%}
+											{%if name == att.order%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+								</tr>
+							</table>
+							<table width="98%">
+								{% for num in range(0,5,2) %}
+								<tr>
+									<td width="105px">
+										{{ att.header1[num] }} 
+									</td>
+									<td>
+										{% if att.header1[num] in header %}
+												<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" value="{{ att.header1[num] }}"/>
+											{% endif %}
+									</td>
+									<td>
+										{{ att.header1[num+1] }} 
+									</td>
+									<td>
+										{% if att.header1[num+1] in header %}
+												<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}"/>
+											{% endif %}
+									</td>
+								</tr>
+								{% endfor %}		
+							</table>
+
+							<div id="filter_menu_showmore">
+								<table width="98%">
+									{% for num in range(0,9,2) %}
+									<tr>
+										<td>
+											{{ att.header2[num] }} 
+										</td>
+										<td>
+											{% if att.header2[num] in header %}
+													<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
+												{% else %}
+													<input type="checkbox" name="attributes" value="{{ att.header2[num] }}"/>
+												{% endif %}
+										</td>
+										<td>
+											{{ att.header2[num+1] }} 
+										</td>
+										<td>
+											{% if att.header2[num+1] in header %}
+													<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
+												{% else %}
+													<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}"/>
+												{% endif %}
+										</td>
+									</tr>
+									{% endfor %}
+
+									{% for num in range(0,5,2) %}
+									<tr>
+										<td>
+											{{ att.header2_1[num] }} 
+										</td>
+										<td>
+											{% if att.header2_1[num] in header %}
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num] }}" disabled="disabled"/>
+											{% endif %}
+										</td>
+										{% if (5//2 == (5-1)//2) and (num != 4) %}
+										<td>
+											{{ att.header2_1[num+1] }} 
+										</td>
+										<td>
+											{% if att.header2_1[num+1] in header %}
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num+1] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num+1] }}" disabled="disabled"/>
+											{% endif %}
+										</td>
+										{% else %}
+										<td></td>
+										<td></td>
+										{% endif %}
+									</tr>
+									{% endfor %}
+
+									{% for num in range(0,5,2) %}
+									<tr>
+										<td>
+											{{ att.header2_2[num] }} 
+										</td>
+										<td>
+											{% if att.header2_2[num] in header %}
+												<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num] }}" disabled="disabled"/>
+											{% endif %}
+										</td>
+										{% if (5//2 == (5-1)//2) and (num != 4) %}
+										<td>
+											{{ att.header2_2[num+1] }} 
+										</td>
+										<td>
+											{% if att.header2_2[num+1] in header %}
+												<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num+1] }}" checked="checked" />
+											{% else %}
+												<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num+1] }}" disabled="disabled" />
+											{% endif %}
+										</td>
+										{% else %}
+										<td></td>
+										<td></td>
+										{% endif %}
+									</tr>
+									{% endfor %}
+									<input type="hidden" onload="change_sunspot_type()">					
+								</table>
+								<button type="button" onclick="hide()" id="hide_button">Hide</button>
+							</div>
+							<button type="button" onclick="showmore()" id="show_button">Show More</button>
+
+
+							
+							<table width="98%" style="margin-top: 5px;">
+								<tr>
+									<td colspan="3">
+										<button type="button" style="width: 50%;margin-left: 20%;margin-bottom: 10px;" data-toggle="modal" data-target="#myModal">
+											Set Values
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<button type="button" id="selectall_button">Select All</button>	
+									</td>
+									<td>
+										<button type="button" id="clearall_button">Clear All</button>	
+									</td>
+									<td>
+										<input type=submit value="Execute" id="execute_button">	
+									</td>
+								</tr>
+							</table>
+						</form>
+					</div>
+<!-- 					<hr>
+			    	<div class = "wrapper_menu_1">
+				    	<table>
+				 			<tr> <th>Quick query</th> </tr>
+				  			<tr><td>Date</td></tr>
+				  			<tr><td>Dataset</td></tr>
+				    		<tr><td>Active Region</td></tr>
+						</table>
+			    	</div> -->
+			    	<hr>
+			    	<div class = "wrapper_menu_2">
+				    	<form method="post">
+				    	<table name="test" id="test">
+				    	 	<tr><a id="create_plot"></a><th>Create Plot</th></a></tr>
+				    	 	<tr>
+				    	 		<td> Plot Type: </td>
+				    	 		<td>
+						    	 	<select name="plot_type" id="plot_type" onchange="change_plot_type();">
+						    	 		<option value="none">Please Select</option>
+						    	 		<option value="histogram">Histogram</option>
+						    	 		<option value="kde">Kernel Density Estimation</option>
+						    	 		<option value="biv_hist">Bivariate Histogram</option>
+						    	 		<option value="line">Line plot</option>
+						    	 		<option value="scatter_2d">Scatter Plot</option>
+						    	 	</select>
+				  				</td>
+				  			</tr>
+
+				  			<tr class="plot_menu histogram_plot">
+									<td> Values: </td>
+									<td>
+										<select name="v">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+
+							<tr class="plot_menu histogram_plot">
+								<td> Normed: </td>
+								<td>
+									<select name="histogram_den">
+										<option value=yes> Yes </option>
+										<option value=no> No </option>
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu histogram_plot">
+								<td> Fit Distribution: </td>
+								<td>
+									<select name="histogram_fit">
+										<option value=Normal> Normal </option>
+										<option value=Gamma> Gamma </option>
+										<option value=Beta> Beta </option>
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu histogram_plot">
+								<td> Color: </td>
+								<td>
+									<select name="histogram_col">
+										<option value=#022440> Blue </option>
+										<option value=black> Black </option>
+										<option value=darkred> Red </option>
+										<option value=gold> Yellow </option>
+										<option value=green> Green </option>
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu histogram_plot">
+								<td> Bin number: </td>
+								<td>
+									<input name="histogram_bin" type="number" value="20">
+								</td>	
+							</tr>
+
+
+
+
+
+				  			<tr class="plot_menu biv_histogram_plot">
+									<td> Values 1: </td>
+									<td>
+										<select name="biv_v">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+
+				  			<tr class="plot_menu biv_histogram_plot">
+									<td> Values 2: </td>
+									<td>
+										<select name="biv_w">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == v%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+
+							<tr class="plot_menu biv_histogram_plot">
+								<td> Bin Size: </td>
+								<td>
+									<input name="biv_w_bin" type="number" value="20">
+								</td>	
+							</tr>
+
+
+
+
+
+
+				  			<tr class="plot_menu line_plot">
+									<td> X-axis: </td>
+									<td>
+										<select name="xl">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == xl%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+							<tr class="plot_menu line_plot">
+								<td> Y-axis: </td>
+								<td>
+									<select name="yl">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == yl%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu line_plot">
+								<td> Color: </td>
+								<td>
+									<select name="line_col">
+										<option value=#022440> Blue </option>
+										<option value=black> Black </option>
+										<option value=darkred> Red </option>
+										<option value=gold> Yellow </option>
+										<option value=green> Green </option>
+									</select>
+								</td>	
+							</tr>
+
+				  			<tr class="plot_menu scatter_2d_plot">
+									<td> X-axis: </td>
+									<td>
+										<select name="x">
+											<option value=None> None </option>
+											{%for name in header%}
+											{%if name == x%}
+												<option value="{{ name }}" selected="selected"> {{ name }} </option>
+											{%else%}
+												<option value="{{ name }}"> {{ name }} </option>
+											{% endif %}
+											{% endfor %}
+										</select>
+									</td>
+							</tr>
+							<tr class="plot_menu scatter_2d_plot">
+								<td> Y-axis: </td>
+								<td>
+									<select name="y">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == y%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>
+
+							<tr class="plot_menu scatter_2d_plot">
+								<td> Color: </td>
+								<td>
+									<select name="c">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == c%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>		
+
+							<tr class="plot_menu scatter_2d_plot">
+								<td> Marker Size: </td>
+								<td>
+									<select name="s">
+										<option value=None> None </option>
+										{%for name in header%}
+										{%if name == s%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+								</td>	
+							</tr>	
+							<tr>
+								<td>
+									<input id="static_execute" type="submit" value="Execute">
+								</td>
+							</tr>
+						</table>
+			    	</div>
+	    		</div>
+	    	</div>
+
+	    	{% for num in range(att.list_length) %}
+	    		<div style="position: relative;top: {{ att.position_top[num] }}px;left: {{ att.position_left[num] }}px;">
+					{{ att_plot.div_frame_list[num]|safe }}
+				</div>
+			{% endfor %}
+
+	    	<!-- {% for div_frame in div_frame_list %}
+	    		<div>
+					{{ div_frame|safe }}
+				</div>
+			{% endfor %} -->
+	    	</form>
+	    	<!-- Menu -->
+
+    		<!-- SQLite query -->	
+	    	<!-- <div id="wrapper_sql">	
+				
+			</div> -->
+			<!-- SQLite query -->
+<!-- 			<div id="wrapper_menu_bar">
+				<div class="wrapper_menu_button" id="reset_button">
+					<p>Reset</p>
+				</div>
+				<div class="wrapper_menu_button" id="help_button">
+					<p>Help</p>
+				</div>
+			</div> -->
+    		<!-- AR image -->	
+	    	<div class="draggable_window z-position" id="wrapper_image">
+	    		<div class="windowBar" id = "wrapper_image_windowBar">
+		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
+		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
+		    		<div class="windowTitle">
+		    			<p>Image</p>
+		    		</div>
+		    	</div>
+		    	<!-- <iframe id="image" src="/static/example.png" frameborder="0" scrolling="yes" width="100%" height="438px" name="imgbox" id="imgbox"></iframe> -->
+		    	{%if att.sunspot_type == "magnetogram_sunspot"%}
+		    	<img id="image" src="/static/example.png"/">
+		    	{%elif att.sunspot_type == 'continuum_sunspot' %}
+		    	<img id="image" src="/static/example2.png"/">
+		    	{%else%}
+		    	<img id="image" src="/static/example.png"/">
+		    	{%endif%}
+			</div>
+			
+			<!-- <div id="bokeh_plot">
+				<div class="windowBar" id = "bokeh_plot_windowBar">
+					<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
+		    		<div class="control_buttons minimum_button" id="bokeh_plot_minimum_button"></div>
+		    		<div class="windowTitle">
+		    			<p>{{ plot_type }}</p>
+		    		</div>
+		    	</div>
+				<div id="figure">{{ div|safe }}</div>
+			</div> -->
+			
+			
+
+			
+			<!-- {{ script }} -->
+			<!-- AR image -->
+
+			<div class="draggable_window z-position" id="wrapper_table_block">
+				<!-- control button -->
+				<div class="windowBar" id = "wrapper_table_windowBar">
+					<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
+		    		<div class="control_buttons minimum_button" id="wrapper_table_minimum_button"></div>
+		    		<div class="windowTitle">
+		    			<p>Data Table</p>
+		    		</div>
+		    	</div>
+				<!-- table -->
+				<div id="wrapper_table_info">
+			    	<!-- SQLite query table -->	
+					<div id = "wrapper_table">						
+						<table>
+							<thead>
+								<tr>
+									{%for name in header%}
+										<th> {{ name }} </th>
+									{% endfor %}
+								</tr>
+							</thead>
+							<tbody>
+								{%for row in table%}
+								    <tr>
+									{% for item in range(att.columns) %}
+									{% if item == 4 %}
+								    	<td><button type="button" onclick="changeImage({{row[item]}})">{{ row[item] }}</button></td>
+									{% else %}
+										<td>{{ row[item] }}</td>
+									{% endif %}
+									{% endfor %}
+								    </tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<!-- SQLite query table -->
+				</div>
+			</div>
+	    	<div id="message_log">
+	    		<div id="message_log_bar"></div>
+	    		<h3>Message Log</h3>
+	    		<!-- SQLite query info -->	
+		    	<div class="message_log_messages">
+		    		<strong>Query information</strong><br>
+		    		<div style="color: blue;">
+						<p>Number of rows: {{ info[0] }}</p> 
+						<p>Number of columns: {{ info[1] }}</p> 
+						<p>Number of active regions: {{ info[0] }}</p> 
+						<p>Timespan: {{ info[0] }}</p> 
+					</div>
+				</div>
+
+				<div class="message_log_messages">
+					{% if att.error_message != '' %}
+						<strong>Error Message</strong><br>
+						<div style="color: red;">
+							{{ att.error_message|safe }}
+						</div>
+					{% else %}
+						No error message.
+					{% endif %}
+				</div>
+	    	</div>
+		</div>
+
+		<div id="fixedWindowBar">
+			<div class ="window1" id="a">
+				<p>Image</p>
+			</div>
+			<div class ="window1" id="b">
+				<p>Data Table</p>
+			</div>
+			<!-- <div class ="window1" id="c">
+				<p>{{ plot_type }}</p>
+			</div> -->
+			{% for div_minimize_block in att_plot.div_minimize_block_list %}
+				{{ div_minimize_block|safe }}
+			{% endfor %}
+		</div>
+
+		<div class="fixedfooter"><p>© The University of Sheffield</p></div>
+    </body>
+
+    {% for bokeh_script in att_plot.bokeh_script_list %}
+			{{ bokeh_script|safe }}
+	{% endfor %}
+
+    <script>
+    	laydate.render({
+		    elem: '#sd'
+		    ,lang: 'en'
+		  });
+
+		    laydate.render({
+		    elem: '#ed'
+		    ,lang: 'en'
+		  });
+
+		  laydate.render({ 
+		    elem: '#st'
+		    ,lang:'en'
+		    ,type: 'time'
+		  });
+
+		  laydate.render({
+		    elem: '#et'
+		    ,lang:'en'
+		    ,type: 'time'
+		  });
+    </script>
+    <script>
+    	$(function(){
+    		if ({{att.block_status[0]}}==1) {
+	    		$('#database_button').addClass('menu-open');
+			    $('#side_menu').css('left','0');
+
+			    $('#statistics_button').addClass('table-close');
+			    $('#wrapper_table_block').css('top','auto');
+			    $('#wrapper_table_block').css('bottom','0');
+			    if ({{att.block_status[1]}} <= 7 ) {
+			    	$('#wrapper_table_block').css('width','28%');
+			    }
+			    else if({{att.block_status[1]}} >= 17){
+			    	$('#wrapper_table_block').css('width','68%');
+			    }
+			    else{
+			    	var t = 4 * {{att.block_status[1]}} + '%';
+			    	$('#wrapper_table_block').css('width',t);
+			    }
+		    }
+		});
+    </script>
+    <script>
+    	$(function(){
+    		if ({{att_plot.plot_status}}==1) {
+    			$('#wrapper_image').css('display','none');
+    			$('#a').css('display','table')
+    			$('#wrapper_table_block').css('bottom','0').css('display','none');
+    			$('#b').css('display','table')
+    		}
+    	});
+    </script>
+    <script>
+    	$(function(){
+    		if ("{{att.sunspot_type}}"=="magnetogram_sunspot") {
+			    $("#type1_header").css("display","block");
+				$("#type2_header").css("display","none");
+    		}
+    		else if ("{{att.sunspot_type}}"=="continuum_sunspot"){
+    			$("#type2_header").css("display","block");
+    			$("#type1_header").css("display","none");
+    		}
+    	});
+    	$(function(){
+    		if ({{statistic_height}} != 0) {
+			  	if ({{statistic_height}} < 600) {
+			    	$("#wrapper_table_block").css("height","{{statistic_height}}");
+    			}else{
+    				$("#wrapper_table_block").css("height","600");
+    			}
+    		}
+    	});
+    	$(function(){
+    		if ("{{att.error_message}}" == '') {
+			    $("#message_log").css("right","-230px");
+			    $("#message_log_bar").addClass('table-close');
+    		}
+    	});
+    </script>
+</html>
