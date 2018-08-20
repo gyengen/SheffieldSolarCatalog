@@ -40,13 +40,14 @@ def LOS2Bz(observation):
     nx, ny = observation.dimensions
 
     # Range of the ROI; full disk
-    r_x, r_y = observation.pixel_to_data((0, nx.value) * u.pix,
-                                         (0, ny.value) * u.pix)
+    SkyCoord = observation.pixel_to_world([0 * u.pix, nx], [0 * u.pix, ny])
+    print('------------------------------------------------')
+    print(SkyCoord)
+    r_x, r_y = SkyCoord.x ,SkyCoord.y
 
     # Create an arcsec grid.
     xv, yv = np.meshgrid(np.linspace(r_x[0].value, r_x[1].value, nx.value),
-                         np.linspace(r_y[0].value, r_y[1].value, ny.value),
-                         indexing='xy')
+                         np.linspace(r_y[0].value, r_y[1].value, ny.value), indexing='xy')
     xv = xv * u.arcsec
     yv = yv * u.arcsec
 
