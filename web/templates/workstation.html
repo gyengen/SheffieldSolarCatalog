@@ -18,6 +18,8 @@
 	</head>
 
     <body>
+
+
 		<div id="fixedheader">
 			<div id="wrap_header">
 				<a href="/">
@@ -28,10 +30,23 @@
 
 			</div>
 		</div>
+
+
+    	<div id = "search">
+			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
+			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
+		</div>
+
+
 		<div id="topmenu">
 			<ul>
+
 				<li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
-	  			<li id="statistics_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Statistic</a></li>
+
+	  			<li id="plot_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Plot</a></li>
+
+	  			<li id="message_log_bar"><a><img src="static/icons/terminal.png" class='icon_im'><br>Console</a></li>
+
 	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
 	  				<ul>
 	  					<li>
@@ -48,23 +63,19 @@
 	  					</li>
 	  				</ul>
 	  			</li>
-				<li><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>FTP access</a></li>
 
-				<li><a href="" data-toggle="modal" data-target="#help-modal">
+				<li id ='sftp'><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>SFTP</a></li>
+
+				<li id='help'><a href="" data-toggle="modal" data-target="#help-modal">
 					<img src="static/icons/help.png" class='icon_im'><br>Help
-						<!-- <div id="popup1" class="overlay">
-							<div class="popup">
-								<h2>Quickhelp</h2><br>
-								What is it? how to use it? examples.
-								<a class="close" href="#">&times;</a>
-								<div class="content"> <a href="#data"></a></div>
-							</div>
-						</div> -->
 				</a></li>
 
-
 				<li id="reset_button"><a><img src="static/icons/redo.png" class='icon_im'><br>Reset</a></li>
-				<li><a href=""><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
+
+				<li id='home'><a href="/"><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
+
+
+	  			
 
 			</ul>
 		</div>
@@ -184,7 +195,7 @@
 										<input type="text" name="start_time" id="st" style="text-align: center;width: 100px" value="{{ att.st }}">
 									</td>
 								</tr>
-								
+
 								<tr>
 									<td>
 										<p>&nbsp To &nbsp</p>
@@ -375,17 +386,38 @@
 							</table>
 						</form>
 					</div>
-<!-- 					<hr>
-			    	<div class = "wrapper_menu_1">
-				    	<table>
-				 			<tr> <th>Quick query</th> </tr>
-				  			<tr><td>Date</td></tr>
-				  			<tr><td>Dataset</td></tr>
-				    		<tr><td>Active Region</td></tr>
-						</table>
-			    	</div> -->
-			    	<hr>
-			    	<div class = "wrapper_menu_2">
+
+
+	    		</div>
+	    	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		    <div id = "plotting_menu">
+		    	
+		    	<div class = "wrapper_menu">
+
+
+			    	<div class = "wrapper_menu_3">
 				    	<form method="post">
 				    	<table name="test" id="test">
 				    	 	<tr><a id="create_plot"></a><th>Create Plot</th></a></tr>
@@ -624,6 +656,45 @@
 	    		</div>
 	    	</div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	    	{% for num in range(att.list_length) %}
 	    		<div style="position: relative;top: {{ att.position_top[num] }}px;left: {{ att.position_left[num] }}px;">
 					{{ att_plot.div_frame_list[num]|safe }}
@@ -657,7 +728,7 @@
 		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
 		    		<div class="windowTitle">
-		    			<p>Image</p>
+		    			<p>AR</p>
 		    		</div>
 		    	</div>
 		    	<!-- <iframe id="image" src="/static/example.png" frameborder="0" scrolling="yes" width="100%" height="438px" name="imgbox" id="imgbox"></iframe> -->
@@ -669,7 +740,25 @@
 		    	<img id="image" src="/static/example.png"/">
 		    	{%endif%}
 			</div>
-			
+
+	    	<div class="draggable_window z-position" id="wrapper_image2">
+	    		<div class="windowBar" id = "wrapper_image_windowBar">
+		    		<div class="control_buttons close_button" id="wrapper_image_close_button2"></div>
+		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button2"></div>
+		    		<div class="windowTitle">
+		    			<p>Full Disk</p>
+		    		</div>
+		    	</div>
+		    	<!-- <iframe id="image" src="/static/example.png" frameborder="0" scrolling="yes" width="100%" height="438px" name="imgbox" id="imgbox"></iframe> -->
+		    	{%if att.sunspot_type == "magnetogram_sunspot"%}
+		    	<img id="image" src="/static/example.png"/">
+		    	{%elif att.sunspot_type == 'continuum_sunspot' %}
+		    	<img id="image" src="/static/example2.png"/">
+		    	{%else%}
+		    	<img id="image" src="/static/example.png"/">
+		    	{%endif%}
+			</div>
+
 			<!-- <div id="bokeh_plot">
 				<div class="windowBar" id = "bokeh_plot_windowBar">
 					<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
@@ -726,13 +815,14 @@
 					<!-- SQLite query table -->
 				</div>
 			</div>
+
 	    	<div id="message_log">
 	    		<div id="message_log_bar"></div>
 	    		<h3>Message Log</h3>
 	    		<!-- SQLite query info -->	
 		    	<div class="message_log_messages">
+		    		<div style="color: white;">
 		    		<strong>Query information</strong><br>
-		    		<div style="color: blue;">
 						<p>Number of rows: {{ info[0] }}</p> 
 						<p>Number of columns: {{ info[1] }}</p> 
 						<p>Number of active regions: {{ info[0] }}</p> 
@@ -742,7 +832,7 @@
 
 				<div class="message_log_messages">
 					{% if att.error_message != '' %}
-						<strong>Error Message</strong><br>
+						<strong>Terminal</strong><br>
 						<div style="color: red;">
 							{{ att.error_message|safe }}
 						</div>
@@ -755,10 +845,13 @@
 
 		<div id="fixedWindowBar">
 			<div class ="window1" id="a">
-				<p>Image</p>
+				<p>Full Disk</p>
 			</div>
 			<div class ="window1" id="b">
 				<p>Data Table</p>
+			</div>
+			<div class ="window1" id="c">
+				<p>Active Region</p>
 			</div>
 			<!-- <div class ="window1" id="c">
 				<p>{{ plot_type }}</p>
@@ -768,7 +861,7 @@
 			{% endfor %}
 		</div>
 
-		<div class="fixedfooter"><p>© The University of Sheffield</p></div>
+
     </body>
 
     {% for bokeh_script in att_plot.bokeh_script_list %}
@@ -820,6 +913,34 @@
 		    }
 		});
     </script>
+
+
+
+    <script>
+    	$(function(){
+    		if ({{att.block_status[0]}}==1) {
+	    		$('#plot_button').addClass('plot-open');
+			    $('#plotting_menu').css('left','0');
+
+			    $('#statistics_button').addClass('table-close');
+			    $('#wrapper_table_block').css('top','auto');
+			    $('#wrapper_table_block').css('bottom','0');
+			    if ({{att.block_status[1]}} <= 7 ) {
+			    	$('#wrapper_table_block').css('width','28%');
+			    }
+			    else if({{att.block_status[1]}} >= 17){
+			    	$('#wrapper_table_block').css('width','68%');
+			    }
+			    else{
+			    	var t = 4 * {{att.block_status[1]}} + '%';
+			    	$('#wrapper_table_block').css('width',t);
+			    }
+		    }
+		});
+    </script>
+
+
+
     <script>
     	$(function(){
     		if ({{att_plot.plot_status}}==1) {
