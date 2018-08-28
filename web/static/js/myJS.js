@@ -28,6 +28,7 @@ function showmore(){
   document.getElementById("show_button").style.display="none";
   document.getElementById("filter_menu").style.height=460;
   document.getElementById("side_menu").style.top="10%";
+  document.getElementById("plotting_menu").style.top="10%";
 }
 
 function hide(){
@@ -35,6 +36,7 @@ function hide(){
   document.getElementById("show_button").style.display="block";
   document.getElementById("filter_menu").style.height=195;
   document.getElementById("side_menu").style.top="20%";
+  document.getElementById("plotting_menu").style.top="20%";
 }
 
 function change_sunspot_type(){     
@@ -139,14 +141,41 @@ $(function () {
       $('#show_button').css('display','block');
       $('#filter_menu').css('height','195');
 
-      $('#side_menu').animate({
-        left: '-330'
-      })
+
+      $('#side_menu').fadeOut(0);
     } else {
       $(this).addClass('menu-open');
-      $('#side_menu').animate({
-        left: '0'
-      })
+      $('#side_menu').fadeIn(0);
+      $('#plotting_menu').fadeOut(0);
+      $('.download_options').fadeOut(0);
+    }
+  })
+});
+
+$(function () {
+  $('#plot_button').click(function () {
+    if ($(this).hasClass('plot-open')) {
+      $(this).removeClass('plot-open');
+      $('#plotting_menu').fadeOut(0);
+    } else {
+      $(this).addClass('plot-open');
+      $('#plotting_menu').fadeIn(0);
+      $('#side_menu').fadeOut(0);
+      $('.download_options').fadeOut(0);
+    }
+  })
+});
+
+$(function () {
+  $('#download_button').click(function () {
+      if ($(this).hasClass('options-open')) {
+      $(this).removeClass('options-open');
+      $('.download_options').fadeOut(0);
+    } else {
+      $(this).addClass('options-open');
+      $('.download_options').fadeIn(0);
+      $('#side_menu').fadeOut(0);
+      $('#plotting_menu').fadeOut(0);
     }
   })
 });
@@ -177,6 +206,11 @@ $(function() {
       cancel: "#image",
       containment: "#wrapper_body"
     });
+    $( "#wrapper_image2" ).draggable({ 
+      cursor: "move",
+      cancel: "#image",
+      containment: "#wrapper_body"
+    });
     $( "#wrapper_table_block" ).draggable({ 
       cursor: "move",
       cancel: "#wrapper_table_info",
@@ -195,13 +229,20 @@ $(function() {
       handles:'all',
       autoHide:true
     });
+    $( "#wrapper_image2" ).resizable({
+      handles:'all',
+      autoHide:true
+    });
       });
+
+
 
 $(function () {
   $('#reset_button').click(function () {
       $('.ui-wrapper').css('height','70vh').css('width','67.8vw').css('left','0').css('top','0');
       $('#image').css('height','100%').css('width','100%');
       $('#wrapper_image').css('top','0').css('left','0').css('display',"block");
+      $('#wrapper_image2').css('top','0').css('left','0').css('display',"block");
       $('#wrapper_table_block').css('top','auto').css('buttom','0').css('left','15%').css('display','block');
       $('.window1').css('display','none');
   })
@@ -213,26 +254,20 @@ $(function () {
   })
 });
 
-$(function () {
-  $('#download_button').click(function () {
-      if ($(this).hasClass('options-open')) {
-      $(this).removeClass('options-open');
-      $('.download_options').fadeOut(400);
-    } else {
-      $(this).addClass('options-open');
-      $('.download_options').fadeIn(400);
-    }
-  })
-});
+
 
 $(function () {
   $('#wrapper_body').click(function () {
       if ($('#download_button').hasClass('options-open')) {
       $('#download_button').removeClass('options-open');
-      $('.download_options').fadeOut(400);
+      $('.download_options').fadeOut(200);
     }
   })
 });
+
+
+
+
 
 $(function(){
   $('#wrapper_table_info').mouseover(function(){
@@ -257,7 +292,24 @@ $(function(){
   $('#wrapper_image_close_button').click(function(){
      $('#wrapper_image').css('display','none');
   });
+});
 
+$(function(){
+  $('#wrapper_image_minimum_button2').click(function(){
+    $('#wrapper_image2').css('display','none');
+    $('#c').css('display','table')
+  });
+  $('#c').click(function(){
+    $('#wrapper_image2').css('display','block');
+    $('#c').css('display','none')
+  });
+  $('#wrapper_image_close_button2').click(function(){
+     $('#wrapper_image2').css('display','none');
+  });
+});
+
+
+$(function(){
   $('#wrapper_table_minimum_button').click(function(){
     $('#wrapper_table_block').css('display','none');
     $('#b').css('display','table');
@@ -278,12 +330,12 @@ $(function () {
     if ($(this).hasClass('table-close')) {
       $(this).removeClass('table-close');
       $('#message_log').animate({
-        right: '0'
+        top: '50'
       });
     } else {
       $(this).addClass('table-close');
       $('#message_log').animate({
-        right: '-230px'
+        top: '-230px'
       });
     }
   })

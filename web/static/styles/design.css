@@ -1,3 +1,41 @@
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+
+
 /* -----------------------------------------------------------Main Page PROPERTIES*/
 
 .plot_menu{
@@ -14,20 +52,22 @@
 
 .windowBar{
     width: 100%;
-    height: 20px;
+    height: 18px;
     cursor: all-scroll;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    background-color: #012e4f;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    background-color: #0e0400;
     margin: 0;
     padding: 0;
+    border: 0.5px #c1c1c1;
+
 }
 
 .control_buttons{
-    background-color: white;
-    height: 14px;
-    width: 14px;
-    margin-top: 3px;
+
+    height: 10px;
+    width: 10px;
+    margin-top: 4px;
     margin-bottom: 3px;
     margin-left: 10px;
     float: left;
@@ -35,13 +75,11 @@
 }
 
 .minimum_button{
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
-    border-radius: 50px;
-    background-color: #29d62a;
-    color: white;
     background-image: url("/static/icons/minimize.png");
     background-size: cover;
+
+
+
 }
 
 /*.minimum_button:hover{
@@ -50,11 +88,6 @@
 }*/
 
 .close_button{
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
-    border-radius: 50px;
-    background-color: #f34747;
-    color: white;
     background-image: url("/static/icons/close.png");
     background-size: cover;
 }
@@ -96,23 +129,30 @@
     margin-top: 0;
     margin-bottom: 0;
     color: white;
-    font-size: 15px;
+    font-size: 12px;
     display: table-cell;
     vertical-align: middle;
 }
 
 .window1{
     margin-bottom: 0;
-    width: 10%;
+    width: 120px;
     height: 100%;
     margin-left:20px;
     padding-left: 10px; 
-    background-color: #012e4f;
+    height: 35px;
+
     float: left;
     display: none;
     text-align: center;
-    border-radius: 10px;
     cursor: pointer;
+
+    background-image: url("/static/icons/reopen.png");
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-color: #0e0400;
+    background-position-y: 50%;
+    background-position-x: 10%;
 }
 
 .window1 p{
@@ -120,7 +160,7 @@
     height: 100%;
     color: white;
     width: 100%;
-    font-size: 18px;
+    font-size: 11px;
     display: table-cell;
     vertical-align: middle;
 }
@@ -138,14 +178,50 @@
 
 .paragraph
     {
-        width:70%;
+        width:60%;
         background-repeat: no-repeat;
         text-align: justify;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 300;
-        font-size: 17px;
+        font-size: 16px;
         margin: auto;
+        line-height: 1.5em;
     }
+
+
+
+.welcome_header a:link {
+    text-decoration: none;
+}
+
+.welcome_header a:visited {
+    text-decoration: none;
+}
+
+.welcome_header a:hover {
+    text-decoration: none;
+}
+
+.welcome_header a:active {
+    text-decoration: none;
+}
+
+
+.welcome_index a:link {
+    text-decoration: none;
+}
+
+.welcome_index a:visited {
+    text-decoration: none;
+}
+
+.welcome_index a:hover {
+    text-decoration: none;
+}
+
+.welcome_index a:active {
+    text-decoration: none;
+}
 
 .welcome_header
     {
@@ -159,8 +235,8 @@
         background-size: 1000px 1000px;
         background-position: center; 
         background-repeat: no-repeat;
-        background-color: black;
-        padding-top: 10px;
+        background-color: #100902;
+
     }
 
 .welcome_header h1
@@ -168,7 +244,7 @@
 
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 500;
-        font-size: 43px;
+        font-size: 33px;
         display:inline;
         letter-spacing: 5px;
         vertical-align: super;
@@ -181,7 +257,7 @@
     {
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 200;
-        font-size: 30px;
+        font-size: 20px;
         display:inline;
         letter-spacing: 1px;
         vertical-align: super;
@@ -191,7 +267,7 @@
 
 .welcome_header h3
     {
-        font-size: 18px;
+        font-size: 15px;
         font-weight: 300;
         color: #d7dadd;
         display:inline;
@@ -210,7 +286,7 @@
         background-repeat: no-repeat;
         text-align: center;
         overflow-y: hidden;
-        margin-top: 400px;
+        margin-top: 250px;
     }
 
 .welcome_index h1
@@ -293,7 +369,7 @@
         text-align:center; 
         margin-left:auto; 
         margin-right:auto; 
-        width: 75%;
+        width: 100%;
         margin-top: 50px;
     }
 
@@ -302,16 +378,9 @@
         border: none;
     }
 
-.welcome_index th:not(:last-child)
-    {
-        border-right: solid 1px; 
-    }
-
-
-
 .welcome_icon
     {
-        height:50px;
+        height:35px;
         padding:0px 0px 0px 0px;
     }
 
@@ -332,16 +401,8 @@
     {
         height:40px;
         display:inline-block;
+        text-align: justify;
     }
-
-.welcome_logo
-    {
-
-text-align: justify;
-    }
-
-
-
 
 
 
@@ -356,25 +417,74 @@ text-align: justify;
         width:100%;
         padding-top: 5px;
         padding-bottom: 5px;
-        background-image: url("/static/bg3.png");
+        background-image: url("/static/bg.png");
+        background-color: #100902;
+        background-position-y: -430px;
+        background-position-x: -120px;
+        background-repeat: no-repeat;
         overflow:hidden;
-        z-index: 100
+        z-index: 100;
     }
 
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #100902;
+    color: white;
+    text-align: center;
+    z-index: 100;
+    font-size:12px;
+}
+
+
+#search
+    {
+        position:fixed;
+        top:0px;
+        left:500px;
+        height: 50px;
+        width:100%;
+        padding-top: 12px;
+        padding-bottom: 5px;
+        z-index: 100;
+    }
+
+.search_input
+{
+    font-size:12px;
+    color: grey;
+    width:25%
+
+
+
+}
+
+.search_button
+{
+    font-size:12px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: white;
+
+}
 
 #wrap_header
     {
         width:100%;
         margin: auto;
         padding-left: 10px; 
-        font-size:10px;
+        right: 0;
+        font-size:6px;
     }
 
 .logo
     {
         height:70px;
-        width: 270px;
-        float: left;
+        float: right;
+        padding-right: 10px; 
     }
 
 .logo_pic
@@ -406,60 +516,71 @@ text-align: justify;
 #topmenu
     {
         position: fixed;
-        height: 60px;
-        right: 0;
+        height: 40px;
+        left: -40px;
         top: 5px;
         z-index: 101;
-        font-size: 12px;
+        font-size: 11px;
+
     }
 
 .icon_im
     {
-        width:25px;
+        margin-top: 5px;
+        margin-bottom: 3px;
+        width:17px;
     }
 
-#topmenu ul
+.icon:active
     {
-        list-style-type: none;
+        background-color: #111111
     }
 
-#topmenu ul li
-    {
-        float: left;
-    }
+
+#topmenu ul {
+    width: 500px;
+    height: 100%;
+    /*display: table;
+    table-layout: fixed;*/
+}
+#topmenu ul li {
+    display: table-cell;
+    float: left;
+}
+#topmenu ul li a {
+    display: block;
+}
 
 #topmenu ul li ul{
-    display: block;
-    width: 100%;
+
+    width: 0px;
     height: 50px;
     padding: 0;
     margin: 0;
-    text-align: center;
-    margin-top: 50px;
+    text-align: left;
+    margin-top: 45px;
+    margin-left: 5px;
 }
 
+}
 #topmenu ul li ul li{
     float: none;
 }
 
 .download_options{
-    width: 100%;
+    width: 80px;
     height: 80%;
-    background-color: #004d7e;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
-    color: white;
-    font-size: 15px;
+    background-color: #ffffff;
     cursor: pointer;
-    border-left: none;
-    border-right: none;
     display: none;
     z-index: 5;
+    border-top: 0px solid #aaabac;
+    border-bottom: 0px solid #aaabac;
+    border-left: 0px solid #aaabac;
+    border-right: 0px solid #aaabac;
+
 }
 
-.download_options:hover {
-    background-color: #e1732c;
-}
 
 #topmenu a
     {
@@ -588,8 +709,7 @@ body
         background-size: 1000px 1000px;
         background-position: center;
         background-repeat: no-repeat;*/
-        /*background-color: #1a3865;*/
-        background-color: black;
+        background-color: #e9ebee;
         /*background-size: contain; */
         padding: 0;
         margin-top: 50px;
@@ -627,23 +747,25 @@ body
 
 
 /* ----------------------QUERY TABLE PROPERTIES*/
+
+
 #wrapper_table_block{
-    width: 68%;
-    height: 80%;
-    position: fixed;
-    left: 15%;
-    bottom: -90%;
-    /*border:1px solid black;*/
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    min-width: 230px;
+    width: 71%;
+    height: 180px;
+    left: 14.5%;
+    top: 2%;
+    border:0px solid black;
+    float: left;
+    z-index: 1;
 }
+
 
 #wrapper_table_info{
     width: 100%;
     height: 95%;
+
     /*float: left;*/
-/*    margin-left: 26px;*/
+    /*margin-left: 26px;*/
 }
 
 #wrapper_table_info button{
@@ -655,10 +777,8 @@ body
 
 #wrapper_table
     {
-        margin: 0;
         overflow-y:hidden;
         overflow-x:hidden;
-        float: left;
         width: 100%;
         height: 100%;
     }
@@ -666,8 +786,8 @@ body
 #wrapper_table table
     {
         background-color: white;
-        font-size: 12px;
-        line-height: 3px;
+        font-size: 11px;
+        line-height: 4px;
     }   
 
 #wrapper_table th
@@ -705,19 +825,34 @@ body
 
 #wrapper_image
     {
+        background-color: #ffffff;
+        width: 35vw;
+        height: 35vw;
+        font-size: 11px;
+        border:0px solid black;
+        z-index: 55;
+        float: right;
+        top:10px;
+        right:14.5%;
+    }
+
+#wrapper_image2
+    {
         background-color: #e9ebee;
-        width: 50%;
-        height: 70%;
+        width: 35vw;
+        height: 35vw;
+        font-size: 11px;
+        border:0.15px solid black;
+        z-index: 55;
         float: left;
-        font-size: 12px;
-        border-top-right-radius: 10px;
-        border-top-left-radius: 10px;
+        top:10px;
+        left:14.5%;
     }
 
 #image{
     width: 100%;
     height: 95%;
-    float: left;
+
 }
 
 .bokeh_plot{
@@ -764,10 +899,27 @@ body
         position: fixed;
         left: 2px;
         width: 290px;
-        top: 20%;
-        left: -330px;
-        background-color: rgba(0,0,0,0);
+        top: 50px;
+        left: 0px;
+        background-color: #ffffff;
         z-index: 49;
+        border: 0px solid;
+        border-color: #aaabac;
+        display: none; 
+    }
+
+#plotting_menu
+    {
+        position: fixed;
+        width: 290px;
+        top: 50px;
+        margin-left: 55px;
+        background-color: #ffffff;
+        z-index: 49;
+        border: 0px solid;
+        border-color: #aaabac;
+        height: 75px;
+        display: none; 
     }
 
 #filter_menu{
@@ -777,13 +929,20 @@ body
     margin-left: 10px;
 }
 
+#plot_menu{
+    width: 290px;
+    height: 155px;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
 .wrapper_menu
     {
-        background-color: rgba(233, 235, 238, 0.7);
+        /* background-color: rgba(233, 235, 238, 0.7);*/
         width: 290px;
         float: left;
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
+        /* border-top-right-radius: 10px; */
+        /* border-bottom-right-radius: 10px; */
     }
 
 .wrapper_menu table
@@ -802,7 +961,7 @@ body
     {
         font-variant: small-caps;
         text-align: left;
-        color: #666666;
+        color: #000000;
         font-weight: bold;
     }
 
@@ -871,23 +1030,7 @@ body
     margin-top: 5px;
 }
 /* ---------------------- MENU PROPERTIES*/
-.fixedfooter{
-    float: left;
-    height:0.5%;
-    width:100%;
-    padding-bottom: 10px;
-    background-image: url("/static/bg3.png");
-}
 
-.fixedfooter p{
-    color: white;
-    width:100%;
-    height:0.8%;
-    text-align: center;
-    font-size: 12px;
-    padding: 0;
-    margin: 0;
-}
 
 .value_input{
     text-align: center;
@@ -899,36 +1042,32 @@ body
 }
 
 #message_log{
-    width: 250px;
-    height: 100%;
-    background-color: rgba(255,255,255,0.6);
+    width: 100%;
+    height: 95px;
+    background-color: rgba(0,0,0,0.6);
+    background-image: url("/static/bg.png");
+    background-color: #100902;
+    background-position-y: -480px;
+    background-position-x: -120px;
     position: absolute;
-    right: 0px;
-    z-index: 100;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
+    background-repeat: no-repeat;
+    top: -100px;
+    left:0px;
+    z-index: 99;
+    background-color:rgba(0, 0, 0, 1);
 
-#message_log_bar{
-    margin: 0;
-    width: 20px;
-    height: 100%;
-    background-color: rgba(16,137,224,0.6);
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    float: left;
-    cursor: pointer;
 }
 
 #message_log_bar:hover{
-    background-color: #0b71bb;
+    background-color: rgba(255,255,255,0.25);
     cursor: pointer;
+    border-radius: 10px;
 }
 
 #message_log h3{
     width: 230px;
     float: left;
-    color: #012e4e;
+    color: white;
     text-align: center;
 }
 
@@ -938,16 +1077,59 @@ body
 
 .message_log_messages
     {
-        width: 220px;
         max-height: 45%;
         float: left;
-        margin-top: 20px;
-        margin-left: 10px;
-        font-size: 12px;
-        overflow: scroll
+        font-size: 11px;
     }
 .top-position{
     z-index: 51;
+}
+
+
+
+#database_button:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+#plot_button:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+#database_button:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+#download_button:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+#reset_button:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+#home:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+#help:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+#sftp:hover{
+    background-color: rgba(255,255,255,0.25);
+    cursor: pointer;
+    border-radius: 10px;
 }
 /* ---------------------- MENU PROPERTIES*/
 .mytext
@@ -957,7 +1139,13 @@ body
         font-weight: bold;
     }
 
-
+.astext {
+    background:none;
+    border:none;
+    margin:0;
+    padding:0;
+    cursor: pointer;
+}
 
 tbody:hover tr:hover td
     {

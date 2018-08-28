@@ -233,7 +233,42 @@ def keyword_check(form, string):
     '''
 
     for keyword in form:
-        if str(keyword) == string: 
+        if str(keyword) == string:
             return True
-    
+
     return False
+
+
+def html_image_path(row, directory):
+    '''Build the full path of the observation based on html request.
+
+    Parameters
+    ----------
+        row - HTML table tow
+        directory - directory of the project
+
+    Returns
+    -------
+        Filename of the associated image of the row
+
+    '''
+
+    Noaa_number = row[4]
+    obs_type = row[2]
+    date = row[0]
+    time = row[1]
+
+    fname_AR = ('hmi.ssc.' + str(Noaa_number) + '.' + str(obs_type) + '.' +
+                str(date).replace('-', '') + '_' + str(time).replace(':', '') +
+                '.fits')
+
+    fname_full = ('hmi.ssc.fulldisk.' + str(obs_type) + '.' +
+                  str(date).replace('-', '') + '_' +
+                  str(time).replace(':', '') + '.fits')
+
+    path = directory + '/database/img/AR' + str(date) + '/fits/'
+    AR = path + fname_AR
+
+    full = path + fname_full
+
+    return AR, full

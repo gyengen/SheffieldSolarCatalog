@@ -103,8 +103,11 @@ def Data_statistic(spot):
     spot = np.where(spot != 0, spot, np.nan)
 
     # Calculate the basic stat of the mask
-    stat = [np.nansum(spot), np.nanmean(spot),
-            np.nanmin(spot), np.nanmax(spot), np.nanstd(spot)]
+    stat = [np.nansum(spot),
+            np.nanmean(spot),
+            np.nanmin(spot),
+            np.nanmax(spot),
+            np.nanstd(spot)]
 
     return stat
 

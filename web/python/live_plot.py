@@ -3,6 +3,8 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from scipy import stats
 from bokeh.models import HoverTool
+import pyfits
+import sunpy.cm as cm
 
 TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
 
@@ -197,7 +199,7 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
 
 def Create_live_bivariate_histogram_plot(table, header, v_index, w_index, biv_w_bin):
 
-    # DEfine custom tools for this plot
+    # Define custom tools for this plot
     TOOLS = "crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
     
     # Convert the table to np array
@@ -236,4 +238,119 @@ def Create_live_bivariate_histogram_plot(table, header, v_index, w_index, biv_w_
     script, div = components(p)
 
     return script, div
+
+
+
+
+
+
+
+
+
+def Create_live_AR(full_path, NOAA):
+
+    from bokeh.plotting import figure, show, output_file
+    # Open the fits file
+    hdulist = pyfits.open(full_path)
+
+    # Save the data
+    scidata = hdulist[0].data
+
+    # Close the fits file
+    hdulist.close()
+
+    # Separate the different layers in the fits
+    image = scidata[0]
+    image_umbra = scidata[1]
+    image_penumbra = scidata[2]
+
+    # Define custom tools for this plot
+    TOOLS = "crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+    left, bottom = 0, 0
+    right, top = np.shape(image)[0], np.shape(image)[0]
+
+    # Initialise the figure window
+    p = figure(tools=TOOLS, plot_width=300, plot_height=265, sizing_mode='scale_both',
+               x_range=(left, right), y_range=(bottom, top), match_aspect=True,
+               tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
+
+    from bokeh.colors import RGB
+    from matplotlib import cm
+
+    m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
+    coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
+
+
+    p.image(image=[image], x=0, y=0, dw=right, dh=top, palette=coolwarm_palette)
+
+    p.xaxis.axis_label = 'X'
+    p.yaxis.axis_label = 'Y'
+
+    p.title.text = 'AR' + NOAA
+
+    from bokeh.models import LogColorMapper, BasicTicker, ColorBar
+
+    print(int(np.min(image)))
+    
+    
+    color_mapper = LogColorMapper(palette=coolwarm_palette, low=int(np.min(image)), high=int(np.max(image)))
+    color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(desired_num_ticks=5),
+                         label_standoff=8, border_line_color=None, location=(0,0),
+                         orientation="horizontal",major_label_text_font_size='10pt')
+
+    p.add_layout(color_bar, 'below')
+
+    script_html, div_html = components(p)
+
+    return script_html, div_html
+
+
+
+
+def Create_live_fulldisk(full_path):
+
+    from bokeh.plotting import figure, show, output_file
+    # Open the fits file
+    hdulist = pyfits.open(full_path)
+
+    # Save the data
+    scidata = hdulist[1].data
+
+    # Close the fits file
+    hdulist.close()
+
+    # Separate the different layers in the fits
+    image = scidata
+
+    # Define custom tools for this plot
+    TOOLS = "crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+    print(np.shape(image))
+    left, bottom = 0, 0
+    right, top = np.shape(image)[0], np.shape(image)[0]
+
+    # Initialise the figure window
+    p = figure(tools=TOOLS, plot_width=300, plot_height=265, sizing_mode='scale_both',
+               x_range=(left, right), y_range=(bottom, top), match_aspect=True,
+               tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
+
+    from bokeh.colors import RGB
+    from matplotlib import cm
+
+    m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
+    coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
+
+
+    p.image(image=[image], x=0, y=0, dw=right, dh=top, palette=coolwarm_palette)
+
+    p.xaxis.axis_label = 'X'
+    p.yaxis.axis_label = 'Y'
+
+    p.title.text = 'AR' + NOAA
+
+    script_html, div_html = components(p)
+
+    return script_html, div_html
+
 
