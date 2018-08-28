@@ -16,6 +16,7 @@ from gevent import monkey
 from pathlib import Path
 import sqlite3
 import json
+import os
 
 monkey.patch_all()
 
@@ -39,6 +40,9 @@ class att:
 
     # columns of the table
     columns = 0
+
+    # rows of the table
+    rows = 0
 
     # list of all attributes in the table
     attributes = []
@@ -118,6 +122,21 @@ class att_plot:
     # Plot div from Bokeh
     div_minimize_block_list = []
 
+
+class att_visual:
+
+    visual_div_full = ''
+
+    visual_script_full = ''
+
+    visual_div = ''
+
+    visual_script = ''
+
+    js_resources = ''
+
+    att_plot.css_resources = ''
+
 # Define global variables --------------------------------------------------'''
 
 
@@ -126,6 +145,7 @@ app = Flask(__name__)
 # Add the defined classes to the global namespace
 app.add_template_global(att, 'att')
 app.add_template_global(att_plot, 'att_plot')
+app.add_template_global(att_visual, 'att_visual')
 
 
 @app.before_request
@@ -408,9 +428,12 @@ def query():
     table, header = Create_table(sql_table)
 
     try:
-
         # Save the lenght of the table
         att.columns = len(table[0])
+
+        # Read the lenght of the table
+        att.rows = len(table)
+
     except Exception as e:
 
         # Error if the table is empyt
@@ -428,6 +451,9 @@ def query():
 
         # Read the lenght of the table
         att.columns = len(table[0])
+
+        # Read the lenght of the table
+        att.rows = len(table)
 
     # Divide header into two parts
     att.header1 = []
@@ -472,6 +498,28 @@ def query():
 
     # Obtain the basic info (number of elements etc...) of the table
     info = Query_info(table)
+
+    # Create the AR and Full disk plots
+    if keyword_check(request.form, 'AR_ID') is True:
+
+        row = table[int(request.form['AR_ID'])]
+
+        # Define the filename of the associated image
+        path_AR, path_full = html_image_path(row, os.getcwd())
+
+        NOAA = str(table[int(request.form['AR_ID'])][4])
+        script_html, div_html = Create_live_AR(path_AR, NOAA)
+
+        #script_html_full, div_html_full = Create_live_fulldisk(path_full)
+
+        #att_visual.visual_div_full = div_html_full
+        #att_visual.visual_script_full = script_html_full
+
+        att_visual.visual_div = div_html
+        att_visual.visual_script = script_html
+
+        att_visual.js_resources = INLINE.render_js()
+        att_visual.css_resources = INLINE.render_css()
 
     # Display the plot(s)
     if keyword_check(request.form, 'plot_type') is True:

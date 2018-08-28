@@ -13,6 +13,8 @@
 		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		{{ att_plot.js_resources|safe }}
         {{ att_plot.css_resources|safe }}
+		{{ att_visual.js_resources|safe }}
+        {{ att_visual.css_resources|safe }}
 
 	<title>SSC - Workstation</title>
 	</head>
@@ -159,7 +161,7 @@
 								&times;
 							</button>
 							<h4 class="modal-title" id="help-modal-label">
-								This is a header!
+								How to Use SSC.
 							</h4>
 						</div>
 						<div class="modal-body">
@@ -722,7 +724,8 @@
 					<p>Help</p>
 				</div>
 			</div> -->
-    		<!-- AR image -->	
+    		<!-- AR image -->
+
 	    	<div class="draggable_window z-position" id="wrapper_image">
 	    		<div class="windowBar" id = "wrapper_image_windowBar">
 		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
@@ -731,16 +734,29 @@
 		    			<p>AR</p>
 		    		</div>
 		    	</div>
-		    	<!-- <iframe id="image" src="/static/example.png" frameborder="0" scrolling="yes" width="100%" height="438px" name="imgbox" id="imgbox"></iframe> -->
-		    	{%if att.sunspot_type == "magnetogram_sunspot"%}
-		    	<img id="image" src="/static/example.png"/">
-		    	{%elif att.sunspot_type == 'continuum_sunspot' %}
-		    	<img id="image" src="/static/example2.png"/">
-		    	{%else%}
-		    	<img id="image" src="/static/example.png"/">
-		    	{%endif%}
-			</div>
 
+		    	<div id="AR_plot">
+		    		{{ att_visual.visual_div|safe }}
+		    	</div>
+			</div>
+			{{ att_visual.visual_script|safe }}
+
+	    	<div class="draggable_window z-position" id="wrapper_image2">
+	    		<div class="windowBar" id = "wrapper_image_windowBar">
+		    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
+		    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
+		    		<div class="windowTitle">
+		    			<p>Full Disk</p>
+		    		</div>
+		    	</div>
+
+		    	<div id="AR_plot">
+		    		{{ att_visual.visual_div_full|safe }}
+		    	</div>
+			</div>
+			{{ att_visual.visual_script_full|safe }}
+
+			<!-- 
 	    	<div class="draggable_window z-position" id="wrapper_image2">
 	    		<div class="windowBar" id = "wrapper_image_windowBar">
 		    		<div class="control_buttons close_button" id="wrapper_image_close_button2"></div>
@@ -749,17 +765,15 @@
 		    			<p>Full Disk</p>
 		    		</div>
 		    	</div>
-		    	<!-- <iframe id="image" src="/static/example.png" frameborder="0" scrolling="yes" width="100%" height="438px" name="imgbox" id="imgbox"></iframe> -->
-		    	{%if att.sunspot_type == "magnetogram_sunspot"%}
-		    	<img id="image" src="/static/example.png"/">
-		    	{%elif att.sunspot_type == 'continuum_sunspot' %}
-		    	<img id="image" src="/static/example2.png"/">
-		    	{%else%}
-		    	<img id="image" src="/static/example.png"/">
-		    	{%endif%}
-			</div>
 
-			<!-- <div id="bokeh_plot">
+
+
+			</div>-->
+
+
+
+			<!-- 
+			<div id="bokeh_plot">
 				<div class="windowBar" id = "bokeh_plot_windowBar">
 					<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="bokeh_plot_minimum_button"></div>
@@ -778,6 +792,7 @@
 
 			<div class="draggable_window z-position" id="wrapper_table_block">
 				<!-- control button -->
+
 				<div class="windowBar" id = "wrapper_table_windowBar">
 					<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
 		    		<div class="control_buttons minimum_button" id="wrapper_table_minimum_button"></div>
@@ -785,9 +800,8 @@
 		    			<p>Data Table</p>
 		    		</div>
 		    	</div>
-				<!-- table -->
+
 				<div id="wrapper_table_info">
-			    	<!-- SQLite query table -->	
 					<div id = "wrapper_table">						
 						<table>
 							<thead>
@@ -798,21 +812,26 @@
 								</tr>
 							</thead>
 							<tbody>
-								{%for row in table%}
+								{%for row in range(att.rows)%}
 								    <tr>
-									{% for item in range(att.columns) %}
-									{% if item == 4 %}
-								    	<td><button type="button" onclick="changeImage({{row[item]}})">{{ row[item] }}</button></td>
-									{% else %}
-										<td>{{ row[item] }}</td>
-									{% endif %}
+									{% for col in range(att.columns) %}
+										{% if col == 4 %}
+								    		<td>
+								    			<form method="post">
+    												<button class="astext" name="AR_ID" type="submit" value={{row}}> {{table[row][col]}} </button>
+												</form>
+								    		</td>
+										{% else %}
+											<td>
+												{{ table[row][col] }}
+											</td>
+										{% endif %}
 									{% endfor %}
 								    </tr>
 								{% endfor %}
 							</tbody>
 						</table>
 					</div>
-					<!-- SQLite query table -->
 				</div>
 			</div>
 
@@ -861,6 +880,10 @@
 			{% endfor %}
 		</div>
 
+
+	<div class="footer">
+  		<p>Next</p>
+	</div>
 
     </body>
 
@@ -964,10 +987,10 @@
     	});
     	$(function(){
     		if ({{statistic_height}} != 0) {
-			  	if ({{statistic_height}} < 600) {
+			  	if ({{statistic_height}} < 400) {
 			    	$("#wrapper_table_block").css("height","{{statistic_height}}");
     			}else{
-    				$("#wrapper_table_block").css("height","600");
+    				$("#wrapper_table_block").css("height","400");
     			}
     		}
     	});
