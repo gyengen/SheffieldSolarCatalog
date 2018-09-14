@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
+		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		{{ att_plot.js_resources|safe }}
+		{{ att_plot.css_resources|safe }}
+		{{ att_visual.js_resources|safe }}
+		{{ att_visual.css_resources|safe }}
+
+	<title>SSC / {{att_visual_full.header_t[3][0]}} / {{att_visual_full.header_t[5][1]}}</title>
+	</head>
+
+	<body id = "wrapper_body">
+
+		<div id="fixedheader">
+			<div id="wrap_header">
+				<a href="/">
+					<div class='logo'>
+						<img class="logo_pic" src="/static/logos/ssc.png">
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<div id = "search">
+			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
+			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
+		</div>
+
+		<div id="wrapper_image_full">
+			<div class="windowBar" id = "wrapper_image_windowBar">
+				<div class="windowTitle"><p>Full Disk</p></div>
+			</div>
+			<div id="AR_plot"> {{ att_visual_full.visual_div_full|safe }}</div>
+		</div>
+		
+		{{ att_visual_full.visual_script_full|safe }}
+
+		<div id="wrapper_table_block">
+			<div class="windowBar" id = "wrapper_table_windowBar">
+				<div class="windowTitle"><p>Fits Header</p></div>
+			</div>				
+			<table id = "header_table">
+				{%for row in range(att_visual_full.rows)%}
+					<tr>
+						{% for col in range(att_visual_full.columns) %}
+							<td>{{att_visual_full.header_t[row][col]}}</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+	</body>
+
+</html>

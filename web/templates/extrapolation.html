@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
+		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		{{ att_visual_ar.js_resources|safe }}
+		{{ att_visual_ar.css_resources|safe }}
+
+		<title> SSC / Magnetic Extrapolation </title>
+	</head>
+
+	<body id = "wrapper_body">
+
+		<div id="fixedheader">
+			<div id="wrap_header">
+				<a href="/">
+					<div class='logo'>
+						<img class="logo_pic" src="/static/logos/ssc.png">
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<div id = "search">
+			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
+			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
+		</div>
+
+		<div id="wrapper_extrapolation">
+			<div class="windowBar" id = "wrapper_image_windowBar">
+				<div class="windowTitle"><p>Extrapolation</p></div>
+			</div>
+
+			<div class="extrapolation_input">
+				Number of extrpolated layers: <input type="text" name="Nz"><br>
+				Scale: <input type="text" name="zscale">
+			</div>
+
+			<div class="slidecontainer">
+  				<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+			</div>
+
+			<div id="AR_plot">{{ att_visual_ar.visual_div_ar|safe }}</div>
+
+		</div>
+
+		{{ att_visual_ar.visual_script_ar|safe }}
+
+		</div>
+	</body>
+</html>

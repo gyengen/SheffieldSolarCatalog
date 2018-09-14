@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+function openInNewTab(url) {
+  var win = window.open(url, '_blank');
+  win.focus();
+}
+
 function createAndDownloadFile(fileName, content) {
     var aTag = document.createElement('a');
     var blob = new Blob([content]);
@@ -203,13 +215,12 @@ $(function () {
 $(function() {
     $( "#wrapper_image" ).draggable({ 
       cursor: "move",
-      cancel: "#image",
-      containment: "#wrapper_body"
+      handle:'#wrapper_image_windowBar'
     });
     $( "#wrapper_image2" ).draggable({ 
       cursor: "move",
       cancel: "#image",
-      containment: "#wrapper_body"
+      handle:'#wrapper_image_windowBar'
     });
     $( "#wrapper_table_block" ).draggable({ 
       cursor: "move",
@@ -225,15 +236,7 @@ $(function() {
       handles:'all',
       autoHide:true
     });
-    $( "#wrapper_image" ).resizable({
-      handles:'all',
-      autoHide:true
-    });
-    $( "#wrapper_image2" ).resizable({
-      handles:'all',
-      autoHide:true
-    });
-      });
+});
 
 
 

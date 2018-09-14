@@ -1,10 +1,19 @@
-import numpy as np
+from bokeh.models import BoxSelectTool, LassoSelectTool
+from bokeh.models import LinearColorMapper, HoverTool
+from bokeh.models import ColumnDataSource
+from bokeh.models.markers import Triangle
 from bokeh.embed import components
 from bokeh.plotting import figure
+from bokeh.layouts import column
+from bokeh.models import Label
+from skimage import measure
+from astropy.io import fits
+import matplotlib as plt
 from scipy import stats
-from bokeh.models import HoverTool
-import pyfits
-import sunpy.cm as cm
+import numpy as np
+import sunpy.cm
+import cv2
+
 
 TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
 
@@ -240,117 +249,649 @@ def Create_live_bivariate_histogram_plot(table, header, v_index, w_index, biv_w_
     return script, div
 
 
+def Generate_position_data(hdulist, hdulist_full):
+
+    # Save the headers
+    header = hdulist[0].header
+    header_full = hdulist_full[1].header
+
+    # The coordinates of the corners of ROI
+    rx = np.array([int(header['BL_X']), int(header['TR_X'])])
+    ry = np.array([int(header['BL_Y']), int(header['TR_Y'])])
+
+    # From pixel to arcsecs
+    rx = (rx - int(header_full['CRPIX1'])) * float(header_full['CDELT1'])
+    ry = (ry - int(header_full['CRPIX2'])) * float(header_full['CDELT2'])
+
+    # The dimensions of the ROI
+    ny, nx = np.shape(hdulist[0].data)
+
+    # Generate a arcsec meshgrid for the html visualisation
+    xv, yv = np.meshgrid(np.linspace(rx[0], rx[1], nx),
+                         np.linspace(ry[0], ry[1], ny),
+                         indexing='xy')
+
+    return xv, yv
 
 
+def subpanel_live_plot(p, obs, table, selected_row):
+
+    # Initialise the subpanel
+    k = figure(tools="save",
+               plot_width=p.plot_width,
+               plot_height=int(p.plot_height / 2))
+
+    # Flatten the image
+    obs_flat = np.array(obs).flatten()
+
+    # Calculate the histogram
+    hist, edges = np.histogram(obs_flat, bins='rice')
+
+    # Covert to logarithmic scale
+    hist = np.log(hist)
+
+    # Replace inf
+    hist[np.isneginf(hist)] = 0
+
+    # Define the range between minimum and maximum B
+    B_minimum_inx = np.abs(edges[:-1] - float(selected_row[18])).argmin()
+    B_maximum_inx = np.abs(edges[:-1] - float(selected_row[19])).argmin()
+
+    # Define the selected range
+    B_selected_range_x = edges[B_minimum_inx:B_maximum_inx]
+    B_selected_range_y = hist[B_minimum_inx:B_maximum_inx]
+
+    # Save the penumbra or umbra id
+    if selected_row[3] == 'umbra':
+        B_selected_umbra = [int(selected_row[5])]
+        B_selected_penumbra = [0]
+
+    elif selected_row[3] == 'penumbra':
+        B_selected_umbra = [0]
+        B_selected_penumbra = [int(selected_row[5])]
+
+    # The date to be plotted
+    source = ColumnDataSource({'top': hist, 'left': edges[:-1],
+                               'right': edges[1:],
+                               'umbra': ["-"] * len(hist),
+                               'penumbra': ["-"] * len(hist)})
+
+    source_s = ColumnDataSource({'top': B_selected_range_y[:-1],
+                                 'left': B_selected_range_x[:-1],
+                                 'right': B_selected_range_x[1:],
+                                 'umbra': (B_selected_umbra *
+                                           len(B_selected_range_y[:-1])),
+                                 'penumbra': (B_selected_penumbra *
+                                              len(B_selected_range_y[:-1]))})
+
+    # Plot the histogram B
+    k.quad(source=source, top='top', bottom=0, left='left', right='right',
+           fill_color="#5d5d5d", line_color="#5d5d5d")
+
+    # Plot the histogram B with the selected range
+    k.quad(source=source_s, top='top', bottom=0, left='left', right='right',
+           fill_color="#b72130", line_color="#b72130")
+
+    # Store the sunspot positions in arrays
+    spot_x, spot_y = [], []
+
+    # Save the umbra and penumbra id
+    umbra, penumbra = [], []
+
+    # Read the sunspot positions in the histogram from the table
+    for row in table:
+
+        # The selected sunspot
+        if(row[3] == selected_row[3] and
+           row[4] == selected_row[4] and
+           row[5] == selected_row[5]):
+
+            # The x coordinate
+            spot_s_x = [float(row[17])]
+
+            # The closest y coordinate
+            spot_s_y = [hist[np.abs(edges[:-1] - float(row[17])).argmin()] +
+                        hist.max() * 0.2]
+
+            if str(row[3]) == 'umbra':
+
+                # Umbra id
+                umbra_s = [int(row[5])]
+
+                # Penumbra id
+                penumbra_s = [0]
+
+            if str(row[3]) == 'penumbra':
+
+                # Umbra id
+                umbra_s = [0]
+
+                # Penumbra id
+                penumbra_s = [int(row[5])]
+
+        # The other sunspots
+        else:
+
+            # The x coordinate
+            spot_x.append(float(row[17]))
+
+            # The closest y coordinate
+            spot_y.append(hist[np.abs(edges[:-1] - float(row[17])).argmin()] +
+                          hist.max() * 0.125)
+
+            if str(row[3]) == 'umbra':
+
+                # Umbra id
+                umbra.append(int(row[5]))
+
+                # Penumbra id
+                penumbra.append(0)
+
+            if str(row[3]) == 'penumbra':
+
+                # Umbra id
+                umbra.append(0)
+
+                # Penumbra id
+                penumbra.append(int(row[5]))
+
+    # Convert the data to Bokeh compatible source object
+    source = ColumnDataSource(dict(x=spot_x, y=spot_y,
+                                   umbra=umbra, penumbra=penumbra))
+
+    source_s = ColumnDataSource(dict(x=spot_s_x, y=spot_s_y,
+                                     umbra=umbra_s, penumbra=penumbra_s))
+
+    # Create the blue triangles
+    glyph1 = Triangle(x="x", y="y", size=8, line_color=None,
+                      line_width=0, fill_color='#4b82a5', angle=3.14)
+
+    # Create the red triangle, indicating the selected sunspot
+    glyph2 = Triangle(x="x", y="y", size=12, line_color=None,
+                      line_width=0, fill_color='#b72130', angle=3.14)
+
+    # Add them to the actual plot
+    #k.add_glyph(source, glyph1)
+    k.add_glyph(source_s, glyph2)
+
+    # Hide the axis
+    k.yaxis.visible = False
+
+    # Custom hover tooltips
+    '''
+    hover = HoverTool(tooltips=[('B', '$x{1.11} G'),
+                                ('lg(F)', '$y'),
+                                ("UID/PID", "@umbra/@penumbra")])
+    '''
+    hover = HoverTool(tooltips=[('B', '$x{1.11} G'),
+                                ('lg(F)', '$y')])
+    # Add the hover tool to the figure
+    k.add_tools(hover)
+
+    return k
 
 
+def Extrapolation_visual(path_AR):
 
+    # Open the fits file, AR
+    hdulist = fits.open(path_AR)
 
-
-def Create_live_AR(full_path, NOAA):
-
-    from bokeh.plotting import figure, show, output_file
-    # Open the fits file
-    hdulist = pyfits.open(full_path)
+    # Fix the broken fits
+    hdulist.verify('fix')
 
     # Save the data
-    scidata = hdulist[0].data
+    obs = hdulist[0].data
 
-    # Close the fits file
+    # Close the fits files
     hdulist.close()
 
-    # Separate the different layers in the fits
-    image = scidata[0]
-    image_umbra = scidata[1]
-    image_penumbra = scidata[2]
-
     # Define custom tools for this plot
-    TOOLS = "crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+    y1, x1 = 0, 0
+    y2, x2 = np.shape(obs)[0], np.shape(obs)[1]
 
-    left, bottom = 0, 0
-    right, top = np.shape(image)[0], np.shape(image)[0]
+    # Setup the dimensions
+    plot_width = 600
+    plot_height = int((600. / x2) * y2)
+
+    # Define the toolbox for the HTML image visualisation
+    TOOLS = "crosshair,pan,zoom_in,zoom_out,box_select,lasso_select,reset,save"
 
     # Initialise the figure window
-    p = figure(tools=TOOLS, plot_width=300, plot_height=265, sizing_mode='scale_both',
-               x_range=(left, right), y_range=(bottom, top), match_aspect=True,
-               tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
+    p = figure(tools=TOOLS,
+               plot_width=plot_width,
+               plot_height=plot_height,
+               sizing_mode='scale_both',
+               x_range=(x1, x2),
+               y_range=(y1, y2),
+               toolbar_location="right")
 
-    from bokeh.colors import RGB
-    from matplotlib import cm
+    p.select(BoxSelectTool).select_every_mousemove = False
+    p.select(LassoSelectTool).select_every_mousemove = False
 
-    m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
-    coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
+    # Define the colormap
+    exp_cmap = LinearColorMapper(palette='Greys256',
+                                 nan_color='black')
 
+    # Define the data
+    data = dict(original=[obs],
+                x=[0],
+                y=[0],
+                dw=[x2],
+                dh=[y2])
 
-    p.image(image=[image], x=0, y=0, dw=right, dh=top, palette=coolwarm_palette)
+    # Plot the AR image
+    img = p.image(source=data, image='original', x='x', y='y',
+                  dw='dw', dh='dh', color_mapper=exp_cmap)
 
-    p.xaxis.axis_label = 'X'
-    p.yaxis.axis_label = 'Y'
+    TOOLTIPS = [("B", "@original")]
 
-    p.title.text = 'AR' + NOAA
+    # Add the hover TOOLTIPS for the plot
+    p.add_tools(HoverTool(renderers=[img], tooltips=TOOLTIPS))
 
-    from bokeh.models import LogColorMapper, BasicTicker, ColorBar
+    # Hide the axis
+    p.yaxis.visible = False
+    p.xaxis.visible = False
 
-    print(int(np.min(image)))
-    
-    
-    color_mapper = LogColorMapper(palette=coolwarm_palette, low=int(np.min(image)), high=int(np.max(image)))
-    color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(desired_num_ticks=5),
-                         label_standoff=8, border_line_color=None, location=(0,0),
-                         orientation="horizontal",major_label_text_font_size='10pt')
-
-    p.add_layout(color_bar, 'below')
-
+    # Generate the html and js scripts
     script_html, div_html = components(p)
 
     return script_html, div_html
 
 
+def Create_live_AR(path_AR, path_full, table, selected_row):
 
+    # Open the fits file, AR
+    hdulist = fits.open(path_AR)
 
-def Create_live_fulldisk(full_path):
+    # Open the fits file, full disk
+    hdulist_full = fits.open(path_full)
 
-    from bokeh.plotting import figure, show, output_file
-    # Open the fits file
-    hdulist = pyfits.open(full_path)
+    # Fix the broken fits
+    hdulist.verify('fix')
+
+    # Fix the broken fits
+    hdulist_full.verify('fix')
 
     # Save the data
-    scidata = hdulist[1].data
+    obs = hdulist[0].data
+    image_umbra = hdulist[1].data
+    image_penumbra = hdulist[2].data
+    b_mask = hdulist[3].data
+    l_mask = hdulist[4].data
 
-    # Close the fits file
-    hdulist.close()
+    if "magnetogram" in path_AR:
+        obs_type = 'mag'
 
-    # Separate the different layers in the fits
-    image = scidata
+    elif "continuum" in path_AR:
+        obs_type = 'con'
+
+    else:
+        obs_type = 'gen'
+
+    if obs_type is 'mag':
+
+        # Change the colormap
+        palette = 'Greys256'
+
+        # Normalise the data between -1 and 1.
+        normalised = (2 * (obs - np.nanmin(obs)) /
+                      (np.nanmax(obs) - np.nanmin(obs))) - 1
+
+        # Minimum and maximum for colormap
+        low = -1
+        high = 1
+
+        # Custom tooltips setup for the html
+        TOOLTIPS = [("Lat, LCM", "@lat, @lon"),
+                    ("X, Y", "@asec_x{1.11}, @asec_y{1.11}"),
+                    ("PID/UID", "@umbra/@penumbra"),
+                    ("B", "@original")]
+
+    if obs_type is 'con':
+
+        # Change the colormap
+        colormap = sunpy.cm.get_cmap('sdoaia171')
+        palette = [plt.colors.rgb2hex(m)
+                   for m in colormap(np.arange(colormap.N))]
+
+        # Normalise the data between 0 and 1.
+        normalised = (obs - np.nanmin(obs)) / (np.nanmax(obs) - np.nanmin(obs))
+
+        # Minimum and maximum for colormap
+        low = 0
+        high = 1
+
+        # Custom tooltips setup for the html
+        TOOLTIPS = [("Lat, LCM", "@lat, @lon"),
+                    ("X, Y", "@asec_x{1.11}, @asec_y{1.11}"),
+                    ("PID/UID", "@umbra/@penumbra"),
+                    ("P", "@original")]
+
+    if obs_type is 'gen':
+
+        # Change the colormap
+        palette = 'Magma256'
+
+        # Normalise the data between -1 and 1.
+        normalised = (obs - np.nanmin(obs)) / (np.nanmax(obs) - np.nanmin(obs))
 
     # Define custom tools for this plot
-    TOOLS = "crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+    y1, x1 = 0, 0
+    y2, x2 = np.shape(obs)[0], np.shape(obs)[1]
 
-    print(np.shape(image))
-    left, bottom = 0, 0
-    right, top = np.shape(image)[0], np.shape(image)[0]
+    # Setup the dimensions
+    plot_width = 300
+    plot_height = int((300. / x2) * y2)
+
+    # Calculate the positions in arcsecs
+    asec_x, asec_y = Generate_position_data(hdulist, hdulist_full)
+
+    # Close the fits files
+    hdulist.close()
+    hdulist_full.close()
+
+    # Define the toolbox for the HTML image visualisation
+    TOOLS = "crosshair,pan,zoom_in,zoom_out,box_select,lasso_select,reset,save"
 
     # Initialise the figure window
-    p = figure(tools=TOOLS, plot_width=300, plot_height=265, sizing_mode='scale_both',
-               x_range=(left, right), y_range=(bottom, top), match_aspect=True,
-               tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
+    p = figure(tools=TOOLS,
+               plot_width=plot_width,
+               plot_height=plot_height,
+               x_range=(x1, x2),
+               y_range=(y1, y2),
+               toolbar_location="right")
 
-    from bokeh.colors import RGB
-    from matplotlib import cm
+    p.select(BoxSelectTool).select_every_mousemove = False
+    p.select(LassoSelectTool).select_every_mousemove = False
 
-    m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
-    coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
+    # Define the colormap
+    exp_cmap = LinearColorMapper(palette=palette,
+                                 nan_color='black',
+                                 low=low,
+                                 high=high)
 
+    # Define the data
+    data = dict(image=[normalised],
+                original=[obs],
+                lat=[b_mask],
+                lon=[l_mask],
+                asec_x=[asec_x],
+                asec_y=[asec_y],
+                umbra=[image_umbra],
+                penumbra=[image_penumbra],
+                x=[0],
+                y=[0],
+                dw=[x2],
+                dh=[y2])
 
-    p.image(image=[image], x=0, y=0, dw=right, dh=top, palette=coolwarm_palette)
+    # Plot the AR image
+    img = p.image(source=data, image='image', x='x', y='y',
+                  dw='dw', dh='dh', color_mapper=exp_cmap)
 
-    p.xaxis.axis_label = 'X'
-    p.yaxis.axis_label = 'Y'
+    # Add the hover TOOLTIPS for the plot
+    p.add_tools(HoverTool(renderers=[img], tooltips=TOOLTIPS))
 
-    p.title.text = 'AR' + NOAA
+    # Hide the axis
+    p.yaxis.visible = False
+    p.xaxis.visible = False
 
+    # Find the contours in the umbra map, useing a binary mask
+    c1 = measure.find_contours(np.where(image_umbra != 0, 1, 0), 0.5)
+
+    # Plot the umbra contours
+    for n, contour in enumerate(c1):
+        p.line(contour[:, 1], contour[:, 0])
+
+    # Find the contours in the umbra map, useing a binary mask
+    c2 = measure.find_contours(np.where(image_penumbra != 0, 1, 0), 0.5)
+
+    # Plot the umbra contours
+    for n, contour in enumerate(c2):
+        p.line(contour[:, 1], contour[:, 0])
+
+    # Find the user selected sunspot from the html form
+    if str(selected_row[3]) == 'umbra':
+        selected_mask = np.where(image_penumbra == int(selected_row[5]), 1, 0)
+
+    elif str(selected_row[3]) == 'penumbra':
+        selected_mask = np.where(image_penumbra == int(selected_row[5]), 1, 0)
+
+    # Plot the umbra contours
+    for n, contour in enumerate(measure.find_contours(selected_mask, 0.5)):
+        p.line(contour[:, 1], contour[:, 0], color='red')
+
+    # Create the subpanel for the histogram
+    k = subpanel_live_plot(p, obs, table, selected_row)
+
+    # Arrange the two panels above and below
+    p = column(p, k, sizing_mode='scale_width')
+
+    # Generate the html and js scripts
     script_html, div_html = components(p)
 
     return script_html, div_html
 
 
+def Create_header_table(header):
+    header_list = []
+    for i, key in enumerate(header):
+        header_list.append(str(key) + ' = ' + str(header[i]))
+
+    header_list = np.array(header_list)
+    header_list.resize((33, 3))
+    return header_list
+
+
+def Create_live_fulldisk(full_path, selected_row, full):
+    '''This funciton generates the fulldisk image for the html frontend
+
+    Parameters
+    ----------
+        full_path - The full path of the observation
+
+    Returns
+    -------
+        script_html - The associated javascript
+        div_html - The actual image
+    '''
+
+    if "magnetogram" in full_path:
+        obs_type = 'mag'
+
+    elif "continuum" in full_path:
+        obs_type = 'con'
+
+    else:
+        obs_type = 'gen'
+
+    # Try again and
+    hdulist = fits.open(full_path, uint=True)
+
+    # Fix the broken fits
+    hdulist.verify('fix')
+
+    # Save the data
+    full_size_image = np.array(hdulist[1].data)
+
+    # Save the header, index zero is an empty hdu, 1 is the compressed image
+    header = hdulist[1].header
+
+    # Close the fits file
+    hdulist.close()
+
+    if full is True:
+        # Keep the original size os fthe picutre
+        scaling_factor = 4
+
+        # Save the header table for the full disk htom page
+        header_table = Create_header_table(header)
+
+    if full is False:
+        # Shrink the original observation to make the html backend faster
+        scaling_factor = 4
+
+    # Size of the x and y axis
+    x_dim = float(header['NAXIS1'])
+    y_dim = float(header['NAXIS2'])
+
+    # Some parameters for the data to world conversion
+    dx = header['CDELT1']
+    dy = header['CDELT2']
+    c_x = header['CRPIX1']
+    c_y = header['CRPIX2']
+
+    x_dim = np.shape(full_size_image)[0]
+    y_dim = np.shape(full_size_image)[1]
+
+    xasec, yasec = np.meshgrid((np.linspace(0, x_dim, x_dim) - c_x) * dx,
+                               (np.linspace(0, y_dim, y_dim) - c_y) * dy)
+
+    # New dimensions
+    new_x = int(x_dim / scaling_factor)
+    new_y = int(y_dim / scaling_factor)
+
+    # Resize the image and the coordinate systems
+    obs = cv2.resize(full_size_image, (new_x, new_y),
+                     interpolation=cv2.INTER_CUBIC)
+
+    xasec = cv2.resize(xasec, (new_x, new_y),
+                       interpolation=cv2.INTER_CUBIC)
+
+    yasec = cv2.resize(yasec, (new_x, new_y),
+                       interpolation=cv2.INTER_CUBIC)
+
+    if obs_type is 'mag':
+
+        # Change the colormap
+        palette = 'Greys256'
+
+        # Normalise the data between -1 and 1.
+        normalised = (2 * (obs - np.nanmin(obs)) /
+                      (np.nanmax(obs) - np.nanmin(obs))) - 1
+
+        # Minimum and maximum for colormap
+        low = -.25
+        high = .25
+
+        # Custom tooltips setup for the html
+        TOOLTIPS = [("x, y", "@x_arcsec\", @y_arcsec\""),
+                    ("B", "@original G")]
+
+    if obs_type is 'con':
+
+        # Change the colormap
+        colormap = sunpy.cm.get_cmap('sdoaia171')
+        palette = [plt.colors.rgb2hex(m)
+                   for m in colormap(np.arange(colormap.N))]
+
+        # Normalise the data between 0 and 1.
+        normalised = (obs - np.nanmin(obs)) / (np.nanmax(obs) - np.nanmin(obs))
+
+        # Minimum and maximum for colormap
+        low = 0
+        high = 1
+
+        # Custom tooltips setup for the html
+        TOOLTIPS = [("x, y", "@x_arcsec\", @y_arcsec\""),
+                    ("P", "@original")]
+
+    if obs_type is 'gen':
+
+        # Change the colormap
+        palette = 'Magma256'
+
+        # Normalise the data between -1 and 1.
+        normalised = (obs - np.nanmin(obs)) / (np.nanmax(obs) - np.nanmin(obs))
+
+    # Define the data
+    data = dict(image=[normalised],
+                original=[normalised],
+                x_arcsec=[xasec],
+                y_arcsec=[yasec],
+                x=[0],
+                y=[0],
+                dw=[np.shape(obs)[0]],
+                dh=[np.shape(obs)[1]])
+
+    exp_cmap = LinearColorMapper(palette=palette,
+                                 low=low,
+                                 high=high,
+                                 nan_color='black')
+
+    # Initialise the figure window
+    p = figure(tools="crosshair,pan,zoom_in,zoom_out,undo,redo,reset,save",
+               plot_width=300,
+               plot_height=280,
+               sizing_mode='scale_both',
+               x_range=(0, np.shape(obs)[0]),
+               y_range=(0, np.shape(obs)[1]),
+               match_aspect=True,
+               toolbar_location="left")
+
+    # Plot the full disk image
+    l1 = p.image(source=data, image='image', x='x', y='y',
+                 dw='dw', dh='dh', color_mapper=exp_cmap)
+
+    # Define the bounderies of the ROI in pixels
+    # BL = Bottom Left, TR = Top Right)
+    '''
+    ROI = [int(header['BL_X']),
+           int(header['BL_Y']),
+           int(header['TR_X']),
+           int(header['TR_Y'])]
+
+    '''
+
+    # Read the NOAA numbers from the header
+    NOAA_list = str(header['ARS']).split(",")
+
+    # Define the header index ('ARS' record in header) of the selected AR
+    index = NOAA_list.index(str(selected_row[4]))
+
+    for i in range(len(NOAA_list)):
+
+        # Highlight the selected active region
+        if i == index:
+            color = '#b91e2c'
+        else:
+            color = '#0e0400'
+
+        # Extract the corner cordinates from the header
+        top = float(header['TR_Y'].split(",")[i])
+        bottom = float(header['BL_Y'].split(",")[i])
+        left = float(header['BL_X'].split(",")[i])
+        right = float(header['TR_X'].split(",")[i])
+
+        # Scale the original coordinates
+        top = int(top / scaling_factor)
+        bottom = int(bottom / scaling_factor)
+        left = int(left / scaling_factor)
+        right = int(right / scaling_factor)
+
+        # Plot the ROI region
+        p.quad(top=top, bottom=bottom, left=left, right=right,
+               fill_alpha=0, line_color=color, line_width=0.5)
+
+        # Adding annotations for the all AR
+        p.add_layout(Label(x=left, y=top, text=' ' + str(NOAA_list[i]) + ' ',
+                           background_fill_color=color,
+                           background_fill_alpha=1,
+                           border_line_alpha=0,
+                           text_font_size="10pt",
+                           text_color="#ededed"))
+
+    # Hide the axis
+    p.yaxis.visible = False
+    p.xaxis.visible = False
+
+    # Add the hover TOOLTIPS for the plot
+    p.add_tools(HoverTool(renderers=[l1], tooltips=TOOLTIPS))
+
+    # Generating the script for the html
+    script_html, div_html = components(p)
+
+    if full is False:
+        return script_html, div_html
+
+    if full is True:
+        return script_html, div_html, header_table

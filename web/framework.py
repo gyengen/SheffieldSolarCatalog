@@ -33,7 +33,7 @@ class att:
     block_status = []
 
     # Default sql query command
-    sql_cmd = "SELECT * FROM magnetogram_sunspot"
+    sql_cmd = "SELECT * FROM continuum_sunspot"
 
     # start date, end date, start time, end time
     sd, ed, st, et = '', '', '', ''
@@ -43,6 +43,9 @@ class att:
 
     # rows of the table
     rows = 0
+
+    # selected row id
+    selected_row = 0
 
     # list of all attributes in the table
     attributes = []
@@ -137,6 +140,42 @@ class att_visual:
 
     att_plot.css_resources = ''
 
+
+class att_visual_full:
+
+    visual_div_full = ''
+
+    visual_script_full = ''
+
+    js_resources = ''
+
+    css_resources = ''
+
+    rows = 0
+
+    columns = 0
+
+    header_t = []
+
+class att_visual_ar:
+
+    visual_div_ar = ''
+
+    visual_script_ar = ''
+
+    js_resources = ''
+
+    css_resources = ''
+
+class param:
+
+    path_AR = ''
+
+    path_full = ''
+
+    row = []
+
+
 # Define global variables --------------------------------------------------'''
 
 
@@ -146,6 +185,8 @@ app = Flask(__name__)
 app.add_template_global(att, 'att')
 app.add_template_global(att_plot, 'att_plot')
 app.add_template_global(att_visual, 'att_visual')
+app.add_template_global(att_visual_ar, 'att_visual_ar')
+app.add_template_global(att_visual_full, 'att_visual_full')
 
 
 @app.before_request
@@ -170,12 +211,55 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/extrapolation.html', methods=['GET', 'POST'])
+def extrapolation():
+
+    # Make sure that the magnetogram observation is selected
+    mg_path = param.path_AR.replace('continuum', 'magnetogram')
+
+    # Visualise the active region
+    script, div = Extrapolation_visual(mg_path)
+
+    # Save the Bokeh scripts
+    att_visual_ar.visual_div_ar = div
+    att_visual_ar.visual_script_ar = script
+
+    # Store the css amd JavaSrcipt resources
+    att_visual_ar.js_resources = INLINE.render_js()
+    att_visual_ar.css_resources = INLINE.render_css()
+
+    return render_template('extrapolation.html')
+
+
+@app.route('/full_disk.html', methods=['GET', 'POST'])
+def full_disk():
+
+    # Full disk visualisation in full screen
+    script, div, header = Create_live_fulldisk(param.path_full,
+                                               param.row, True)
+
+    # Save the Bokeh scripts
+    att_visual_full.visual_div_full = div
+    att_visual_full.visual_script_full = script
+
+    # Store the css amd JavaSrcipt resources
+    att_visual_full.js_resources = INLINE.render_js()
+    att_visual_full.css_resources = INLINE.render_css()
+
+    # Additional info for displaying the fits header
+    att_visual_full.header_t = header
+    att_visual_full.rows = len(header)
+    att_visual_full.columns = len(header[0])
+
+    return render_template('full_disk.html')
+
+
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
 
     # Default commands
-    c1 = "SELECT * FROM magnetogram_sunspot"
-    c2 = "SELECT * FROM continuum_sunspot"
+    c1 = "SELECT * FROM continuum_sunspot"
+    c2 = "SELECT * FROM magnetogram_sunspot"
 
     # Get the whole header in the complete table
     table_all_1, header_all_1 = Create_table(g.db.execute(c1))
@@ -400,7 +484,7 @@ def query():
     else:
 
         # Use the default sql command, display every sunspot
-        att.sql_cmd = "SELECT * FROM magnetogram_sunspot"
+        att.sql_cmd = c1
         att.sql_attr = '*'
 
     # Clear sql_table
@@ -502,24 +586,30 @@ def query():
     # Create the AR and Full disk plots
     if keyword_check(request.form, 'AR_ID') is True:
 
-        row = table[int(request.form['AR_ID'])]
+        # The index of the selected row
+        att.selected_row = int(request.form['AR_ID'])
 
-        # Define the filename of the associated image
-        path_AR, path_full = html_image_path(row, os.getcwd())
+    # Define the selected row
+    param.row = table[att.selected_row]
 
-        NOAA = str(table[int(request.form['AR_ID'])][4])
-        script_html, div_html = Create_live_AR(path_AR, NOAA)
+    # Define the filename of the associated image
+    param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
 
-        #script_html_full, div_html_full = Create_live_fulldisk(path_full)
+    # NOAA = str(table[int(request.form['AR_ID'])][4])
+    script_html, div_html = Create_live_AR(param.path_AR,
+                                           param.path_full, table, param.row)
 
-        #att_visual.visual_div_full = div_html_full
-        #att_visual.visual_script_full = script_html_full
+    script_html_full, div_html_full = Create_live_fulldisk(param.path_full,
+                                                           param.row, False)
 
-        att_visual.visual_div = div_html
-        att_visual.visual_script = script_html
+    att_visual.visual_div_full = div_html_full
+    att_visual.visual_script_full = script_html_full
 
-        att_visual.js_resources = INLINE.render_js()
-        att_visual.css_resources = INLINE.render_css()
+    att_visual.visual_div = div_html
+    att_visual.visual_script = script_html
+
+    att_visual.js_resources = INLINE.render_js()
+    att_visual.css_resources = INLINE.render_css()
 
     # Display the plot(s)
     if keyword_check(request.form, 'plot_type') is True:
