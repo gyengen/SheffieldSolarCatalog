@@ -620,9 +620,8 @@
 }
 
 #topmenu ul li ul{
-
     width: 0px;
-    height: 50px;
+    height: 0px;
     padding: 0;
     margin: 0;
     text-align: left;
@@ -637,16 +636,20 @@
 
 .download_options{
     width: 80px;
-    height: 80%;
+    height: 40px;
     background-color: #ffffff;
     cursor: pointer;
     display: none;
-    z-index: 5;
+    z-index: 0;
     border-top: 0px solid #aaabac;
     border-bottom: 0px solid #aaabac;
     border-left: 0px solid #aaabac;
     border-right: 0px solid #aaabac;
+}
 
+.download_options:hover{
+    background-color: #000000;
+    color: white;
 }
 
 
@@ -1019,7 +1022,7 @@ body
         top: 50px;
         left: 0px;
         background-color: #ffffff;
-        z-index: 49;
+        z-index: 0;
         border: 0px solid;
         border-color: #aaabac;
         display: none; 
@@ -1032,12 +1035,26 @@ body
         top: 50px;
         margin-left: 55px;
         background-color: #ffffff;
-        z-index: 49;
+        z-index: 0;
         border: 0px solid;
         border-color: #aaabac;
         height: 75px;
         display: none; 
     }
+
+#download_menu
+{
+    position: fixed;
+    width: 290px;
+    top: 50px;
+    margin-left: 155px;
+    background-color: #ffffff;
+    z-index: 49;
+    border: 0px solid;
+    border-color: #aaabac;
+    height: 75px;
+    display: none; 
+}
 
 #filter_menu{
     width: 290px;

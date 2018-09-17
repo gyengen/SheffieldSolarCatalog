@@ -39,16 +39,16 @@ function showmore(){
   document.getElementById("filter_menu_showmore").style.display="block";
   document.getElementById("show_button").style.display="none";
   document.getElementById("filter_menu").style.height=460;
-  document.getElementById("side_menu").style.top="10%";
-  document.getElementById("plotting_menu").style.top="10%";
+  // document.getElementById("side_menu").style.top="10%";
+  // document.getElementById("plotting_menu").style.top="10%";
 }
 
 function hide(){
   document.getElementById("filter_menu_showmore").style.display="none";
   document.getElementById("show_button").style.display="block";
   document.getElementById("filter_menu").style.height=195;
-  document.getElementById("side_menu").style.top="20%";
-  document.getElementById("plotting_menu").style.top="20%";
+  // document.getElementById("side_menu").style.top="20%";
+  // document.getElementById("plotting_menu").style.top="20%";
 }
 
 function change_sunspot_type(){     
@@ -149,17 +149,18 @@ $(function () {
   $('#database_button').click(function () {
     if ($(this).hasClass('menu-open')) {
       $(this).removeClass('menu-open');
-      $('#filter_menu_showmore').css('display','none');
-      $('#show_button').css('display','block');
-      $('#filter_menu').css('height','195');
-
-
       $('#side_menu').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
       $(this).addClass('menu-open');
-      $('#side_menu').fadeIn(0);
+      $('#side_menu').fadeIn(100);
       $('#plotting_menu').fadeOut(0);
+      $('#plot_button').removeClass('plot-open');
       $('.download_options').fadeOut(0);
+      $('#download_button').removeClass('open');
+      $('#side_menu').css('z-index','100');
+      $('#plotting_menu').css('z-index','0');
+      $('.download_options').css('z-index','0');
     }
   })
 });
@@ -169,25 +170,37 @@ $(function () {
     if ($(this).hasClass('plot-open')) {
       $(this).removeClass('plot-open');
       $('#plotting_menu').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
       $(this).addClass('plot-open');
-      $('#plotting_menu').fadeIn(0);
+      $('#plotting_menu').fadeIn(100);
+      $('#database_button').removeClass('menu-open');
       $('#side_menu').fadeOut(0);
       $('.download_options').fadeOut(0);
+      $('#download_button').removeClass('open');
+      $('#plotting_menu').css('z-index','100');
+      $('#side_menu').css('z-index','0');
+      $('.download_options').css('z-index','0');
     }
   })
 });
 
 $(function () {
   $('#download_button').click(function () {
-      if ($(this).hasClass('options-open')) {
-      $(this).removeClass('options-open');
+      if ($(this).hasClass('open')) {
+      $(this).removeClass('open');
       $('.download_options').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
-      $(this).addClass('options-open');
-      $('.download_options').fadeIn(0);
+      $(this).addClass('open');
+      $('.download_options').fadeIn(100);
       $('#side_menu').fadeOut(0);
+      $('#database_button').removeClass('menu-open');
       $('#plotting_menu').fadeOut(0);
+      $('#plot_button').removeClass('plot-open');
+      $('.download_options').css('z-index','100');
+      $('#side_menu').css('z-index','0');
+      $('#plotting_menu').css('z-index','0');
     }
   })
 });
