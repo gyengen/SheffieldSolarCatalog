@@ -431,19 +431,7 @@ def subpanel_live_plot(p, obs, table, selected_row):
     return k
 
 
-def Extrapolation_visual(path_AR):
-
-    # Open the fits file, AR
-    hdulist = fits.open(path_AR)
-
-    # Fix the broken fits
-    hdulist.verify('fix')
-
-    # Save the data
-    obs = hdulist[0].data
-
-    # Close the fits files
-    hdulist.close()
+def Extrapolation_visual(obs):
 
     # Define custom tools for this plot
     y1, x1 = 0, 0

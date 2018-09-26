@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 function openInNewTab(url) {
   var win = window.open(url, '_blank');
   win.focus();
@@ -99,8 +93,6 @@ function change_plot_type()
            $(".wrapper_menu_2").css("height","90px");
            $(".histogram_plot").removeClass("plot_menu_shown");
         }
-        
-        
         
       if (type == "biv_hist")
         {

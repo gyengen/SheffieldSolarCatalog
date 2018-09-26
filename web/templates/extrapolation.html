@@ -8,7 +8,6 @@
 		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
 		<script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
 		<script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
 		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		{{ att_visual_ar.js_resources|safe }}
 		{{ att_visual_ar.css_resources|safe }}
@@ -38,14 +37,90 @@
 				<div class="windowTitle"><p>Extrapolation</p></div>
 			</div>
 
-			<div class="extrapolation_input">
-				Number of extrpolated layers: <input type="text" name="Nz"><br>
-				Scale: <input type="text" name="zscale">
-			</div>
+			<form method="POST">
+				<table class = "extrapolation_table">
 
-			<div class="slidecontainer">
-  				<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-			</div>
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				  <tr>
+				    <td>
+						Layer Number:
+				    </td>
+
+				    <td>
+						<input type="text" name="Nz" value="{{ att_visual_ar.Nz }}">
+				    </td>
+
+				    <td>
+				    	<div class = "extrapolate_range_div">
+				 			<input name="slider" class="range-slider__range" type="range" value="{{ att_visual_ar.level }}" min="0" max="{{ att_visual_ar.range_max }}" oninput="document.getElementById('vl').innerHTML = this.value" >
+				 		</div>
+				 	</td>
+
+				 	<td>
+				 		Date/Time: {{ att_visual_ar.date }}
+				 	</td>
+
+				 </tr>
+
+				 <tr>
+				 	<td>
+				 		Scale Height:
+				 	</td>
+
+				 	<td>
+				 		<input type="text" name="zscale" value="{{ att_visual_ar.zscale }}">
+				 	</td>
+
+				 	<td>
+				 		Number of selected layer: <label id="vl">{{ att_visual_ar.level }}</label> / {{ att_visual_ar.range_max }}
+				 	</td>
+
+				 	<td>
+				 		NOAA AR: {{ att_visual_ar.NOAA }}
+				 	</td>
+
+				 </tr>
+
+				 <tr>
+				 	<td>
+				 		Alpha:
+				 	</td>
+
+				 	<td>
+				 		<input type="text" name="Alpha" value="0">
+				 	</td>
+
+				    <td>
+						Approximate altitude: {{ att_visual_ar.level_in_mm }} Mm
+				    </td>
+
+				 	<td>
+				 		Instrument: {{ att_visual_ar.Instrument }}
+				 	</td>
+
+
+				  </tr>
+
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				  <tr>
+				    <td colspan="4" class="extrapolate_execute_button">
+				    	<input type=submit value="Extrapolation" id="extrapolate_button" name="submit_button">
+				    	<input type=submit value="Download Data" id="extrapolate_download" name="submit_button">
+				    </td>
+				  </tr>
+
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				</table>				
+			</form>
 
 			<div id="AR_plot">{{ att_visual_ar.visual_div_ar|safe }}</div>
 
@@ -53,6 +128,6 @@
 
 		{{ att_visual_ar.visual_script_ar|safe }}
 
-		</div>
 	</body>
 </html>
+						

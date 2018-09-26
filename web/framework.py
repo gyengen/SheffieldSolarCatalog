@@ -9,6 +9,7 @@ flask.py
 
 from flask import Flask, render_template, request, g
 from gevent.pywsgi import WSGIServer
+from .python.extrapolation import *
 from bokeh.resources import INLINE
 from .python.live_plot import *
 from .python.utility import *
@@ -173,6 +174,33 @@ class att_visual_ar:
 
     css_resources = ''
 
+    range_max = 30
+
+    # Number of equally spaced grid points in the z direction
+    Nz = 30
+
+    # Sets the z-scale (1.0 = same scale as the x,y axes)
+    zscale = 1
+
+    # Z layer for visualisation
+    level = 0
+
+    level_in_mm = 0
+
+    ex_cube = 0
+
+    date = ''
+
+    Instrument = ''
+
+    NOAA = ''
+
+    stream_plot = ''
+
+    path = ''
+
+    fname = ''
+
 class param:
 
     path_AR = ''
@@ -216,15 +244,91 @@ def index():
     # The index page is static but handled by Flask
     return render_template('index.html')
 
+@app.route('/download.html')
+def download_extrapolation():
+    return render_template('download.html')
+
 
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
 
     # Make sure that the magnetogram observation is selected
-    mg_path = param.path_AR.replace('continuum', 'magnetogram')
+    path_AR = param.path_AR.replace('continuum', 'magnetogram')
+
+    # Open the fits file, AR
+    hdulist = fits.open(path_AR)
+
+    # Fix the broken fits
+    hdulist.verify('fix')
+
+    # Save the data
+    obs = hdulist[0].data
+    header = hdulist[0].header
+
+    # Close the fits files
+    hdulist.close()
+
+    # NOAA number of the observation
+    att_visual_ar.NOAA = header['NOAA']
+
+    # Instrument and type
+    att_visual_ar.Instrument = header['TELESCOP'] + ' - ' + header['CONTENT']
+
+    # Date of observation
+    att_visual_ar.date = header['DATE']
+
+    # Setup few variables
+    extrapolate = True
+    downloading = False
+
+    # Check the request method
+    if request.method == 'POST':
+
+        try:
+
+            if (att_visual_ar.Nz == int(request.form['Nz']) and
+               att_visual_ar.zscale == int(request.form['zscale'])):
+                extrapolate = False
+
+            if request.form['submit_button'] == 'Download Data':
+                downloading = True
+
+            # Number of equally spaced grid points in the z direction
+            att_visual_ar.Nz = int(request.form['Nz'])
+
+            # Sets the z-scale (1.0 = same scale as the x,y axes)
+            att_visual_ar.zscale = int(request.form['zscale'])
+
+            # Z layer for visualisation
+            att_visual_ar.level = int(request.form['slider'])
+
+            # Z layer for visualisation in Mm
+            att_visual_ar.level_in_mm = format(att_visual_ar.level * 0.35, '.4f')
+
+        except Exception:
+            pass
+
+    # Magnetic Field Extrapolation
+    if extrapolate is True:
+        att_visual_ar.ex_cube = PFFF(obs, nz=att_visual_ar.Nz,
+                                     zscale=att_visual_ar.zscale)
+
+    if downloading is True:
+
+        hdf5_path, hdf5_fname = generate_hdf5(att_visual_ar.ex_cube,
+                                              att_visual_ar.NOAA,
+                                              att_visual_ar.date)
+
+        att_visual_ar.path = hdf5_path
+        att_visual_ar.fname = hdf5_fname
+
+        return redirect(url_for('download_extrapolation'))
+
+    # Range Bar maximum value for the HTML
+    att_visual_ar.range_max = int(att_visual_ar.Nz - 1)
 
     # Visualise the active region
-    script, div = Extrapolation_visual(mg_path)
+    script, div = Extrapolation_visual(att_visual_ar.ex_cube['Bz'][att_visual_ar.level])
 
     # Save the Bokeh scripts
     att_visual_ar.visual_div_ar = div
