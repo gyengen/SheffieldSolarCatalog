@@ -38,7 +38,7 @@ function changeImage(number){
 function showmore(){
   document.getElementById("filter_menu_showmore").style.display="block";
   document.getElementById("show_button").style.display="none";
-  document.getElementById("filter_menu").style.height=460;
+  document.getElementById("filter_menu").style.height=435;
   // document.getElementById("side_menu").style.top="10%";
   // document.getElementById("plotting_menu").style.top="10%";
 }
@@ -76,54 +76,62 @@ function change_sunspot_type(){
 function change_plot_type()
 {
    var type = $("#plot_type").val();
-   if (type == "scatter_2d")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".scatter_2d_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".scatter_2d_plot").removeClass("plot_menu_shown");
-      }
-  if (type == "histogram")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".histogram_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".histogram_plot").removeClass("plot_menu_shown");
-      }
-      
-      
-      
-  if (type == "biv_hist")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".biv_histogram_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".biv_histogram_plot").removeClass("plot_menu_shown");
-      }
-      
-      
-      
-      
-      
-  if (type == "line")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".line_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".line_plot").removeClass("plot_menu_shown");
-      } 
+   if (type != "none" && type != "kde") {
+     if (type == "scatter_2d")
+        {
+           $("#plotting_menu").css("height","155px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".scatter_2d_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".scatter_2d_plot").removeClass("plot_menu_shown");
+        }
+      if (type == "histogram")
+        {
+           $("#plotting_menu").css("height","180px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".histogram_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".histogram_plot").removeClass("plot_menu_shown");
+        }
+        
+        
+        
+      if (type == "biv_hist")
+        {
+           $("#plotting_menu").css("height","141px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".biv_histogram_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".biv_histogram_plot").removeClass("plot_menu_shown");
+        }
+
+      if (type == "line")
+        {
+           $("#plotting_menu").css("height","136px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".line_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".line_plot").removeClass("plot_menu_shown");
+        } 
+    }else{
+      $("#plotting_menu").css("height","75px");
+      $(".line_plot").removeClass("plot_menu_shown");
+      $(".biv_histogram_plot").removeClass("plot_menu_shown");
+      $(".histogram_plot").removeClass("plot_menu_shown");
+      $(".scatter_2d_plot").removeClass("plot_menu_shown");
+    }
 };
  $(function(){     
     $("#selectall_button").click(function(){

@@ -41,7 +41,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
 
     # Histogram calculation
     histv, edges = np.histogram(hist, density=False, bins=int(bin_n))
- 
+
     # Error bar calculation
     yerrs = np.sqrt(histv)
 

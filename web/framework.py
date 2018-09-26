@@ -17,6 +17,7 @@ from pathlib import Path
 import sqlite3
 import json
 import os
+import datetime
 
 monkey.patch_all()
 
@@ -36,7 +37,12 @@ class att:
     sql_cmd = "SELECT * FROM continuum_sunspot"
 
     # start date, end date, start time, end time
-    sd, ed, st, et = '', '', '', ''
+    date_formate = '%Y-%m-%d'
+    time_formate = '%H:%M:%S'
+
+    sd, st = '1993-06-01','06:06:06'
+    ed = datetime.datetime.now().strftime(date_formate)
+    et = datetime.datetime.now().strftime(time_formate)
 
     # columns of the table
     columns = 0
@@ -272,7 +278,7 @@ def query():
     if request.method == 'POST':
 
         # clear the error message
-        error_message = ''
+        att.error_message = ''
 
         if 'sunspot_type' in request.form:
 
@@ -499,7 +505,7 @@ def query():
     except Exception as e:
 
         # Error if sending failed
-        error_message = error_message + \
+        att.error_message = att.error_message + \
             "<p> -- Error happened when retrieving data.<br></p><br>"
 
         # Construct the sql command
@@ -521,7 +527,7 @@ def query():
     except Exception as e:
 
         # Error if the table is empyt
-        error_message = error_message + \
+        att.error_message = att.error_message + \
             "<p> -- No data detected based on your filer.<br></p><br>"
 
         # Default sql command
@@ -614,6 +620,7 @@ def query():
     # Display the plot(s)
     if keyword_check(request.form, 'plot_type') is True:
 
+        global script, div
         # Define some local variables
         script = ''
         active_bokeh = []
@@ -653,7 +660,7 @@ def query():
 
             # Error if no data, handle_the_exception_somehow
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating line plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -681,7 +688,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating scatter plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -699,7 +706,6 @@ def query():
         # Histogram
         elif request.form['plot_type'] == 'histogram':
             try:
-
                 # Create the actual plot and save the Bokeh script
                 script, div = Create_live_histogram_plot(table, header, v,
                                                          density, fit, bin_n,
@@ -707,9 +713,10 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating histogram plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                print(str(e))
 
             # Set few varaibles
             else:
@@ -724,7 +731,6 @@ def query():
 
         # Bivariate Histogram
         elif request.form['plot_type'] == 'biv_hist':
-
             try:
 
                 # Create the actual plot and save the Bokeh script
@@ -736,7 +742,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating bivariate plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -753,7 +759,7 @@ def query():
 
         # Create the div frame for the plots
         if att_plot.plot_status == 1:
-
+            print(att_plot.plot_type)
             # Create div_frame and bokeh_script
             div_frame, div_minimize_block, bokeh_script = Bokehscript(att_plot,
                                                                       div,
@@ -811,17 +817,17 @@ def query():
                 new_bokeh_script_list = new_bokeh_script_list.append(bs)
 
         # Position of the plot windows
-        list_length = len(att_plot.div_frame_list)
-        if list_length != 0:
-            position_left = []
-            position_top = []
-            for x in range(0, list_length):
+        att.list_length = len(att_plot.div_frame_list)
+        if att.list_length != 0:
+            att.position_left = []
+            att.position_top = []
+            for x in range(0, att.list_length):
 
                 # Define the corners of the window
                 left = 100 + 20 * x
                 top = 20 * x
-                position_left.append(left)
-                position_top.append(top)
+                att.position_left.append(left)
+                att.position_top.append(top)
 
     # Render the front end
     return render_template('workstation.html',

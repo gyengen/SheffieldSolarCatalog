@@ -49,7 +49,7 @@
 	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
 	  				<ul>
 	  					<li>
-	  						<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='database/sql/ssc_sql.db') }}')">SQLlite</button>
+	  						<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='./database/sql/ssc_sql.db') }}')">SQLite</button>
 	  					</li>
 	  					<li>
 	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.h5',{{ att.data }})">HDF5</button>
@@ -241,21 +241,21 @@
 						<table width="98%">
 							{% for num in range(0,5,2) %}
 							<tr>
-								<td width="105px">
-									{{ att.header1[num] }} 
+								<td class="side_menu_header">
+									{{ att.header2[num] }} 
 								</td>
-								<td>
-									{% if att.header1[num] in header %}
+								<td class="side_menu_checkbox">
+									{% if att.header2[num] in header %}
 											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
 										{% else %}
 											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}"/>
 										{% endif %}
 								</td>
-								<td>
-									{{ att.header1[num+1] }} 
+								<td class="side_menu_header">
+									{{ att.header2[num+1] }} 
 								</td>
-								<td>
-									{% if att.header1[num+1] in header %}
+								<td class="side_menu_checkbox">
+									{% if att.header2[num+1] in header %}
 											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
 										{% else %}
 											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}"/>
@@ -267,22 +267,22 @@
 
 						<div id="filter_menu_showmore">
 							<table width="98%">
-								{% for num in range(0,9,2) %}
+								{% for num in range(4,9,2) %}
 								<tr>
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2[num] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2[num] in header %}
 												<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
 											{% else %}
 												<input type="checkbox" name="attributes" value="{{ att.header2[num] }}"/>
 											{% endif %}
 									</td>
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2[num+1] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2[num+1] in header %}
 												<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
 											{% else %}
@@ -294,10 +294,10 @@
 
 								{% for num in range(0,5,2) %}
 								<tr>
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2_1[num] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2_1[num] in header %}
 											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num] }}" checked="checked" />
 										{% else %}
@@ -305,10 +305,10 @@
 										{% endif %}
 									</td>
 									{% if (5//2 == (5-1)//2) and (num != 4) %}
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2_1[num+1] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2_1[num+1] in header %}
 											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num+1] }}" checked="checked" />
 										{% else %}
@@ -324,10 +324,10 @@
 
 								{% for num in range(0,5,2) %}
 								<tr>
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2_2[num] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2_2[num] in header %}
 											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num] }}" checked="checked" />
 										{% else %}
@@ -335,10 +335,10 @@
 										{% endif %}
 									</td>
 									{% if (5//2 == (5-1)//2) and (num != 4) %}
-									<td>
+									<td class="side_menu_header">
 										{{ att.header2_2[num+1] }} 
 									</td>
-									<td>
+									<td class="side_menu_checkbox">
 										{% if att.header2_2[num+1] in header %}
 											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num+1] }}" checked="checked" />
 										{% else %}
@@ -359,7 +359,7 @@
 
 
 						
-						<table width="98%" style="margin-top: 5px;">
+						<table width="98%" style="margin-top: 5px;margin-bottom: 5px;">
 							<tr>
 								<td colspan="3">
 									<button type="button" style="width: 50%;margin-left: 20%;margin-bottom: 10px;" data-toggle="modal" data-target="#myModal">
@@ -622,7 +622,6 @@
     		</div>
     	</div>
 
-
     	{% for num in range(att.list_length) %}
     		<div style="position: relative;top: {{ att.position_top[num] }}px;left: {{ att.position_left[num] }}px;">
 				{{ att_plot.div_frame_list[num]|safe }}
@@ -707,8 +706,8 @@
 
 
 
-		<!-- 
-		<div id="bokeh_plot">
+		
+<!-- 		<div id="bokeh_plot">
 			<div class="windowBar" id = "bokeh_plot_windowBar">
 				<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
 	    		<div class="control_buttons minimum_button" id="bokeh_plot_minimum_button"></div>
@@ -719,8 +718,6 @@
 			<div id="figure">{{ div|safe }}</div>
 		</div> -->
 		
-		
-
 		
 		<!-- {{ script }} -->
 		<!-- AR image -->
@@ -843,11 +840,10 @@
 		</ul>  
 	</div>
 
-    </body>
-
-    {% for bokeh_script in att_plot.bokeh_script_list %}
+	{% for bokeh_script in att_plot.bokeh_script_list %}
 			{{ bokeh_script|safe }}
 	{% endfor %}
+    </body>
 
     <script>
     	laydate.render({

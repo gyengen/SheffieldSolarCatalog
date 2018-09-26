@@ -1028,6 +1028,14 @@ body
         display: none; 
     }
 
+.side_menu_header{
+    width: 90px;
+}
+
+.side_menu_checkbox{
+    width: 25px;
+}
+
 #plotting_menu
     {
         position: fixed;
