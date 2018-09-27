@@ -11,6 +11,7 @@ import ssc.visual.plot        # For full disk visualisation
 import download as get        # Getting data
 import feature as fea         # Feature algorithms
 import ssc.tools.util         # Utility library for the index function
+import ssc.tools.fits         # Export the full disk fits file
 import logging                # Log the errors and progress
 import time                   # Estimating the running time
 
@@ -54,17 +55,20 @@ def engine(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
                 # Additional information for processing the data
                 AR.input(img, obs_type)
 
+                # Append the database with the new information
+                AR.append_sql()
+
                 # Create figures and save png and pdf files
                 AR.save()
 
                 # Save the fits files
                 AR.savefits()
 
-                # Append the database with the new information
-                AR.append_sql()
-
             # Create the full disk image
             ssc.visual.plot.HMI_full_disk_plot(Active_Regions, img)
+
+            # Create the full disk image in fits format
+            ssc.tools.fits.HMI_full_disk_fits(Active_Regions, img)
 
             logging.info(obs_type + ' data.')
 

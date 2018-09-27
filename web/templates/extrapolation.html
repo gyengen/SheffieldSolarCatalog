@@ -1,0 +1,133 @@
+<html>
+	<head>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
+		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+		<script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		{{ att_visual_ar.js_resources|safe }}
+		{{ att_visual_ar.css_resources|safe }}
+
+		<title> SSC / Magnetic Extrapolation </title>
+	</head>
+
+	<body id = "wrapper_body">
+
+		<div id="fixedheader">
+			<div id="wrap_header">
+				<a href="/">
+					<div class='logo'>
+						<img class="logo_pic" src="/static/logos/ssc.png">
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<div id = "search">
+			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
+			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
+		</div>
+
+		<div id="wrapper_extrapolation">
+			<div class="windowBar" id = "wrapper_image_windowBar">
+				<div class="windowTitle"><p>Extrapolation</p></div>
+			</div>
+
+			<form method="POST">
+				<table class = "extrapolation_table">
+
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				  <tr>
+				    <td>
+						Layer Number:
+				    </td>
+
+				    <td>
+						<input type="text" name="Nz" value="{{ att_visual_ar.Nz }}">
+				    </td>
+
+				    <td>
+				    	<div class = "extrapolate_range_div">
+				 			<input name="slider" class="range-slider__range" type="range" value="{{ att_visual_ar.level }}" min="0" max="{{ att_visual_ar.range_max }}" oninput="document.getElementById('vl').innerHTML = this.value" >
+				 		</div>
+				 	</td>
+
+				 	<td>
+				 		Date/Time: {{ att_visual_ar.date }}
+				 	</td>
+
+				 </tr>
+
+				 <tr>
+				 	<td>
+				 		Scale Height:
+				 	</td>
+
+				 	<td>
+				 		<input type="text" name="zscale" value="{{ att_visual_ar.zscale }}">
+				 	</td>
+
+				 	<td>
+				 		Number of selected layer: <label id="vl">{{ att_visual_ar.level }}</label> / {{ att_visual_ar.range_max }}
+				 	</td>
+
+				 	<td>
+				 		NOAA AR: {{ att_visual_ar.NOAA }}
+				 	</td>
+
+				 </tr>
+
+				 <tr>
+				 	<td>
+				 		Alpha:
+				 	</td>
+
+				 	<td>
+				 		<input type="text" name="Alpha" value="0">
+				 	</td>
+
+				    <td>
+						Approximate altitude: {{ att_visual_ar.level_in_mm }} Mm
+				    </td>
+
+				 	<td>
+				 		Instrument: {{ att_visual_ar.Instrument }}
+				 	</td>
+
+
+				  </tr>
+
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				  <tr>
+				    <td colspan="4" class="extrapolate_execute_button">
+				    	<input type=submit value="Extrapolation" id="extrapolate_button" name="submit_button">
+				    	<input type=submit value="Download Data" id="extrapolate_download" name="submit_button">
+				    </td>
+				  </tr>
+
+				  <tr class="blank_row">
+    				<td colspan="4"></td>
+					</tr>
+
+				</table>				
+			</form>
+
+			<div id="AR_plot">{{ att_visual_ar.visual_div_ar|safe }}</div>
+
+		</div>
+
+		{{ att_visual_ar.visual_script_ar|safe }}
+
+	</body>
+</html>
+						

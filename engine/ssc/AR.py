@@ -11,13 +11,14 @@ import matplotlib.pyplot as plt
 from astropy import units as u
 import ssc.sunspot.coordinates
 import matplotlib.cm as mcm
+from astropy.io import fits
 import ssc.sunspot.pixel
 import ssc.sunspot.area
 import ssc.sunspot.sql
 import ssc.tools.util
 import sunpy.cm as scm
 import numpy as np
-import pyfits
+
 
 __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
@@ -27,6 +28,7 @@ class Sunspot_groups(object):
     NOAA = []
     SC = []
     ROI = []
+    HG_mask = []
 
     def __init__(self, NOAA, MASK, SC, ROI):
         self.NOAA = NOAA
@@ -47,11 +49,51 @@ class Sunspot_groups(object):
         fname = ssc.tools.util.fname(str(sub.date).split('.')[0],
                                      self.obs_type, self.NOAA, 'fits')
 
-        # Create the HDU, containing the observation
-        img = pyfits.PrimaryHDU()
-
         # Submap, focused on the region of interest
-        img.data = sub.data
+        data = np.array(sub.data, dtype=float)
+
+        # Separate umbra and penumbra data
+        for ctype in ['umbra', 'penumbra']:
+
+            if ctype is 'umbra':
+
+                # The coordinates of the umbra
+                sunspots = self.SC[0]
+
+                # Create the initial umbra mask
+                umbra_mask = np.zeros(np.shape(self.MASK[0]), dtype=int)
+
+            if ctype is 'penumbra':
+
+                # The coordinates of the penumbra
+                sunspots = self.SC[1]
+
+                # create the initial penumbra mask
+                penumbra_mask = np.zeros(np.shape(self.MASK[1]), dtype=int)
+
+            # Loop over the individual sunspots
+            for i, spot_position in enumerate(sunspots):
+
+                # Extract the x and y coordinates of the sunspot
+                x = spot_position[1]
+                y = spot_position[0]
+
+                # Create a dictionary from the data
+                spot = ssc.sunspot.pixel.spot_grid(sub, x, y)
+
+                # The background is zero
+                spot = np.where(spot != 0, i + 1, 0)
+
+                # Append the umbra mask, every spot has an id number
+                if ctype is 'umbra':
+                    umbra_mask = umbra_mask + spot
+
+                # Append the penumbra mask
+                if ctype is 'penumbra':
+                    penumbra_mask = penumbra_mask + spot
+
+        # Create the fits header first
+        hdr = fits.Header()
 
         # Start to fill the header
         for key, value in sub.meta.items():
@@ -67,31 +109,32 @@ class Sunspot_groups(object):
 
             # Add the useful elements to the header
             if bad_header is not True:
-                img.header[key] = value
+                hdr[key] = value
 
         # Additional fields, the associated NOAA number and source
-        img.header['source'] = 'Sheffield Solar Catalouge'
-        img.header['NOAA'] = self.NOAA
+        hdr['source'] = 'Sheffield Solar Catalog'
+        hdr['NOAA'] = self.NOAA
 
         # Bottom Left corner of ROI, x- and y-coordinates
-        img.header['bl_x'] = self.ROI[0][0]
-        img.header['bl_y'] = self.ROI[0][1]
+        hdr['bl_x'] = self.ROI[0][0]
+        hdr['bl_y'] = self.ROI[0][1]
 
         # Top Right corner of ROI, x- and y-coordinates
-        img.header['tr_x'] = self.ROI[1][0]
-        img.header['tr_y'] = self.ROI[1][1]
+        hdr['tr_x'] = self.ROI[1][0]
+        hdr['tr_y'] = self.ROI[1][1]
 
-        # Submap mask, same dimension as img
-        contour_mask = np.dstack((self.MASK[0], self.MASK[1]))
+        # Define the hdu list, header, image and the masks
+        hl = [fits.PrimaryHDU(header=hdr, data=data),
+              fits.ImageHDU(data=np.array(umbra_mask, dtype=np.uint16)),
+              fits.ImageHDU(data=np.array(penumbra_mask, dtype=np.uint16)),
+              fits.ImageHDU(data=np.array(self.HG_mask[0], dtype=np.float32)),
+              fits.ImageHDU(data=np.array(self.HG_mask[1], dtype=np.float32))]
 
-        # Create the 3D cube
-        img.data = np.dstack((img.data, contour_mask))
+        # Create the HDU list
+        hdu = fits.HDUList(hl)
 
-        # Rotationg the 3D cube, x- and y- dimension should be
-        # Solar-X and Solar-Y and z-dimension represent the layers
-        img.data = np.transpose(img.data, (2, 0, 1))
-
-        img.writeto(fname, clobber=True)
+        # Write the fits
+        hdu.writeto(fname, overwrite=True, output_verify='silentfix')
 
     def save(self):
 
@@ -160,7 +203,6 @@ class Sunspot_groups(object):
             sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
 
             # Loop over the individual sunspots
-
             for i, spot_position in enumerate(sunspots):
 
                 # Extract the x and y coordinates of the sunspot
@@ -180,7 +222,7 @@ class Sunspot_groups(object):
                 ry = (self.ROI[0][1], self.ROI[1][1]) * u.pixel
 
                 # Estimate the area
-                a = ssc.sunspot.area.Area_Calculation(self.img, rx, ry, sm)
+                a, self.HG_mask = ssc.sunspot.area.AreaC(self.img, rx, ry, sm)
 
                 # Calculate the spot's coordinate
                 c = ssc.sunspot.coordinates.Sunspot_coord(self.img, rx, ry, sm)

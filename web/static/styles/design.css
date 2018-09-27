@@ -1,3 +1,51 @@
+.extrapolation_table
+    {
+        table-layout: auto;
+        width: 100%;
+
+    }
+
+table.extrapolation_table tr td
+    {
+        line-height: 10px;
+        font-size: 11px;
+        column-width: auto;
+    }
+
+table.extrapolation_table input[type="text"] 
+{
+    width: 50px;
+    border: 1px solid #CCC;
+}
+
+.extrapolate_range_div
+    {
+        width: 50%;
+    }
+
+.blank_row
+    {
+        height: 10px !important; /* overwrites any other rules */
+        background-color: #FFFFFF;
+    }
+
+.extrapolate_execute_button
+    {
+        text-align: center;
+        line-height: 20px;
+    }
+
+#extrapolate_button
+    {
+        width: 15%;
+        background: #828282;
+        color: white;
+        border-radius: 8px;
+        border: none;
+    }
+
+
+
 /* Style the tab */
 .tab {
     overflow: hidden;
@@ -34,8 +82,6 @@
     border-top: none;
 }
 
-
-
 /* -----------------------------------------------------------Main Page PROPERTIES*/
 
 .plot_menu{
@@ -56,10 +102,10 @@
     cursor: all-scroll;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    background-color: #0e0400;
+    background-color: #251801;
     margin: 0;
     padding: 0;
-    border: 0.5px #c1c1c1;
+    border: 0.5px #dddfe2;
 
 }
 
@@ -92,6 +138,17 @@
     background-size: cover;
 }
 
+.full_button{
+    background-image: url("/static/icons/reopen.png");
+    background-size: cover;
+    height: 13px;
+    width: 13px;
+    margin-top: 1px;
+    margin-right: 5px;
+    float: left;
+    cursor: pointer;
+}
+
 /*.close_button:hover{
     background-image: url("/static/icons/close.png");
     background-size: cover;
@@ -115,9 +172,18 @@
     bottom:100px;
 }
 
+
+.Full_disk{
+    margin-top: 1px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 20px;
+    float: right;
+}
+
 .windowTitle{
     height: 100%;
-    width: 150px;
     display: table;
     margin-left: 20px;
     float: left;
@@ -438,12 +504,29 @@
     font-size:12px;
 }
 
+#footer_menu {
+    display: table;
+    table-layout: fixed;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+#footer_menu li {
+    display: table-cell;
+}
+#footer_menu a {
+    display: block;
+    border: 1px solid red;
+    text-align: center;
+    margin: 0 5px;
+    background: #999;
+}
 
 #search
     {
         position:fixed;
         top:0px;
-        left:500px;
+        left:450px;
         height: 50px;
         width:100%;
         padding-top: 12px;
@@ -455,7 +538,7 @@
 {
     font-size:12px;
     color: grey;
-    width:25%
+    width:25vw;
 
 
 
@@ -485,6 +568,14 @@
         height:70px;
         float: right;
         padding-right: 10px; 
+    }
+
+@media (max-width: 860px)
+    {
+        .logo
+            {
+                display: none;
+            }
     }
 
 .logo_pic
@@ -552,9 +643,8 @@
 }
 
 #topmenu ul li ul{
-
     width: 0px;
-    height: 50px;
+    height: 0px;
     padding: 0;
     margin: 0;
     text-align: left;
@@ -569,16 +659,20 @@
 
 .download_options{
     width: 80px;
-    height: 80%;
+    height: 40px;
     background-color: #ffffff;
     cursor: pointer;
     display: none;
-    z-index: 5;
+    z-index: 0;
     border-top: 0px solid #aaabac;
     border-bottom: 0px solid #aaabac;
     border-left: 0px solid #aaabac;
     border-right: 0px solid #aaabac;
+}
 
+.download_options:hover{
+    background-color: #000000;
+    color: white;
 }
 
 
@@ -705,16 +799,12 @@ body
 
 #wrapper_body
     {
-        /*background-image: url(/static/bg.png);
-        background-size: 1000px 1000px;
-        background-position: center;
-        background-repeat: no-repeat;*/
         background-color: #e9ebee;
-        /*background-size: contain; */
-        padding: 0;
         margin-top: 50px;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
+        overflow-x: hidden;
+
     }
 /* ----------------------MENU BAR PROPERTIES*/
 #wrapper_menu_bar
@@ -748,13 +838,26 @@ body
 
 /* ----------------------QUERY TABLE PROPERTIES*/
 
+#buttom_color{
+
+    color:#4b82a5;
+
+
+}
+
+#selected_row{
+    color: #b72130;
+
+}
+
+#unselected_row{
+    color: black;
+}
 
 #wrapper_table_block{
-    width: 71%;
-    height: 180px;
-    left: 14.5%;
-    top: 2%;
-    border:0px solid black;
+    width: 71vw;
+    left: 14.5vw;
+    top: 10px;
     float: left;
     z-index: 1;
 }
@@ -768,11 +871,12 @@ body
     /*margin-left: 26px;*/
 }
 
-#wrapper_table_info button{
-    background-color: white;
-    border:none;
+#wrapper_table button{
+    background-color: inherit;
+    border: 0px;
     color: blue;
     cursor: pointer;
+
 }
 
 #wrapper_table
@@ -790,19 +894,39 @@ body
         line-height: 4px;
     }   
 
+#wrapper_table tr:nth-child(even)
+    {
+      background-color: #e9ebee;
+    }
+
 #wrapper_table th
     {
         font-variant: small-caps;
-        text-align: left;
-        color: #333333;
+        text-align: right;
         font-weight: bold;
         padding: 10px 15px;
     }
 
 #wrapper_table td
     {
-        padding: 5px 7px;
-        transition: all 1000ms;
+        padding: 4px 3px;
+    }
+
+#header_table
+    {
+        overflow-y:hidden;
+        overflow-x:hidden;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        font-size: 11px;
+
+    }
+
+#header_table tr:nth-child(even)
+    {
+      background-color: #e9ebee;
+
     }
 
 /* ----------------------QUERY TABLE PROPERTIES*/
@@ -823,30 +947,49 @@ body
         margin:auto;
     }*/
 
+#wrapper_extrapolation
+    {
+        background-color: #ffffff;
+        width: 71vw;
+        font-size: 11px;
+        z-index: 1;
+        margin-left: 14.5vw;
+        margin-top: 60px;
+    }
+
+#wrapper_image_full
+    {
+        background-color: #ffffff;
+        width: 71vw;
+        height: 68vw;
+        font-size: 11px;
+        z-index: 1;
+        margin-left: 14.5vw;
+        margin-top: 60px;
+    }
+
 #wrapper_image
     {
         background-color: #ffffff;
         width: 35vw;
         height: 35vw;
         font-size: 11px;
-        border:0px solid black;
-        z-index: 55;
+        z-index: 1;
         float: right;
-        top:10px;
-        right:14.5%;
+        margin-top:10px;
+        right:14.5vw;
     }
 
 #wrapper_image2
     {
-        background-color: #e9ebee;
+        background-color: #ffffff;
         width: 35vw;
         height: 35vw;
         font-size: 11px;
-        border:0.15px solid black;
-        z-index: 55;
+        z-index: 1;
         float: left;
-        top:10px;
-        left:14.5%;
+        margin-top:10px;
+        left:14.5vw;
     }
 
 #image{
@@ -902,11 +1045,19 @@ body
         top: 50px;
         left: 0px;
         background-color: #ffffff;
-        z-index: 49;
+        z-index: 0;
         border: 0px solid;
         border-color: #aaabac;
         display: none; 
     }
+
+.side_menu_header{
+    width: 90px;
+}
+
+.side_menu_checkbox{
+    width: 25px;
+}
 
 #plotting_menu
     {
@@ -915,12 +1066,26 @@ body
         top: 50px;
         margin-left: 55px;
         background-color: #ffffff;
-        z-index: 49;
+        z-index: 0;
         border: 0px solid;
         border-color: #aaabac;
         height: 75px;
         display: none; 
     }
+
+#download_menu
+{
+    position: fixed;
+    width: 290px;
+    top: 50px;
+    margin-left: 155px;
+    background-color: #ffffff;
+    z-index: 49;
+    border: 0px solid;
+    border-color: #aaabac;
+    height: 75px;
+    display: none; 
+}
 
 #filter_menu{
     width: 290px;
@@ -1138,14 +1303,6 @@ body
         width:600px;
         font-weight: bold;
     }
-
-.astext {
-    background:none;
-    border:none;
-    margin:0;
-    padding:0;
-    cursor: pointer;
-}
 
 tbody:hover tr:hover td
     {

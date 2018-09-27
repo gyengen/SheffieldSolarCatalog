@@ -9,6 +9,7 @@ flask.py
 
 from flask import Flask, render_template, request, g
 from gevent.pywsgi import WSGIServer
+from .python.extrapolation import *
 from bokeh.resources import INLINE
 from .python.live_plot import *
 from .python.utility import *
@@ -17,6 +18,7 @@ from pathlib import Path
 import sqlite3
 import json
 import os
+import datetime
 
 monkey.patch_all()
 
@@ -33,16 +35,24 @@ class att:
     block_status = []
 
     # Default sql query command
-    sql_cmd = "SELECT * FROM magnetogram_sunspot"
+    sql_cmd = "SELECT * FROM continuum_sunspot"
 
     # start date, end date, start time, end time
-    sd, ed, st, et = '', '', '', ''
+    date_formate = '%Y-%m-%d'
+    time_formate = '%H:%M:%S'
+
+    sd, st = '1993-06-01','06:06:06'
+    ed = datetime.datetime.now().strftime(date_formate)
+    et = datetime.datetime.now().strftime(time_formate)
 
     # columns of the table
     columns = 0
 
     # rows of the table
     rows = 0
+
+    # selected row id
+    selected_row = 0
 
     # list of all attributes in the table
     attributes = []
@@ -137,6 +147,69 @@ class att_visual:
 
     att_plot.css_resources = ''
 
+
+class att_visual_full:
+
+    visual_div_full = ''
+
+    visual_script_full = ''
+
+    js_resources = ''
+
+    css_resources = ''
+
+    rows = 0
+
+    columns = 0
+
+    header_t = []
+
+class att_visual_ar:
+
+    visual_div_ar = ''
+
+    visual_script_ar = ''
+
+    js_resources = ''
+
+    css_resources = ''
+
+    range_max = 30
+
+    # Number of equally spaced grid points in the z direction
+    Nz = 30
+
+    # Sets the z-scale (1.0 = same scale as the x,y axes)
+    zscale = 1
+
+    # Z layer for visualisation
+    level = 0
+
+    level_in_mm = 0
+
+    ex_cube = 0
+
+    date = ''
+
+    Instrument = ''
+
+    NOAA = ''
+
+    stream_plot = ''
+
+    path = ''
+
+    fname = ''
+
+class param:
+
+    path_AR = ''
+
+    path_full = ''
+
+    row = []
+
+
 # Define global variables --------------------------------------------------'''
 
 
@@ -146,6 +219,8 @@ app = Flask(__name__)
 app.add_template_global(att, 'att')
 app.add_template_global(att_plot, 'att_plot')
 app.add_template_global(att_visual, 'att_visual')
+app.add_template_global(att_visual_ar, 'att_visual_ar')
+app.add_template_global(att_visual_full, 'att_visual_full')
 
 
 @app.before_request
@@ -169,13 +244,132 @@ def index():
     # The index page is static but handled by Flask
     return render_template('index.html')
 
+@app.route('/download.html')
+def download_extrapolation():
+    return render_template('download.html')
+
+
+@app.route('/extrapolation.html', methods=['GET', 'POST'])
+def extrapolation():
+
+    # Make sure that the magnetogram observation is selected
+    path_AR = param.path_AR.replace('continuum', 'magnetogram')
+
+    # Open the fits file, AR
+    hdulist = fits.open(path_AR)
+
+    # Fix the broken fits
+    hdulist.verify('fix')
+
+    # Save the data
+    obs = hdulist[0].data
+    header = hdulist[0].header
+
+    # Close the fits files
+    hdulist.close()
+
+    # NOAA number of the observation
+    att_visual_ar.NOAA = header['NOAA']
+
+    # Instrument and type
+    att_visual_ar.Instrument = header['TELESCOP'] + ' - ' + header['CONTENT']
+
+    # Date of observation
+    att_visual_ar.date = header['DATE']
+
+    # Setup few variables
+    extrapolate = True
+    downloading = False
+
+    # Check the request method
+    if request.method == 'POST':
+
+        try:
+
+            if (att_visual_ar.Nz == int(request.form['Nz']) and
+               att_visual_ar.zscale == int(request.form['zscale'])):
+                extrapolate = False
+
+            if request.form['submit_button'] == 'Download Data':
+                downloading = True
+
+            # Number of equally spaced grid points in the z direction
+            att_visual_ar.Nz = int(request.form['Nz'])
+
+            # Sets the z-scale (1.0 = same scale as the x,y axes)
+            att_visual_ar.zscale = int(request.form['zscale'])
+
+            # Z layer for visualisation
+            att_visual_ar.level = int(request.form['slider'])
+
+            # Z layer for visualisation in Mm
+            att_visual_ar.level_in_mm = format(att_visual_ar.level * 0.35, '.4f')
+
+        except Exception:
+            pass
+
+    # Magnetic Field Extrapolation
+    if extrapolate is True:
+        att_visual_ar.ex_cube = PFFF(obs, nz=att_visual_ar.Nz,
+                                     zscale=att_visual_ar.zscale)
+
+    if downloading is True:
+
+        hdf5_path, hdf5_fname = generate_hdf5(att_visual_ar.ex_cube,
+                                              att_visual_ar.NOAA,
+                                              att_visual_ar.date)
+
+        att_visual_ar.path = hdf5_path
+        att_visual_ar.fname = hdf5_fname
+
+        return redirect(url_for('download_extrapolation'))
+
+    # Range Bar maximum value for the HTML
+    att_visual_ar.range_max = int(att_visual_ar.Nz - 1)
+
+    # Visualise the active region
+    script, div = Extrapolation_visual(att_visual_ar.ex_cube['Bz'][att_visual_ar.level])
+
+    # Save the Bokeh scripts
+    att_visual_ar.visual_div_ar = div
+    att_visual_ar.visual_script_ar = script
+
+    # Store the css amd JavaSrcipt resources
+    att_visual_ar.js_resources = INLINE.render_js()
+    att_visual_ar.css_resources = INLINE.render_css()
+
+    return render_template('extrapolation.html')
+
+
+@app.route('/full_disk.html', methods=['GET', 'POST'])
+def full_disk():
+
+    # Full disk visualisation in full screen
+    script, div, header = Create_live_fulldisk(param.path_full,
+                                               param.row, True)
+
+    # Save the Bokeh scripts
+    att_visual_full.visual_div_full = div
+    att_visual_full.visual_script_full = script
+
+    # Store the css amd JavaSrcipt resources
+    att_visual_full.js_resources = INLINE.render_js()
+    att_visual_full.css_resources = INLINE.render_css()
+
+    # Additional info for displaying the fits header
+    att_visual_full.header_t = header
+    att_visual_full.rows = len(header)
+    att_visual_full.columns = len(header[0])
+
+    return render_template('full_disk.html')
+
 
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
 
     # Default commands
-    c1 = "SELECT * FROM magnetogram_sunspot"
-    c2 = "SELECT * FROM continuum_sunspot"
+    c1 = "SELECT * FROM continuum_sunspot"
+    c2 = "SELECT * FROM magnetogram_sunspot"
 
     # Get the whole header in the complete table
     table_all_1, header_all_1 = Create_table(g.db.execute(c1))
@@ -188,7 +382,7 @@ def query():
     if request.method == 'POST':
 
         # clear the error message
-        error_message = ''
+        att.error_message = ''
 
         if 'sunspot_type' in request.form:
 
@@ -400,7 +594,7 @@ def query():
     else:
 
         # Use the default sql command, display every sunspot
-        att.sql_cmd = "SELECT * FROM magnetogram_sunspot"
+        att.sql_cmd = c1
         att.sql_attr = '*'
 
     # Clear sql_table
@@ -415,7 +609,7 @@ def query():
     except Exception as e:
 
         # Error if sending failed
-        error_message = error_message + \
+        att.error_message = att.error_message + \
             "<p> -- Error happened when retrieving data.<br></p><br>"
 
         # Construct the sql command
@@ -437,7 +631,7 @@ def query():
     except Exception as e:
 
         # Error if the table is empyt
-        error_message = error_message + \
+        att.error_message = att.error_message + \
             "<p> -- No data detected based on your filer.<br></p><br>"
 
         # Default sql command
@@ -502,28 +696,35 @@ def query():
     # Create the AR and Full disk plots
     if keyword_check(request.form, 'AR_ID') is True:
 
-        row = table[int(request.form['AR_ID'])]
+        # The index of the selected row
+        att.selected_row = int(request.form['AR_ID'])
 
-        # Define the filename of the associated image
-        path_AR, path_full = html_image_path(row, os.getcwd())
+    # Define the selected row
+    param.row = table[att.selected_row]
 
-        NOAA = str(table[int(request.form['AR_ID'])][4])
-        script_html, div_html = Create_live_AR(path_AR, NOAA)
+    # Define the filename of the associated image
+    param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
 
-        #script_html_full, div_html_full = Create_live_fulldisk(path_full)
+    # NOAA = str(table[int(request.form['AR_ID'])][4])
+    script_html, div_html = Create_live_AR(param.path_AR,
+                                           param.path_full, table, param.row)
 
-        #att_visual.visual_div_full = div_html_full
-        #att_visual.visual_script_full = script_html_full
+    script_html_full, div_html_full = Create_live_fulldisk(param.path_full,
+                                                           param.row, False)
 
-        att_visual.visual_div = div_html
-        att_visual.visual_script = script_html
+    att_visual.visual_div_full = div_html_full
+    att_visual.visual_script_full = script_html_full
 
-        att_visual.js_resources = INLINE.render_js()
-        att_visual.css_resources = INLINE.render_css()
+    att_visual.visual_div = div_html
+    att_visual.visual_script = script_html
+
+    att_visual.js_resources = INLINE.render_js()
+    att_visual.css_resources = INLINE.render_css()
 
     # Display the plot(s)
     if keyword_check(request.form, 'plot_type') is True:
 
+        global script, div
         # Define some local variables
         script = ''
         active_bokeh = []
@@ -563,7 +764,7 @@ def query():
 
             # Error if no data, handle_the_exception_somehow
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating line plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -591,7 +792,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating scatter plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -609,7 +810,6 @@ def query():
         # Histogram
         elif request.form['plot_type'] == 'histogram':
             try:
-
                 # Create the actual plot and save the Bokeh script
                 script, div = Create_live_histogram_plot(table, header, v,
                                                          density, fit, bin_n,
@@ -617,9 +817,10 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating histogram plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                print(str(e))
 
             # Set few varaibles
             else:
@@ -634,7 +835,6 @@ def query():
 
         # Bivariate Histogram
         elif request.form['plot_type'] == 'biv_hist':
-
             try:
 
                 # Create the actual plot and save the Bokeh script
@@ -646,7 +846,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                error_message = error_message + \
+                att.error_message = att.error_message + \
                     "<p> -- Creating bivariate plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -663,7 +863,7 @@ def query():
 
         # Create the div frame for the plots
         if att_plot.plot_status == 1:
-
+            print(att_plot.plot_type)
             # Create div_frame and bokeh_script
             div_frame, div_minimize_block, bokeh_script = Bokehscript(att_plot,
                                                                       div,
@@ -721,17 +921,17 @@ def query():
                 new_bokeh_script_list = new_bokeh_script_list.append(bs)
 
         # Position of the plot windows
-        list_length = len(att_plot.div_frame_list)
-        if list_length != 0:
-            position_left = []
-            position_top = []
-            for x in range(0, list_length):
+        att.list_length = len(att_plot.div_frame_list)
+        if att.list_length != 0:
+            att.position_left = []
+            att.position_top = []
+            for x in range(0, att.list_length):
 
                 # Define the corners of the window
                 left = 100 + 20 * x
                 top = 20 * x
-                position_left.append(left)
-                position_top.append(top)
+                att.position_left.append(left)
+                att.position_top.append(top)
 
     # Render the front end
     return render_template('workstation.html',

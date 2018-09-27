@@ -9,7 +9,7 @@ __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
 
 
-def Area_Calculation(observation, rangex, rangey, mask):
+def AreaC(observation, rangex, rangey, mask):
     '''Calculate the real area of a feature (e.g sunspot umbra or penumbra).
     The area of the feature will be corrected for foreshortening.
     The total area will be the summed up areas of the value True or 1 pixels.
@@ -73,7 +73,6 @@ def Area_Calculation(observation, rangex, rangey, mask):
     <Quantity 676269521.7399449 km2>]'''
 
     # Check the rotation matrix
-
     m = np.array(observation.rotation_matrix, dtype=int).flatten()
     if set(m) != set([1, 0, 0, 1]):
         warnings.warn('The rotation matrix corresponds to a non\
@@ -140,4 +139,4 @@ def Area_Calculation(observation, rangex, rangey, mask):
     # Convert feature size to km2
     A2 = S * (A0 / S1)
 
-    return [A0, A1, A2]
+    return [A0, A1, A2], [b_mask, l_mask]

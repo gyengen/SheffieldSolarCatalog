@@ -1,3 +1,9 @@
+
+function openInNewTab(url) {
+  var win = window.open(url, '_blank');
+  win.focus();
+}
+
 function createAndDownloadFile(fileName, content) {
     var aTag = document.createElement('a');
     var blob = new Blob([content]);
@@ -26,17 +32,17 @@ function changeImage(number){
 function showmore(){
   document.getElementById("filter_menu_showmore").style.display="block";
   document.getElementById("show_button").style.display="none";
-  document.getElementById("filter_menu").style.height=460;
-  document.getElementById("side_menu").style.top="10%";
-  document.getElementById("plotting_menu").style.top="10%";
+  document.getElementById("filter_menu").style.height=435;
+  // document.getElementById("side_menu").style.top="10%";
+  // document.getElementById("plotting_menu").style.top="10%";
 }
 
 function hide(){
   document.getElementById("filter_menu_showmore").style.display="none";
   document.getElementById("show_button").style.display="block";
   document.getElementById("filter_menu").style.height=195;
-  document.getElementById("side_menu").style.top="20%";
-  document.getElementById("plotting_menu").style.top="20%";
+  // document.getElementById("side_menu").style.top="20%";
+  // document.getElementById("plotting_menu").style.top="20%";
 }
 
 function change_sunspot_type(){     
@@ -64,54 +70,60 @@ function change_sunspot_type(){
 function change_plot_type()
 {
    var type = $("#plot_type").val();
-   if (type == "scatter_2d")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".scatter_2d_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".scatter_2d_plot").removeClass("plot_menu_shown");
-      }
-  if (type == "histogram")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".histogram_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".histogram_plot").removeClass("plot_menu_shown");
-      }
-      
-      
-      
-  if (type == "biv_hist")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".biv_histogram_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".biv_histogram_plot").removeClass("plot_menu_shown");
-      }
-      
-      
-      
-      
-      
-  if (type == "line")
-      {
-         $(".wrapper_menu_2").css("height","140px");
-         $(".line_plot").addClass("plot_menu_shown")
-      }
-  else
-      {
-         $(".wrapper_menu_2").css("height","90px");
-         $(".line_plot").removeClass("plot_menu_shown");
-      } 
+   if (type != "none" && type != "kde") {
+     if (type == "scatter_2d")
+        {
+           $("#plotting_menu").css("height","155px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".scatter_2d_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".scatter_2d_plot").removeClass("plot_menu_shown");
+        }
+      if (type == "histogram")
+        {
+           $("#plotting_menu").css("height","180px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".histogram_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".histogram_plot").removeClass("plot_menu_shown");
+        }
+        
+      if (type == "biv_hist")
+        {
+           $("#plotting_menu").css("height","141px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".biv_histogram_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".biv_histogram_plot").removeClass("plot_menu_shown");
+        }
+
+      if (type == "line")
+        {
+           $("#plotting_menu").css("height","136px");
+           $(".wrapper_menu_2").css("height","140px");
+           $(".line_plot").addClass("plot_menu_shown")
+        }
+      else
+        {
+           $(".wrapper_menu_2").css("height","90px");
+           $(".line_plot").removeClass("plot_menu_shown");
+        } 
+    }else{
+      $("#plotting_menu").css("height","75px");
+      $(".line_plot").removeClass("plot_menu_shown");
+      $(".biv_histogram_plot").removeClass("plot_menu_shown");
+      $(".histogram_plot").removeClass("plot_menu_shown");
+      $(".scatter_2d_plot").removeClass("plot_menu_shown");
+    }
 };
  $(function(){     
     $("#selectall_button").click(function(){
@@ -137,17 +149,18 @@ $(function () {
   $('#database_button').click(function () {
     if ($(this).hasClass('menu-open')) {
       $(this).removeClass('menu-open');
-      $('#filter_menu_showmore').css('display','none');
-      $('#show_button').css('display','block');
-      $('#filter_menu').css('height','195');
-
-
       $('#side_menu').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
       $(this).addClass('menu-open');
-      $('#side_menu').fadeIn(0);
+      $('#side_menu').fadeIn(100);
       $('#plotting_menu').fadeOut(0);
+      $('#plot_button').removeClass('plot-open');
       $('.download_options').fadeOut(0);
+      $('#download_button').removeClass('open');
+      $('#side_menu').css('z-index','100');
+      $('#plotting_menu').css('z-index','0');
+      $('.download_options').css('z-index','0');
     }
   })
 });
@@ -157,25 +170,37 @@ $(function () {
     if ($(this).hasClass('plot-open')) {
       $(this).removeClass('plot-open');
       $('#plotting_menu').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
       $(this).addClass('plot-open');
-      $('#plotting_menu').fadeIn(0);
+      $('#plotting_menu').fadeIn(100);
+      $('#database_button').removeClass('menu-open');
       $('#side_menu').fadeOut(0);
       $('.download_options').fadeOut(0);
+      $('#download_button').removeClass('open');
+      $('#plotting_menu').css('z-index','100');
+      $('#side_menu').css('z-index','0');
+      $('.download_options').css('z-index','0');
     }
   })
 });
 
 $(function () {
   $('#download_button').click(function () {
-      if ($(this).hasClass('options-open')) {
-      $(this).removeClass('options-open');
+      if ($(this).hasClass('open')) {
+      $(this).removeClass('open');
       $('.download_options').fadeOut(0);
+      $(this).css('z-index','0');
     } else {
-      $(this).addClass('options-open');
-      $('.download_options').fadeIn(0);
+      $(this).addClass('open');
+      $('.download_options').fadeIn(100);
       $('#side_menu').fadeOut(0);
+      $('#database_button').removeClass('menu-open');
       $('#plotting_menu').fadeOut(0);
+      $('#plot_button').removeClass('plot-open');
+      $('.download_options').css('z-index','100');
+      $('#side_menu').css('z-index','0');
+      $('#plotting_menu').css('z-index','0');
     }
   })
 });
@@ -203,13 +228,12 @@ $(function () {
 $(function() {
     $( "#wrapper_image" ).draggable({ 
       cursor: "move",
-      cancel: "#image",
-      containment: "#wrapper_body"
+      handle:'#wrapper_image_windowBar'
     });
     $( "#wrapper_image2" ).draggable({ 
       cursor: "move",
       cancel: "#image",
-      containment: "#wrapper_body"
+      handle:'#wrapper_image_windowBar'
     });
     $( "#wrapper_table_block" ).draggable({ 
       cursor: "move",
@@ -225,15 +249,7 @@ $(function() {
       handles:'all',
       autoHide:true
     });
-    $( "#wrapper_image" ).resizable({
-      handles:'all',
-      autoHide:true
-    });
-    $( "#wrapper_image2" ).resizable({
-      handles:'all',
-      autoHide:true
-    });
-      });
+});
 
 
 
