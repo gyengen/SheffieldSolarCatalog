@@ -10,6 +10,7 @@ flask.py
 from flask import Flask, render_template, request, g
 from gevent.pywsgi import WSGIServer
 from .python.extrapolation import *
+from flask import redirect, url_for
 from bokeh.resources import INLINE
 from .python.live_plot import *
 from .python.utility import *
@@ -41,9 +42,8 @@ class att:
     date_formate = '%Y-%m-%d'
     time_formate = '%H:%M:%S'
 
-    sd, st = '1993-06-01','06:06:06'
-    ed = datetime.datetime.now().strftime(date_formate)
-    et = datetime.datetime.now().strftime(time_formate)
+    sd, st = '',''
+    ed, et = '', ''
 
     # columns of the table
     columns = 0
@@ -64,7 +64,7 @@ class att:
     order = ''
 
     # list of attributes that should be included in the table
-    sql_attr = ''
+    sql_attr = '*'
 
     # first part of the query
     sql_head = ''
@@ -368,12 +368,16 @@ def full_disk():
 def query():
 
     # Default commands
-    c1 = "SELECT * FROM continuum_sunspot"
-    c2 = "SELECT * FROM magnetogram_sunspot"
+    c1 = "SELECT * FROM magnetogram_sunspot"
+    c2 = "SELECT * FROM continuum_sunspot"
 
     # Get the whole header in the complete table
     table_all_1, header_all_1 = Create_table(g.db.execute(c1))
     table_all_2, header_all_2 = Create_table(g.db.execute(c2))
+
+    # Read the first and last data and time form the SQL data
+    att.sd, att.st = table_all_1[0][0], table_all_1[0][1]
+    att.ed, att.et = table_all_1[-1][0], table_all_1[-1][1]
 
     # css command
     statistic_height = 0
@@ -418,6 +422,7 @@ def query():
             # Read the sql attributes
             else:
                 for a in range(len(att.attributes)):
+                    print('HERE: ',a, att.attributes[a])
                     att.sql_attr = att.sql_attr + att.attributes[a] + ','
                 att.sql_attr = att.sql_attr + 'p_key'
 
@@ -500,15 +505,20 @@ def query():
                 if att.st != '' and att.et != '':
 
                     # sql command
+                    print('dfsfdsfdsfdsfdsfdsfsdfsfds: ', att.sql_head)
+
                     att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE ((DATE_OBS > '" + att.sd + \
-                        "' AND DATE_OBS <'" + att.ed + "') OR (DATE_OBS='" + \
-                        att.sd + "' AND Time_obs>'" + att.st + \
-                        "' AND DATE_OBS <'" + att.ed + "') OR (DATE_OBS>'" + \
-                        att.sd + "' AND Time_obs<'" + att.et + \
+                        " WHERE ((DATE_OBS >= '" + att.sd + \
+                        "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS='" + \
+                        att.sd + "' AND Time_obs>='" + att.st + \
+                        "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS>='" + \
+                        att.sd + "' AND Time_obs<='" + att.et + \
                         "' AND DATE_OBS='" + att.ed + "'))" + \
                         att.sql_values + order_info
 
+
+
+                # Probably not used *------------------------------------------------------------
                 # if start time is empty
                 elif att.st == '' and att.et != '':
 
@@ -524,7 +534,7 @@ def query():
                 elif att.st != '' and att.et == '':
 
                     # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
+                    att.sql_cmd = att.sql_head + att.p + \
                         " WHERE DATE_OBS >= '" + att.sd + "' AND " + \
                         "Time_obs >= '" + att.st + "' AND " + \
                         "DATE_OBS <= '" + att.ed + "'" + att.sql_values + \
@@ -579,6 +589,11 @@ def query():
                         " WHERE DATE_OBS <= '" + att.ed + "'" + \
                         att.sql_values + order_info
 
+            # Probably not used *------------------------------------------------------------
+
+
+
+
             else:
                 if att.sql_values == '' or att.sql_values == ' END':
 
@@ -591,12 +606,7 @@ def query():
                     att.sql_cmd = att.sql_head + att.sunspot_type + \
                         " WHERE " + att.sql_values + order_info
 
-    else:
-
-        # Use the default sql command, display every sunspot
-        att.sql_cmd = c1
-        att.sql_attr = '*'
-
+    print(att.sql_cmd)
     # Clear sql_table
     sql_table = []
 
@@ -610,10 +620,10 @@ def query():
 
         # Error if sending failed
         att.error_message = att.error_message + \
-            "<p> -- Error happened when retrieving data.<br></p><br>"
+            "<p> -- Error occured when retrieving data.<br></p><br>"
 
-        # Construct the sql command
-        att.sql_cmd = att.sql_head + att.sunspot_type + order_info
+        # Default sql command if something is wrong
+        att.sql_cmd = "SELECT * FROM continuum_sunspot"
 
         # Execute the query
         sql_table = g.db.execute(att.sql_cmd)
@@ -635,7 +645,7 @@ def query():
             "<p> -- No data detected based on your filer.<br></p><br>"
 
         # Default sql command
-        att.sql_cmd = att.sql_head + att.sunspot_type + order_info
+        att.sql_cmd = "SELECT * FROM continuum_sunspot"
 
         # Execute the command
         sql_table = g.db.execute(att.sql_cmd)
@@ -666,6 +676,11 @@ def query():
     for index in range(0, len(header_all_2)):
         if index >= 16:
             att.header2_2.append(header_all_2[index])
+
+
+    print('--------------------------------')
+    print(header)
+    print(att.header2)
 
     # Create data for downloading
     data = []
@@ -700,14 +715,23 @@ def query():
         att.selected_row = int(request.form['AR_ID'])
 
     # Define the selected row
-    param.row = table[att.selected_row]
+    if att.sunspot_type == 'magnetogram_sunspot':
+        # Execute the query
+        param.row = table_all_1[att.selected_row]
+        table_live =table_all_1
+
+    else:
+        # Execute the query
+        param.row = table_all_2[att.selected_row]
+        table_live = table_all_2
+
 
     # Define the filename of the associated image
     param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
 
     # NOAA = str(table[int(request.form['AR_ID'])][4])
     script_html, div_html = Create_live_AR(param.path_AR,
-                                           param.path_full, table, param.row)
+                                           param.path_full, table_live, param.row)
 
     script_html_full, div_html_full = Create_live_fulldisk(param.path_full,
                                                            param.row, False)
@@ -863,7 +887,6 @@ def query():
 
         # Create the div frame for the plots
         if att_plot.plot_status == 1:
-            print(att_plot.plot_type)
             # Create div_frame and bokeh_script
             div_frame, div_minimize_block, bokeh_script = Bokehscript(att_plot,
                                                                       div,

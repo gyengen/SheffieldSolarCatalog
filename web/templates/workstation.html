@@ -209,14 +209,15 @@
 								<td>
 									<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="change_sunspot_type();">
 										{%if att.sunspot_type == 'magnetogram_sunspot' %}
+										<option value="continuum">Continuum</option>
 										<option value="magnetogram" selected="selected">Magnetogram</option>
-										<option value="continuum">Continuum</option>
 										{%elif att.sunspot_type == 'continuum_sunspot' %}
-										<option value="magnetogram">Magnetogram</option>
 										<option value="continuum" selected="selected">Continuum</option>
-										{% else %}
 										<option value="magnetogram">Magnetogram</option>
+										{% else %}
 										<option value="continuum">Continuum</option>
+										<option value="magnetogram">Magnetogram</option>
+
 										{% endif %} 
 									</select>
 								</td>
@@ -246,9 +247,9 @@
 								</td>
 								<td class="side_menu_checkbox">
 									{% if att.header2[num] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
+											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
 										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}"/>
+											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" />
 										{% endif %}
 								</td>
 								<td class="side_menu_header">
@@ -256,9 +257,9 @@
 								</td>
 								<td class="side_menu_checkbox">
 									{% if att.header2[num+1] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
+											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
 										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}"/>
+											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}"/>
 										{% endif %}
 								</td>
 							</tr>
