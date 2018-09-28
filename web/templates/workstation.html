@@ -209,25 +209,35 @@
 								<td>
 									<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="change_sunspot_type();">
 										{%if att.sunspot_type == 'magnetogram_sunspot' %}
+										<option value="continuum">Continuum</option>
 										<option value="magnetogram" selected="selected">Magnetogram</option>
-										<option value="continuum">Continuum</option>
 										{%elif att.sunspot_type == 'continuum_sunspot' %}
-										<option value="magnetogram">Magnetogram</option>
 										<option value="continuum" selected="selected">Continuum</option>
-										{% else %}
 										<option value="magnetogram">Magnetogram</option>
+										{% else %}
 										<option value="continuum">Continuum</option>
+										<option value="magnetogram">Magnetogram</option>
+
 										{% endif %} 
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<td>
-									<p>Sorted by: &nbsp</p>
+									<p>Sorted by:&nbsp</p>
 								</td>
 								<td>
-									<select name="order_by">
-										{%for name in header%}
+									<select name="continnum_order_by" id="c_order_by">
+										{%for name in header_all_2%}
+										{%if name == att.order%}
+											<option value="{{ name }}" selected="selected"> {{ name }} </option>
+										{%else%}
+											<option value="{{ name }}"> {{ name }} </option>
+										{% endif %}
+										{% endfor %}
+									</select>
+									<select name="magnetogram_order_by" id="m_order_by" class="hide">
+										{%for name in header_all_1%}
 										{%if name == att.order%}
 											<option value="{{ name }}" selected="selected"> {{ name }} </option>
 										{%else%}
@@ -238,6 +248,14 @@
 								</td>
 							</tr>
 						</table>
+
+						<div class="hide">
+							{% for num in range(0,5,2) %}
+									<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
+									<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
+							{% endfor %}
+						</div>		
+
 						<table width="98%">
 							{% for num in range(0,5,2) %}
 							<tr>
@@ -246,9 +264,9 @@
 								</td>
 								<td class="side_menu_checkbox">
 									{% if att.header2[num] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
+											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
 										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num] }}"/>
+											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" />
 										{% endif %}
 								</td>
 								<td class="side_menu_header">
@@ -256,9 +274,9 @@
 								</td>
 								<td class="side_menu_checkbox">
 									{% if att.header2[num+1] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
+											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
 										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}"/>
+											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}"/>
 										{% endif %}
 								</td>
 							</tr>
@@ -267,7 +285,7 @@
 
 						<div id="filter_menu_showmore">
 							<table width="98%">
-								{% for num in range(4,9,2) %}
+								{% for num in range(6,9,2) %}
 								<tr>
 									<td class="side_menu_header">
 										{{ att.header2[num] }} 
@@ -931,10 +949,12 @@
     <script>
     	$(function(){
     		if ("{{att.sunspot_type}}"=="magnetogram_sunspot") {
+    			$("#c_order_by").addClass("hide")
 			    $("#type1_header").css("display","block");
 				$("#type2_header").css("display","none");
     		}
     		else if ("{{att.sunspot_type}}"=="continuum_sunspot"){
+    			$("#m_order_by").addClass("hide")
     			$("#type2_header").css("display","block");
     			$("#type1_header").css("display","none");
     		}

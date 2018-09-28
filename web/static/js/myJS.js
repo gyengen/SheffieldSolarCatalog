@@ -48,6 +48,8 @@ function hide(){
 function change_sunspot_type(){     
   var type = $("#sunspot_type").val();
   if (type == "magnetogram") {
+    $("#c_order_by").addClass("hide")
+    $("#m_order_by").removeClass("hide")
     $("[name='attributes']").prop("checked",true); 
     $("[class='magnetogram']").removeAttr("disabled");
     $("[class='magnetogram']").prop("checked",true);
@@ -57,6 +59,8 @@ function change_sunspot_type(){
     $("#type2_header").css("display","none");
   }
   else if (type == "continuum") {
+    $("#m_order_by").addClass("hide")
+    $("#c_order_by").removeClass("hide")
     $("[name='attributes']").prop("checked",true); 
     $("[class='continuum']").removeAttr("disabled");
     $("[class='continuum']").prop("checked",true);
