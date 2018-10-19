@@ -1,3 +1,7 @@
+.hide{
+    display: none;
+}
+
 .extrapolation_table
     {
         table-layout: auto;

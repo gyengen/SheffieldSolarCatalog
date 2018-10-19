@@ -31,9 +31,9 @@ __email__ = ["n.g.gyenge@sheffield.ac.uk", "hyu31@sheffield.ac.uk"]
 
 # SETUP -------------------------------------------------------------------'''
 
-# STEP 1: Define the ip address of the server.
+# STEP 1: Define the ip address of the server. 127.0.0.1 for local server.
 
-ip = '127.0.0.1'
+ip = '143.167.2.57'
 
 # STEP 2: Define the port. Must be integer.
 
@@ -46,7 +46,11 @@ port = 5000
 
 directory = 'default'
 
+# STEP 4: SSL certificate folder. If no certificate needed: SSL = FALSE
+
+SSL = True
+
 # SETUP -------------------------------------------------------------------'''
 
 # Start the Flask server
-web.framework.start(ip, port, directory)
+web.framework.start(ip, port, directory, SSL)
