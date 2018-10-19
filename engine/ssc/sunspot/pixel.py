@@ -72,6 +72,25 @@ def Initial_threshold(ic, sg, upper=True):
     std = np.nanstd(obs_flat)
     mu = np.nanmean(obs_flat)
 
+
+
+    import matplotlib.pyplot as plt 
+
+    fig = plt.figure(figsize=(7,4))
+    ax = fig.add_subplot(1,1,1)
+    count, bins, ignored = plt.hist(obs_flat, 75, range=(np.nanmin(obs_flat), np.nanmax(obs_flat)), density=True , color='#fec22d',rwidth=0.75)
+    plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) * np.exp( - (bins - mu)**2 / (2 * std**2) ),linewidth=2, color='#591a45')
+    plt.axvline(x=mu + (sg * std), color='k')
+    plt.xlabel("Normalised Photon Count (%)")
+    plt.ylabel("PDF")
+    ax.text(7,0.15 ,'Quiet Sun')
+    ax.text(36,0.15 ,'Potential ARs')
+
+    plt.tight_layout()
+    plt.savefig("figure3.pdf")
+
+    dsfs
+
     # Introducing the new threshold
     if upper is True:
         threshold = mu + (sg * std)

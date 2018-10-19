@@ -962,7 +962,7 @@ def query():
                            statistic_height=statistic_height)
 
 
-def start(ip, port, directory):
+def start(ip, port, directory, SSL):
 
     global DATABASE
 
@@ -975,8 +975,17 @@ def start(ip, port, directory):
     else:
         DATABASE = directory + '/database/sql/ssc_sql.db'
 
-    # Use gevent WSGI server instead of the Flask
-    http = WSGIServer((ip, port), app.wsgi_app)
+    if SSL is True:
+
+        # Use gevent WSGI server instead of the Flask
+        http = WSGIServer((ip, port), app.wsgi_app,
+                          keyfile=directory + 'certs/server.key',
+                          certfile=directory + 'certs/server.crt')
+
+    else:
+
+        # Use gevent WSGI server instead of the Flask
+        http = WSGIServer((ip, port), app.wsgi_app)
 
     # TODO gracefully handle shutdown
     http.serve_forever()
