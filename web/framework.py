@@ -979,8 +979,8 @@ def start(ip, port, directory, SSL):
 
         # Use gevent WSGI server instead of the Flask
         http = WSGIServer((ip, port), app.wsgi_app,
-                          keyfile=directory + 'certs/server.key',
-                          certfile=directory + 'certs/server.crt')
+                          keyfile=str(directory) + 'certs/server.key',
+                          certfile=str(directory) + 'certs/server.crt')
 
     else:
 
