@@ -977,10 +977,13 @@ def start(ip, port, directory, SSL):
 
     if SSL is True:
 
+        print(str(directory) + 'web/certs/server.key')
+        print(str(directory) + 'web/certs/server.crt')
+
         # Use gevent WSGI server instead of the Flask
         http = WSGIServer((ip, port), app.wsgi_app,
-                          keyfile=str(directory) + 'certs/server.key',
-                          certfile=str(directory) + 'certs/server.crt')
+                          keyfile=str(directory) + '/web/certs/server.key',
+                          certfile=str(directory) + '/web/certs/server.crt')
 
     else:
 
