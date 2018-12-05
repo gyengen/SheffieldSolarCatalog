@@ -3,34 +3,43 @@
 	<head>
 		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
 		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
-		<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css">
-		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css" type="text/css">
+		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
 		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
-	    <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
-	    <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
-	    <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
-		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	        <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+	        <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+	        <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+		<script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
+		<script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
 		{{ att_plot.js_resources|safe }}
-        {{ att_plot.css_resources|safe }}
+                {{ att_plot.css_resources|safe }}
 		{{ att_visual.js_resources|safe }}
-        {{ att_visual.css_resources|safe }}
+                {{ att_visual.css_resources|safe }}
 
-	<title>SSC - Workstation</title>
+		<title>SSC - Workstation</title>
 	</head>
 
     <body id = "wrapper_body">
 
-		<div id="fixedheader">
-			<div id="wrap_header">
-				<a href="/">
-					<div class='logo'>
-						<img class="logo_pic" src="/static/logos/ssc.png">
-					</div>
-				</a>
+	<div class = "loader">
+		<div class = "blob-r"></div>
+		<div class = "blob-c"></div>
+		<div class = "blob-l"></div>
+		<div class = "blob-m">Please wait.</div>
+	</div>
 
-			</div>
+	<div id="fixedheader">
+		<div id="wrap_header">
+			<a href="/">
+				<div class='logo'>
+					<img class="logo_pic" src="/static/logos/ssc.png">
+				</div>
+			</a>
+
 		</div>
+	</div>
 
     	<div id = "search">
 			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
@@ -76,6 +85,8 @@
 
 			</ul>
 		</div>
+
+	<div class="hidden">
 
 		<form method="POST">
 
@@ -848,19 +859,11 @@
 			{% endfor %}
 		</div>
 
-	<div class="footer">
-		<ul id="footer_menu">
-	  		<li>Previous observation</li>
-	  		<li>Next observation</li>
-	  		<li>Previous day</li>
-	  		<li>Next day</li>
-
-		</ul>  
-	</div>
-
 	{% for bokeh_script in att_plot.bokeh_script_list %}
 			{{ bokeh_script|safe }}
 	{% endfor %}
+
+    </div>
     </body>
 
     <script>
@@ -893,13 +896,13 @@
 			    $('#side_menu').css('left','0');
 
 			    $('#statistics_button').addClass('table-close');
-			    $('#wrapper_table_block').css('top','auto');
+
 			    $('#wrapper_table_block').css('bottom','0');
 			    if ({{att.block_status[1]}} <= 7 ) {
 			    	$('#wrapper_table_block').css('width','28%');
 			    }
 			    else if({{att.block_status[1]}} >= 17){
-			    	$('#wrapper_table_block').css('width','68%');
+			    	
 			    }
 			    else{
 			    	var t = 4 * {{att.block_status[1]}} + '%';
@@ -908,7 +911,6 @@
 		    }
 		});
     </script>
-
 
 
     <script>
@@ -918,13 +920,13 @@
 			    $('#plotting_menu').css('left','0');
 
 			    $('#statistics_button').addClass('table-close');
-			    $('#wrapper_table_block').css('top','auto');
+
 			    $('#wrapper_table_block').css('bottom','0');
 			    if ({{att.block_status[1]}} <= 7 ) {
 			    	$('#wrapper_table_block').css('width','28%');
 			    }
 			    else if({{att.block_status[1]}} >= 17){
-			    	$('#wrapper_table_block').css('width','68%');
+			    	
 			    }
 			    else{
 			    	var t = 4 * {{att.block_status[1]}} + '%';
@@ -933,6 +935,7 @@
 		    }
 		});
     </script>
+
 
 
 
@@ -974,5 +977,10 @@
 			    $("#message_log_bar").addClass('table-close');
     		}
     	});
+
+
+
+
+
     </script>
 </html>

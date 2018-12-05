@@ -161,7 +161,7 @@ def sunspot_continuum_table(row):
 
     # Define working directory
     cwd = os.getcwd()
-    path = os.path.abspath(os.path.join(cwd, os.pardir)) + '/database/sql/'
+    path = os.path.abspath(os.path.join(cwd, os.pardir)) + '/SheffieldSolarCatalog/database/sql/'
 
     # Connect to the local databas/
     c = s3.connect(path + 'ssc_sql.db')
@@ -179,7 +179,7 @@ def sunspot_continuum_table(row):
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:
-            print('Continuum: UNIQUE constraint failed')
+            pass
 
     if str(row[2]) is 'magnetogram':
         create_sunspot_magnetogram_table(c)
@@ -190,7 +190,7 @@ def sunspot_continuum_table(row):
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:
-            print('Magnetogram UNIQUE constraint failed')
+            pass
 
     # Save (commit) the changes
     c.commit()

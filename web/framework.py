@@ -20,6 +20,8 @@ import sqlite3
 import json
 import os
 import datetime
+import sys
+import string
 
 monkey.patch_all()
 
@@ -33,7 +35,7 @@ class att:
     # consists of two boolean elements; the first one is whether the
     # front-end have accessed to the back-end; another is the number
     # of the columns in the table
-    block_status = []
+    block_status = [0,0]
 
     # Default sql query command
     sql_cmd = "SELECT * FROM continuum_sunspot"
@@ -61,7 +63,7 @@ class att:
     sunspot_type = 'continuum_sunspot'
 
     # attribute that should be used in sort
-    order = ''
+    order = 'Time_obs'
 
     # list of attributes that should be included in the table
     sql_attr = '*'
@@ -375,9 +377,25 @@ def query():
     table_all_1, header_all_1 = Create_table(g.db.execute(c1))
     table_all_2, header_all_2 = Create_table(g.db.execute(c2))
 
-    # Read the first and last data and time form the SQL data
-    att.sd, att.st = table_all_1[0][0], table_all_1[0][1]
-    att.ed, att.et = table_all_1[-1][0], table_all_1[-1][1]
+    # Select only the last day
+    #dates = np.array(table_all_1)[:,0]
+    #mask = np.in1d(dates, att.ed)
+
+    # Index of the last record of the last day
+    #index_of_last_record = np.argwhere(mask == True)[-1][0]
+
+    # Select the last observation
+    att.sd, att.st = table_all_1[0][0], table_all_1[-1][1]
+    att.ed, att.et = att.sd, att.st
+
+    # SQL command for the last observation
+    att.sql_cmd = "SELECT * FROM continuum_sunspot" + \
+                  " WHERE ((DATE_OBS >= '" + att.sd + \
+                  "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS='" + \
+                  att.sd + "' AND Time_obs>='" + att.st + \
+                  "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS>='" + \
+                  att.sd + "' AND Time_obs<='" + att.et + \
+                  "' AND DATE_OBS='" + att.ed + "'))" 
 
     # css command
     statistic_height = 0
@@ -419,7 +437,6 @@ def query():
             # Read the sql attributes
             else:
                 for a in range(len(att.attributes)):
-                    print('HERE: ',a, att.attributes[a])
                     att.sql_attr = att.sql_attr + att.attributes[a] + ','
                 att.sql_attr = att.sql_attr + 'p_key'
 
@@ -497,10 +514,10 @@ def query():
             if att.sql_values != '':
                 att.sql_values = " AND " + att.sql_values
 
-            # If start date adnd time are not empty
+            # If start date and time are not empty
             if att.sd != '' and att.ed != '':
 
-                # If start time adnd time are not empty
+                # If start time and time are not empty
                 if att.st != '' and att.et != '':
 
                     # sql command
@@ -588,9 +605,6 @@ def query():
                         att.sql_values + order_info
 
             # Probably not used *------------------------------------------------------------
-
-
-
 
             else:
                 if att.sql_values == '' or att.sql_values == ' END':
@@ -728,6 +742,7 @@ def query():
     script_html, div_html = Create_live_AR(param.path_AR,
                                            param.path_full, table_live, param.row)
 
+
     script_html_full, div_html_full = Create_live_fulldisk(param.path_full,
                                                            param.row, False)
 
@@ -739,6 +754,7 @@ def query():
 
     att_visual.js_resources = INLINE.render_js()
     att_visual.css_resources = INLINE.render_css()
+
 
     # Display the plot(s)
     if keyword_check(request.form, 'plot_type') is True:
@@ -839,7 +855,6 @@ def query():
                 att.error_message = att.error_message + \
                     "<p> -- Creating histogram plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
-                print(str(e))
 
             # Set few varaibles
             else:
@@ -977,9 +992,6 @@ def start(ip, port, directory, SSL):
 
     if SSL is True:
 
-        print(str(directory) + 'web/certs/server.key')
-        print(str(directory) + 'web/certs/server.crt')
-
         # Use gevent WSGI server instead of the Flask
         http = WSGIServer((ip, port), app.wsgi_app,
                           keyfile=str(directory) + '/web/certs/server.key',
@@ -990,10 +1002,9 @@ def start(ip, port, directory, SSL):
         # Use gevent WSGI server instead of the Flask
         http = WSGIServer((ip, port), app.wsgi_app)
 
-    # TODO gracefully handle shutdown
+    # Start the server
     http.serve_forever()
 
-    # Run it
-    app.run()
 
-    return
+
+    return 0

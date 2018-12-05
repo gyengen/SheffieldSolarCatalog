@@ -2,7 +2,7 @@ from astropy import units as u
 from skimage import measure
 import numpy as np
 
-import ssc.sunspot.morphsnakes
+import engine.ssc.sunspot.morphsnakes as mor
 
 
 def Morphological_Snakes_mask(sub, TH):
@@ -47,8 +47,8 @@ def Morphological_Snakes(AR_cut, ini):
         of the IEEE Conference on Computer Vision and Pattern Recognition 2010 (CVPR10).'''
 
     # Penumbra first
-    gI = ssc.sunspot.morphsnakes.gborders(AR_cut, alpha=1, sigma=1)
-    macwe = ssc.sunspot.morphsnakes.MorphACWE(AR_cut, smoothing=0, lambda1=1, lambda2=10)
+    gI = mor.gborders(AR_cut, alpha=1, sigma=1)
+    macwe = mor.MorphACWE(AR_cut, smoothing=0, lambda1=1, lambda2=10)
 
     # Initial condition of the Morphological_Snakes method
     macwe.levelset = ini
@@ -64,8 +64,8 @@ def Morphological_Snakes(AR_cut, ini):
     penumbra_mask = macwe.levelset
 
     # Umbra
-    gI = ssc.sunspot.morphsnakes.gborders(AR_cut, alpha=1, sigma=1)
-    macwe = ssc.sunspot.morphsnakes.MorphACWE(AR_cut, smoothing=0, lambda1=10, lambda2=1)
+    gI = mor.gborders(AR_cut, alpha=1, sigma=1)
+    macwe = mor.MorphACWE(AR_cut, smoothing=0, lambda1=10, lambda2=1)
 
     # Initial condition of the Morphological_Snakes method
     macwe.levelset = ini

@@ -1,10 +1,10 @@
 from astropy import units as u
-import ssc.sunspot.contour
-import ssc.sunspot.pixel
-import ssc.sunspot.area
-import ssc.tools.util
+import engine.ssc.sunspot.contour as con
+import engine.ssc.sunspot.pixel as pix
+import engine.ssc.sunspot.area as area
+import engine.ssc.tools.util as util
 import numpy as np
-import ssc.AR
+import engine.ssc.AR as AR
 
 __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
@@ -22,7 +22,7 @@ def sunspot_contours(initialized_obs, sharp, mpix):
     '''
 
     # Find the continuum image
-    continuum_index = ssc.tools.util.index(initialized_obs, 'continuum')
+    continuum_index = util.index(initialized_obs, 'continuum')
 
     # Find the magnetogram image
     continuum = initialized_obs[continuum_index]
@@ -56,9 +56,7 @@ def sunspot_contours(initialized_obs, sharp, mpix):
             if abs(ar[0].header['CROTA2'] - 180) < 1:
 
                 # Rotate the coordinates of ROI, bottom_left swaps top_right
-                top_right, bottom_left = ssc.sunspot.pixel.HARProt(bottom_left,
-                                                                   top_right,
-                                                                   continuum)
+                top_right, bottom_left = pix.HARProt(bottom_left, top_right, continuum)
 
                 # Rotate the mask as well
                 boundary_mask = np.rot90(boundary_mask, 2)
@@ -71,29 +69,29 @@ def sunspot_contours(initialized_obs, sharp, mpix):
                                      top_right * u.pixel)
 
             # Scaleing and normalization, c_sub sub is numpy array from here
-            c_sub = ssc.sunspot.pixel.scaling_ic(c_sub.data)
+            c_sub = pix.scaling_ic(c_sub.data)
 
             # Simple method to estimate the active region/quiet sun threshold
-            full_disk = ssc.sunspot.pixel.scaling_ic(continuum.data)
-            TH = ssc.sunspot.pixel.Initial_threshold(full_disk, sg=3)
+            full_disk = pix.scaling_ic(continuum.data)
+            TH = pix.Initial_threshold(full_disk, sg=3)
 
             # Initial binary mask (1 if pixel > TH and 0 else)
-            fea_ini = ssc.sunspot.contour.Morphological_Snakes_mask(c_sub, TH)
+            fea_ini = con.Morphological_Snakes_mask(c_sub, TH)
 
             # Morphological_Snakes for finding the boundary of the sunspots
-            AR_mask = ssc.sunspot.contour.Morphological_Snakes(c_sub, fea_ini)
+            AR_mask = con.Morphological_Snakes(c_sub, fea_ini)
 
             # Apply the boundary mask
             AR_mask = [AR_mask[0] * boundary_mask, AR_mask[1] * boundary_mask]
 
             # Create contours from binary masks
-            AR_contours = ssc.sunspot.contour.MS_contours(AR_mask, mpix)
+            AR_contours = con.MS_contours(AR_mask, mpix)
 
             # Filter the contours, no negative contour; no negative peak
-            AR_contours = ssc.sunspot.contour.size_filter(AR_contours, mpix)
+            AR_contours = con.size_filter(AR_contours, mpix)
 
             # Create the Active Region Object
-            ARO = ssc.AR.Sunspot_groups(NOAA_num, AR_mask, AR_contours, corner)
+            ARO = AR.Sunspot_groups(NOAA_num, AR_mask, AR_contours, corner)
 
             # Define a new array for th AROs
             Active_Regions.append(ARO)

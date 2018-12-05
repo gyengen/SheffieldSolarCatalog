@@ -13,7 +13,7 @@ License:
     the authors. For more information how to cite this work properly please
     visit the official webside. THANKS!
 
-                            www.ssc.sheffield.ac.uk
+                            http://ssc.sheffield.ac.uk
 
 SSC_web.py
 
@@ -23,7 +23,10 @@ SSC_web.py
 ----------------------------------------------------------------------------'''
 
 import web.framework
-
+import datetime
+import smtplib
+import sys
+import os
 
 __author__ = ["Gyenge, Norbert", "Yu, Haidong"]
 __email__ = ["n.g.gyenge@sheffield.ac.uk", "hyu31@sheffield.ac.uk"]
@@ -46,11 +49,51 @@ port = 5000
 
 directory = 'default'
 
-# STEP 4: SSL certificate folder. If no certificate needed: SSL = FALSE
+# STEP 4: SSL certificate folder. If no certificate needed: SSL = False
 
 SSL = True
 
 # SETUP -------------------------------------------------------------------'''
 
-# Start the Flask server
-web.framework.start(ip, port, directory, SSL)
+# Switching off the maintenance site
+if os.path.isfile('web/templates/maintenance.html') is True:
+    os.rename('web/templates/maintenance.html', 'web/templates/maintenance_off.html')
+
+try:
+
+    # Start the Flask server
+    web.framework.start(ip, port, directory, SSL)
+
+except:
+
+    # Do not send email if KeyboardInterrupt()
+    if "KeyboardInterrupt()" not in str(sys.exc_info()):
+
+        # Send an email if server fails 
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login("sheffield.solar.catalogue@gmail.com", "sscerror1234")
+ 
+        # Compose the email
+        SUBJECT = "SSC Server failed at " + str(datetime.datetime.now())
+
+        TO = "n.g.gyenge@sheffield.ac.uk"
+
+        FROM = "sheffield.solar.catalogue@gmail.com"
+
+        text1 = "Dear SSC Admins,\n\n" 
+        text2 = "The SSC server is terminated due an unexpected error:\n\n" 
+        text3 = str(sys.exc_info()) + "\n" + str(datetime.datetime.now()) 
+        text4 = "\n\n SSC Web Service"
+
+        BODY = "\r\n".join(["From: %s" % FROM, "To: %s" % __email__[0],
+                            "Subject: %s" % SUBJECT , "", text1+text2+text3+text4])
+
+        server.sendmail(FROM, __email__[0], BODY)
+        server.quit()
+
+    # Maintenance page activation
+    os.rename('web/templates/maintenance_off.html', 'web/templates/maintenance.html')
+
+
+

@@ -3,6 +3,7 @@ from bokeh.models import LinearColorMapper, HoverTool
 from bokeh.models import ColumnDataSource
 from bokeh.models.markers import Triangle
 from bokeh.embed import components
+import scipy.ndimage.interpolation
 from bokeh.plotting import figure
 from bokeh.layouts import column
 from bokeh.models import Label
@@ -253,7 +254,7 @@ def Generate_position_data(hdulist, hdulist_full):
 
     # Save the headers
     header = hdulist[0].header
-    header_full = hdulist_full[1].header
+    header_full = hdulist_full[0].header
 
     # The coordinates of the corners of ROI
     rx = np.array([int(header['BL_X']), int(header['TR_X'])])
@@ -281,8 +282,14 @@ def subpanel_live_plot(p, obs, table, selected_row):
                plot_width=p.plot_width,
                plot_height=int(p.plot_height / 2))
 
+    # Using smaller image to save computation time
+    obs = scipy.ndimage.interpolation.zoom(obs,.5)
+
     # Flatten the image
     obs_flat = np.array(obs).flatten()
+
+    # Save some memory
+    obs_flat = np.array(obs_flat, dtype="f4")
 
     # Calculate the histogram
     hist, edges = np.histogram(obs_flat, bins='rice')
@@ -418,11 +425,6 @@ def subpanel_live_plot(p, obs, table, selected_row):
     k.yaxis.visible = False
 
     # Custom hover tooltips
-    '''
-    hover = HoverTool(tooltips=[('B', '$x{1.11} G'),
-                                ('lg(F)', '$y'),
-                                ("UID/PID", "@umbra/@penumbra")])
-    '''
     hover = HoverTool(tooltips=[('B', '$x{1.11} G'),
                                 ('lg(F)', '$y')])
     # Add the hover tool to the figure
@@ -501,12 +503,12 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     hdulist_full.verify('fix')
 
     # Save the data
-    obs = hdulist[0].data
-    image_umbra = hdulist[1].data
-    image_penumbra = hdulist[2].data
-    b_mask = hdulist[3].data
-    l_mask = hdulist[4].data
-
+    obs = np.array(hdulist[0].data, dtype="f4")
+    image_umbra = np.array(hdulist[1].data, dtype="f4")
+    image_penumbra = np.array(hdulist[2].data, dtype="f4")
+    b_mask = np.array(hdulist[3].data, dtype="f4")
+    l_mask = np.array(hdulist[4].data, dtype="f4")
+    
     if "magnetogram" in path_AR:
         obs_type = 'mag'
 
@@ -579,7 +581,7 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     hdulist_full.close()
 
     # Define the toolbox for the HTML image visualisation
-    TOOLS = "crosshair,pan,zoom_in,zoom_out,box_select,lasso_select,reset,save"
+    TOOLS = "pan,zoom_in,zoom_out,save"
 
     # Initialise the figure window
     p = figure(tools=TOOLS,
@@ -683,6 +685,12 @@ def Create_live_fulldisk(full_path, selected_row, full):
         div_html - The actual image
     '''
 
+    # Scale down the observation for faster downloading
+    if full is True:
+       scale = 1
+    else:
+       scale = 0.25
+
     if "magnetogram" in full_path:
         obs_type = 'mag'
 
@@ -699,54 +707,33 @@ def Create_live_fulldisk(full_path, selected_row, full):
     hdulist.verify('fix')
 
     # Save the data
-    full_size_image = np.array(hdulist[1].data)
+    obs = np.array(hdulist[0].data, dtype="f4")
 
-    # Save the header, index zero is an empty hdu, 1 is the compressed image
-    header = hdulist[1].header
+    # Save the header, index zero is an empty hdu
+    header = hdulist[0].header
 
     # Close the fits file
     hdulist.close()
 
     if full is True:
-        # Keep the original size os fthe picutre
-        scaling_factor = 4
-
-        # Save the header table for the full disk htom page
+        # Save the header table for the full disk htlm page
         header_table = Create_header_table(header)
 
-    if full is False:
-        # Shrink the original observation to make the html backend faster
-        scaling_factor = 4
-
-    # Size of the x and y axis
-    x_dim = float(header['NAXIS1'])
-    y_dim = float(header['NAXIS2'])
-
     # Some parameters for the data to world conversion
-    dx = header['CDELT1']
-    dy = header['CDELT2']
-    c_x = header['CRPIX1']
-    c_y = header['CRPIX2']
+    dx = float(header['CDELT1'])
+    dy = float(header['CDELT2'])
+    c_x = int(header['CRPIX1'])
+    c_y = int(header['CRPIX2'])
 
-    x_dim = np.shape(full_size_image)[0]
-    y_dim = np.shape(full_size_image)[1]
+    x_dim = int(np.shape(obs)[0])
+    y_dim = int(np.shape(obs)[1])
 
     xasec, yasec = np.meshgrid((np.linspace(0, x_dim, x_dim) - c_x) * dx,
                                (np.linspace(0, y_dim, y_dim) - c_y) * dy)
 
     # New dimensions
-    new_x = int(x_dim / scaling_factor)
-    new_y = int(y_dim / scaling_factor)
-
-    # Resize the image and the coordinate systems
-    obs = cv2.resize(full_size_image, (new_x, new_y),
-                     interpolation=cv2.INTER_CUBIC)
-
-    xasec = cv2.resize(xasec, (new_x, new_y),
-                       interpolation=cv2.INTER_CUBIC)
-
-    yasec = cv2.resize(yasec, (new_x, new_y),
-                       interpolation=cv2.INTER_CUBIC)
+    new_x = int(x_dim)
+    new_y = int(y_dim)
 
     if obs_type is 'mag':
 
@@ -762,8 +749,7 @@ def Create_live_fulldisk(full_path, selected_row, full):
         high = .25
 
         # Custom tooltips setup for the html
-        TOOLTIPS = [("x, y", "@x_arcsec\", @y_arcsec\""),
-                    ("B", "@original G")]
+        TT = [("x, y", "@x_arcsec\", @y_arcsec\""), ("B", "@original G")]
 
     if obs_type is 'con':
 
@@ -780,8 +766,7 @@ def Create_live_fulldisk(full_path, selected_row, full):
         high = 1
 
         # Custom tooltips setup for the html
-        TOOLTIPS = [("x, y", "@x_arcsec\", @y_arcsec\""),
-                    ("P", "@original")]
+        TT = [("x, y", "@x_arcsec\", @y_arcsec\""), ("P", "@original")]
 
     if obs_type is 'gen':
 
@@ -790,10 +775,21 @@ def Create_live_fulldisk(full_path, selected_row, full):
 
         # Normalise the data between -1 and 1.
         normalised = (obs - np.nanmin(obs)) / (np.nanmax(obs) - np.nanmin(obs))
+    
+
+    normalised = scipy.ndimage.interpolation.zoom(normalised, scale)
+    obs = scipy.ndimage.interpolation.zoom(obs, scale)
+    xasec = scipy.ndimage.interpolation.zoom(xasec, scale)
+    yasec = scipy.ndimage.interpolation.zoom(yasec, scale)
+
+    xasec = np.array(xasec, dtype="f4")
+    yasec = np.array(yasec, dtype="f4")
+    obs = np.array(obs, dtype="f4")
+    normalised = np.array(normalised, dtype="f4")
 
     # Define the data
     data = dict(image=[normalised],
-                original=[normalised],
+                original=[obs],
                 x_arcsec=[xasec],
                 y_arcsec=[yasec],
                 x=[0],
@@ -805,9 +801,11 @@ def Create_live_fulldisk(full_path, selected_row, full):
                                  low=low,
                                  high=high,
                                  nan_color='black')
+    
+    TOOLS = "pan,zoom_in,zoom_out,reset,save"
 
     # Initialise the figure window
-    p = figure(tools="crosshair,pan,zoom_in,zoom_out,undo,redo,reset,save",
+    p = figure(tools=TOOLS,
                plot_width=300,
                plot_height=280,
                sizing_mode='scale_both',
@@ -820,15 +818,9 @@ def Create_live_fulldisk(full_path, selected_row, full):
     l1 = p.image(source=data, image='image', x='x', y='y',
                  dw='dw', dh='dh', color_mapper=exp_cmap)
 
-    # Define the bounderies of the ROI in pixels
-    # BL = Bottom Left, TR = Top Right)
-    '''
-    ROI = [int(header['BL_X']),
-           int(header['BL_Y']),
-           int(header['TR_X']),
-           int(header['TR_Y'])]
-
-    '''
+    # Add the hover TOOLTIPS for the plot 
+    hover = HoverTool(renderers=[l1], tooltips=TT)
+    p.add_tools(hover)
 
     # Read the NOAA numbers from the header
     NOAA_list = str(header['ARS']).split(",")
@@ -845,16 +837,10 @@ def Create_live_fulldisk(full_path, selected_row, full):
             color = '#0e0400'
 
         # Extract the corner cordinates from the header
-        top = float(header['TR_Y'].split(",")[i])
-        bottom = float(header['BL_Y'].split(",")[i])
-        left = float(header['BL_X'].split(",")[i])
-        right = float(header['TR_X'].split(",")[i])
-
-        # Scale the original coordinates
-        top = int(top / scaling_factor)
-        bottom = int(bottom / scaling_factor)
-        left = int(left / scaling_factor)
-        right = int(right / scaling_factor)
+        top = int(float(header['TR_Y'].split(",")[i]) * scale) 
+        bottom = int(float(header['BL_Y'].split(",")[i]) * scale)
+        left = int(float(header['BL_X'].split(",")[i]) * scale)
+        right = int(float(header['TR_X'].split(",")[i]) * scale)
 
         # Plot the ROI region
         p.quad(top=top, bottom=bottom, left=left, right=right,
@@ -871,9 +857,6 @@ def Create_live_fulldisk(full_path, selected_row, full):
     # Hide the axis
     p.yaxis.visible = False
     p.xaxis.visible = False
-
-    # Add the hover TOOLTIPS for the plot
-    p.add_tools(HoverTool(renderers=[l1], tooltips=TOOLTIPS))
 
     # Generating the script for the html
     script_html, div_html = components(p)

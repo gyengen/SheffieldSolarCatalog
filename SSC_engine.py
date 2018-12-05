@@ -13,7 +13,7 @@ License:
     the authors. For more information how to cite this work properly please
     visit the official webside. THANKS!
 
-                            www.ssc.sheffield.ac.uk
+                            http://ssc.shef.ac.uk
 
 cron_engine.py
 
@@ -24,10 +24,12 @@ cron_engine.py
 
 ----------------------------------------------------------------------------'''
 
-from apscheduler.scheduler import Scheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
-import engine.engine
+import engine.running as run
 import logging
+import smtplib
+import sys
 import os
 
 __author__ = ["Gyenge, Norbert"]
@@ -38,13 +40,13 @@ __email__ = ["n.g.gyenge@sheffield.ac.uk"]
 # STEP 1: Interval-based scheduling. This method schedules jobs to be run on
 # selected intervals (in minutes).
 
-interval = '5'
+interval = 5
 
 # STEP 2: Lag-time. The downloaded observations cannot be real-time because
 # the JSOC and the ShARC services need time for publising data The lag-time
 # defines a period of time between the present and the observations.
 
-lag = 360
+lag = 3070
 
 # STEP 2: Email address. The JSOC service requires a registred email address
 # for downloading the observations. Please do not use this email address if
@@ -88,28 +90,59 @@ def get_log(LOG_FORMAT='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
 def start_engine():
 
     # This function will be scheduled
-    rt = engine.engine(datetime.now(), logger, lag, email)
+    rt = run.start(datetime.now(), logger, lag, email)
 
     # Record the running time
-    logging.info('Running time: ' + str(int(rt / 60)) + ' minute(s)\n')
+    logging.info('Running time: ' + str(rt) + ' minute(s)\n')
 
 
-if __name__ == '__main__':
+# Start the engine
+while True:
 
-    # Print some info
-    print('SSC engine is running.\nLog file location: ' +
-          str(os.path.dirname(os.path.abspath(__file__))) +
-          '\nPID: ' + str(os.getpid()) +
-          '\nYou can stop the Scheduler by pressing CTRL+Z...')
+    try:
+        # Print some info
+        print('SSC engine is running.\nLog file location: ' +
+              str(os.path.dirname(os.path.abspath(__file__))) +
+              '\nPID: ' + str(os.getpid()))
 
-    # Logging setup
-    logger = get_log()
+        # Logging setup
+        logger = get_log()
 
-    # Scheduler definiton
-    sched = Scheduler()
+        # Scheduler definiton
+        sched = BlockingScheduler()
 
-    # Scheduler setup
-    sched.add_cron_job(start_engine, minute=interval)
+        # Scheduler setup
+        sched.add_job(start_engine, 'interval', minutes=interval, next_run_time=datetime.now())
 
-    # Scheduler start
-    sched.start()
+        # Scheduler start
+        sched.start()
+
+    except:
+
+        # Do not send email if KeyboardInterrupt()
+        if "KeyboardInterrupt()" not in str(sys.exc_info()):
+
+                # Send an email if engine fails 
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login("sheffield.solar.catalogue@gmail.com", "sscerror1234")
+ 
+                # Compose the email
+                SUBJECT = "SSC Engine failed at " + str(datetime.now())
+
+                FROM = "sheffield.solar.catalogue@gmail.com"
+
+                text1 = "Dear SSC Admins,\n\n" 
+                text2 = "The SSC engine is being restarted due an unexpected error:\n\n" 
+                text3 = str(sys.exc_info()) + "\n" + str(datetime.now()) 
+                text4 = "\n\n SSC Web Service"
+        
+                BODY = "\r\n".join(["From: %s" % FROM, "To: %s" % __email__[0],
+                                   "Subject: %s" % SUBJECT , "", text1+text2+text3+text4])
+                server.sendmail(FROM, __email__[0], BODY)
+                server.quit()
+
+
+        else:
+            # Break the while loop if crtl+c pressed
+            break

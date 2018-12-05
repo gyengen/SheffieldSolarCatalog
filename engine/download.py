@@ -77,18 +77,10 @@ def get_sharp(date_of_obs, interval, email):
 
     try:
         # Save the filename and path
-        #file_list = drms_query(q, email, path)
+        file_list = drms_query(q, email, path)
 
         # Convert the Pandas dataframe to list
-        #file_list = file_list.loc[:]['download'].tolist()
-
-        file_list = [path + 'hmi.mharp_720s.7085.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7084.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7083.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7082.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7081.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7078.20170713_203600_TAI.bitmap.fits',
-        path + 'hmi.mharp_720s.7075.20170713_203600_TAI.bitmap.fits']
+        file_list = file_list.loc[:]['download'].tolist()
 
         # Read the HARP information
         HARP=[]
@@ -142,9 +134,8 @@ def get_data(date_of_obs, interval, email):
     try:
         # Query and download
         file_list = []
-        file_list = [path + 'hmi.ic_45s.20170713_203215_TAI.2.continuum.fits', path + 'hmi.m_45s.20170713_203215_TAI.2.magnetogram.fits']
         for q in query:
-            break
+
             # Download the observation and save the filename
             filename = drms_query(q, email, path)
 

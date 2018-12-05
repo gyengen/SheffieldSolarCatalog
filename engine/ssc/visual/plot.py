@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from astropy import units as u
 import matplotlib.cm as mcm
 import sunpy.cm as scm
-import ssc.tools.util
+import engine.ssc.tools.util as util
 
 __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
@@ -81,15 +81,15 @@ def HMI_full_disk_plot(Active_Regions, img):
                      xycoords='axes fraction', alpha=0.5)
 
     # Define the path and file name, vector graphics output first
-    filename = ssc.tools.util.fname(str(img.date).split('.')[0],
-                                    img.measurement, 'full_disk', 'pdf')
+    filename = util.fname(str(img.date).split('.')[0],
+                          img.measurement, 'full_disk', 'pdf')
 
     # Save the figure
     plt.savefig(filename, bbox_inches='tight', dpi=300)
 
     # Define the path and file name, png format
-    filename = ssc.tools.util.fname(str(img.date).split('.')[0],
-                                    img.measurement, 'full_disk', 'png')
+    filename = util.fname(str(img.date).split('.')[0],
+                          img.measurement, 'full_disk', 'png')
 
     # Save the figure
     plt.savefig(filename, bbox_inches='tight', dpi=300)

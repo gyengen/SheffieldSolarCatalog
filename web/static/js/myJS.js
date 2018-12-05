@@ -263,7 +263,6 @@ $(function () {
       $('#image').css('height','100%').css('width','100%');
       $('#wrapper_image').css('top','0').css('left','0').css('display',"block");
       $('#wrapper_image2').css('top','0').css('left','0').css('display',"block");
-      $('#wrapper_table_block').css('top','auto').css('buttom','0').css('left','15%').css('display','block');
       $('.window1').css('display','none');
   })
 });

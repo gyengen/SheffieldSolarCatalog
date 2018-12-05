@@ -7,14 +7,15 @@ plot.py
 ----------------------------------------------------------------------------'''
 
 from astropy.io import fits
-import ssc.tools.util
+import scipy.ndimage
+import engine.ssc.tools.util as util
 import numpy as np
 
 __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
 
 
-def HMI_full_disk_fits(Active_Regions, img):
+def HMI_full_disk_fits(Active_Regions, img, scale):
 
     bl_x, bl_y = [], []
     tl_x, tl_y = [], []
@@ -24,10 +25,10 @@ def HMI_full_disk_fits(Active_Regions, img):
     for AR in Active_Regions:
 
         # Define the ROI
-        bl_x.append(str(AR.ROI[0][0]))
-        bl_y.append(str(AR.ROI[0][1]))
-        tl_x.append(str(AR.ROI[1][0]))
-        tl_y.append(str(AR.ROI[1][1]))
+        bl_x.append(str(int(AR.ROI[0][0] * scale)))
+        bl_y.append(str(int(AR.ROI[0][1] * scale)))
+        tl_x.append(str(int(AR.ROI[1][0] * scale)))
+        tl_y.append(str(int(AR.ROI[1][1] * scale)))
 
         # Add the NOAA number at the corner of the box
         NOAA.append(str(AR.NOAA))
@@ -52,7 +53,7 @@ def HMI_full_disk_fits(Active_Regions, img):
             hdr[key] = value
 
     # Define the custom header records
-    hdr['source'] = 'Sheffield Solar Catalog'
+    hdr['source'] = 'Sheffield Solar Catalogue'
 
     # Generate a list of active regions, ROI
     hdr['ARs'] = ",".join(NOAA)
@@ -63,9 +64,18 @@ def HMI_full_disk_fits(Active_Regions, img):
     hdr['tr_x'] = ",".join(tl_x)
     hdr['tr_y'] = ",".join(tl_y)
 
+    # Scale few variables
+    hdr['CRPIX1'] = str(int(int(hdr['CRPIX1']) * scale))
+    hdr['CRPIX2'] = str(int(int(hdr['CRPIX2']) * scale))
+    hdr['CDELT1'] = str(float(hdr['CDELT1']) / scale)
+    hdr['CDELT2'] = str(float(hdr['CDELT2']) / scale)
+
+    # Save the scale value
+    hdr['scale'] = str(scale)
+
     # Define the path and file name, vector graphics output first
-    fname = ssc.tools.util.fname(str(img.date).split('.')[0],
-                                 img.measurement, 'fulldisk', 'fits')
+    fname = util.fname(str(img.date).split('.')[0],
+                       img.measurement, 'fulldisk', 'fits')
 
     # Initialise the image data
     data = np.array(img.data)
@@ -73,10 +83,10 @@ def HMI_full_disk_fits(Active_Regions, img):
     # Replace the nan's in the image
     data = np.where(np.isnan(data), np.nanmin(data), data)
 
-    # Compress the data
-    hdu = fits.CompImageHDU(header=hdr, data=np.array(data, dtype=np.float32))
+    # Reshape the data
+    data = scipy.ndimage.zoom(data, scale, order=0)
 
     # Write the fits
-    hdu.writeto(fname, overwrite=True, output_verify='silentfix')
+    fits.writeto(fname, data=data, header=hdr, overwrite=True)
 
     return

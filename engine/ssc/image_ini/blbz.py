@@ -41,8 +41,6 @@ def LOS2Bz(observation):
 
     # Range of the ROI; full disk
     SkyCoord = observation.pixel_to_world([0 * u.pix, nx], [0 * u.pix, ny])
-    print('------------------------------------------------')
-    print(SkyCoord)
     r_x, r_y = SkyCoord.x ,SkyCoord.y
 
     # Create an arcsec grid.

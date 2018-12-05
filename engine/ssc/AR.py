@@ -9,13 +9,13 @@ AR.py
 
 import matplotlib.pyplot as plt
 from astropy import units as u
-import ssc.sunspot.coordinates
+import engine.ssc.sunspot.coordinates as coor
 import matplotlib.cm as mcm
 from astropy.io import fits
-import ssc.sunspot.pixel
-import ssc.sunspot.area
-import ssc.sunspot.sql
-import ssc.tools.util
+import engine.ssc.sunspot.pixel as pix
+import engine.ssc.sunspot.area as area
+import engine.ssc.sunspot.sql as sql
+import engine.ssc.tools.util as util
 import sunpy.cm as scm
 import numpy as np
 
@@ -46,8 +46,8 @@ class Sunspot_groups(object):
         sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
 
         # Define the filename the
-        fname = ssc.tools.util.fname(str(sub.date).split('.')[0],
-                                     self.obs_type, self.NOAA, 'fits')
+        fname = util.fname(str(sub.date).split('.')[0],
+                           self.obs_type, self.NOAA, 'fits')
 
         # Submap, focused on the region of interest
         data = np.array(sub.data, dtype=float)
@@ -79,7 +79,7 @@ class Sunspot_groups(object):
                 y = spot_position[0]
 
                 # Create a dictionary from the data
-                spot = ssc.sunspot.pixel.spot_grid(sub, x, y)
+                spot = pix.spot_grid(sub, x, y)
 
                 # The background is zero
                 spot = np.where(spot != 0, i + 1, 0)
@@ -123,18 +123,19 @@ class Sunspot_groups(object):
         hdr['tr_x'] = self.ROI[1][0]
         hdr['tr_y'] = self.ROI[1][1]
 
-        # Define the hdu list, header, image and the masks
-        hl = [fits.PrimaryHDU(header=hdr, data=data),
-              fits.ImageHDU(data=np.array(umbra_mask, dtype=np.uint16)),
-              fits.ImageHDU(data=np.array(penumbra_mask, dtype=np.uint16)),
-              fits.ImageHDU(data=np.array(self.HG_mask[0], dtype=np.float32)),
-              fits.ImageHDU(data=np.array(self.HG_mask[1], dtype=np.float32))]
+        if len(self.HG_mask) == 2:
+            # Define the hdu list, header, image and the masks
+            hl = [fits.PrimaryHDU(header=hdr, data=data),
+                  fits.ImageHDU(data=np.array(umbra_mask, dtype=np.uint16)),
+                  fits.ImageHDU(data=np.array(penumbra_mask, dtype=np.uint16)),
+                  fits.ImageHDU(data=np.array(self.HG_mask[0], dtype=np.float32)),
+                  fits.ImageHDU(data=np.array(self.HG_mask[1], dtype=np.float32))]
 
-        # Create the HDU list
-        hdu = fits.HDUList(hl)
+            # Create the HDU list
+            hdu = fits.HDUList(hl)
 
-        # Write the fits
-        hdu.writeto(fname, overwrite=True, output_verify='silentfix')
+            # Write the fits
+            hdu.writeto(fname, overwrite=True, output_verify='silentfix')
 
     def save(self):
 
@@ -178,11 +179,11 @@ class Sunspot_groups(object):
         date = str(sub.date).split('.')[0]
 
         # Tight layout and save pdf figure
-        file_name = ssc.tools.util.fname(date, self.obs_type, self.NOAA, 'png')
+        file_name = util.fname(date, self.obs_type, self.NOAA, 'png')
         plt.savefig(file_name, bbox_inches='tight', dpi=100)
 
         # Tight layout and save pdf figure
-        file_name = ssc.tools.util.fname(date, self.obs_type, self.NOAA, 'pdf')
+        file_name = util.fname(date, self.obs_type, self.NOAA, 'pdf')
         plt.savefig(file_name, bbox_inches='tight', dpi=600)
 
     def append_sql(self):
@@ -210,7 +211,7 @@ class Sunspot_groups(object):
                 y = spot_position[0]
 
                 # Create a dictionary from the data
-                spot = ssc.sunspot.pixel.spot_grid(sub, x, y)
+                spot = pix.spot_grid(sub, x, y)
                 sm = np.where(spot != 0, 1, 0)
 
                 # Save the date
@@ -222,18 +223,18 @@ class Sunspot_groups(object):
                 ry = (self.ROI[0][1], self.ROI[1][1]) * u.pixel
 
                 # Estimate the area
-                a, self.HG_mask = ssc.sunspot.area.AreaC(self.img, rx, ry, sm)
+                a, self.HG_mask = area.AreaC(self.img, rx, ry, sm)
 
                 # Calculate the spot's coordinate
-                c = ssc.sunspot.coordinates.Sunspot_coord(self.img, rx, ry, sm)
+                c = coor.Sunspot_coord(self.img, rx, ry, sm)
 
                 # Calculate the photon flux
-                p = ssc.sunspot.pixel.Data_statistic(spot)
+                p = pix.Data_statistic(spot)
 
                 # Concatenation the data and return
-                row = ssc.sunspot.sql.create_row(i, self.NOAA,
-                                                 [self.obs_type, ctype],
-                                                 date, a, c, p)
+                row = sql.create_row(i, self.NOAA,[self.obs_type, ctype],
+                                     date, a, c, p)
 
                 # Append the sql database with the new row of data
-                ssc.sunspot.sql.sunspot_continuum_table(row)
+                sql.sunspot_continuum_table(row)
+

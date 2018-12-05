@@ -373,7 +373,6 @@ def evolve_visual3d(msnake, levelset=None, num_iters=20):
         for i in range(num_iters):
             msnake.step()
             cnt.mlab_source.scalars = msnake.levelset
-            print("Iteration %s/%s..." % (i + 1, num_iters))
             yield
     
     anim()

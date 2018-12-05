@@ -1,3 +1,113 @@
+div.hidden
+{
+    display: none
+}
+.loader{
+	z-index: 9999;
+	width:400px;
+	height:400px;
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+}
+
+.blob-r,.blob-l,.blob-c{
+	z-index: 9999;
+	width:70px;
+	height:70px;
+	position:absolute;
+	background:#fee737; 
+	border-radius:50%;
+	top:50%;left:50%;
+	transform:translate(-50%,-50%);
+}
+
+.blob-r{
+	left:20%;
+	-webkit-animation: osc-r 5s ease infinite ;
+   	-moz-animation: osc-r 5s ease infinite ;
+    	-ms-animation: osc-r 5s ease infinite ;
+     	-o-animation: osc-r 5s ease infinite ;
+        animation: osc-r 5s ease infinite ; 
+
+}
+
+.blob-l{
+	left:80%;
+	background:#fd7026;
+	-webkit-animation: osc-l 5s ease infinite ;
+   	-moz-animation: osc-l 5s ease infinite ;
+    	-ms-animation: osc-l 5s ease infinite ;
+     	-o-animation: osc-l 5s ease infinite ;
+        animation: osc-l 5s ease infinite ; 
+
+}
+.blob-c{
+	left:50%;
+	background:#fda128;
+}
+
+.blob-m{
+	-webkit-animation: osc-m 5s ease infinite ;
+   	-moz-animation: osc-m 5s ease infinite ;
+    	-ms-animation: osc-m 5s ease infinite ;
+     	-o-animation: osc-m 5s ease infinite ;
+        animation: osc-m 5s ease infinite ; 
+
+	left:42%;
+	position:absolute;
+	top:60%;
+}
+
+body.loading .loader {
+    display: block;
+}
+
+@keyframes osc-l{
+	0%{left:35%;}
+	50%{left:47%;}
+	100%{left:35%;}
+}
+@keyframes osc-r{
+	0%{left:65%;}
+	50%{left:53%;}
+	100%{left:65%;}
+}
+
+@keyframes osc-m{
+	0%{opacity: 1;}
+	50%{opacity: 1;}
+	100%{opacity: 1;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .hide{
     display: none;
 }
