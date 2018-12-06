@@ -12,4 +12,4 @@ License:
     the authors. For more information how to cite this work properly please
     visit the official webside. THANKS!
 
-                            http:/ssc.shef.ac.uk
+                            http://ssc.shef.ac.uk
