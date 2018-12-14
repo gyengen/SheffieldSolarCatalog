@@ -42,17 +42,6 @@ ip = '143.167.2.57'
 
 port = 5000
 
-# STEP 3: Define the path of the sql database file.
-# The parameter 'default' initalises the default location of the sql database
-# in the parent folder of the project
-# Any other diractory can be defined, e.g., \home\user\subdir\subdir\project
-
-directory = 'default'
-
-# STEP 4: SSL certificate folder. If no certificate needed: SSL = False
-
-SSL = True
-
 # SETUP -------------------------------------------------------------------'''
 
 # Switching off the maintenance site
@@ -62,7 +51,7 @@ if os.path.isfile('web/templates/maintenance.html') is True:
 try:
 
     # Start the Flask server
-    web.framework.start(ip, port, directory, SSL)
+    web.framework.start(ip, port)
 
 except:
 

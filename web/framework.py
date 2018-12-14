@@ -977,34 +977,21 @@ def query():
                            statistic_height=statistic_height)
 
 
-def start(ip, port, directory, SSL):
+def start(ip, port):
 
     global DATABASE
 
-    if directory == 'default':
+    # Connect the database from the engine.
+    directory = Path(__file__).parents[2]
+    DATABASE = str(directory) + '/SheffieldSolarCatalog/database/sql/ssc_sql.db'
+    print(DATABASE)
 
-        # Connect the database from the engine.
-        directory = Path(__file__).parent.parent
-        DATABASE = str(directory) + '/database/sql/ssc_sql.db'
-
-    else:
-        DATABASE = directory + '/database/sql/ssc_sql.db'
-
-    if SSL is True:
-
-        # Use gevent WSGI server instead of the Flask
-        http = WSGIServer((ip, port), app.wsgi_app,
-                          keyfile=str(directory) + '/web/certs/server.key',
-                          certfile=str(directory) + '/web/certs/server.crt')
-
-    else:
-
-        # Use gevent WSGI server instead of the Flask
-        http = WSGIServer((ip, port), app.wsgi_app)
+    # Use gevent WSGI server instead of the Flask
+    http = WSGIServer((ip, port), app.wsgi_app,
+                      keyfile=str(directory) + '/certs/server.key',
+                      certfile=str(directory) + '/certs/server.crt')
 
     # Start the server
     http.serve_forever()
-
-
 
     return 0
