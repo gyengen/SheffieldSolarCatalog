@@ -1,4 +1,4 @@
-# Sheffield Solar Catalogue (SSC)
+# Sheffield Solar Catalog (SSC)
 
 
 License:
@@ -12,4 +12,4 @@ License:
     the authors. For more information how to cite this work properly please
     visit the official webside. THANKS!
 
-                            www.ssc.sheffield.ac.uk
+                            http://ssc.shef.ac.uk
