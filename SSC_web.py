@@ -36,7 +36,7 @@ __email__ = ["n.g.gyenge@sheffield.ac.uk", "hyu31@sheffield.ac.uk"]
 
 # STEP 1: Define the ip address of the server. 127.0.0.1 for local server.
 
-ip = '143.167.2.57'
+ip = '127.0.0.1'
 
 # STEP 2: Define the port. Must be integer.
 

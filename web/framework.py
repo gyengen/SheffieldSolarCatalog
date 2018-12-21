@@ -984,13 +984,11 @@ def start(ip, port):
     # Connect the database from the engine.
     directory = Path(__file__).parents[2]
     DATABASE = str(directory) + '/SheffieldSolarCatalog/database/sql/ssc_sql.db'
-    print(DATABASE)
 
     # Use gevent WSGI server instead of the Flask
-    http = WSGIServer((ip, port), app.wsgi_app,
-                      keyfile=str(directory) + '/certs/server.key',
-                      certfile=str(directory) + '/certs/server.crt')
-
+    #http = WSGIServer((ip, port), app.wsgi_app, keyfile=str(directory) + '/certs/server.key', certfile=str(directory) + '/certs/server.crt')
+    http = WSGIServer((ip, port), app.wsgi_app)
+    
     # Start the server
     http.serve_forever()
 

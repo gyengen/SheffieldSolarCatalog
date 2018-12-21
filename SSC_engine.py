@@ -97,52 +97,42 @@ def start_engine():
 
 
 # Start the engine
-while True:
+try:
 
-    try:
-        # Print some info
-        print('SSC engine is running.\nLog file location: ' +
-              str(os.path.dirname(os.path.abspath(__file__))) +
-              '\nPID: ' + str(os.getpid()))
+    # Logging setup
+    logger = get_log()
 
-        # Logging setup
-        logger = get_log()
+    # Scheduler definiton
+    sched = BlockingScheduler()
 
-        # Scheduler definiton
-        sched = BlockingScheduler()
+    # Scheduler setup
+    sched.add_job(start_engine, 'interval', minutes=interval, next_run_time=datetime.now())
 
-        # Scheduler setup
-        sched.add_job(start_engine, 'interval', minutes=interval, next_run_time=datetime.now())
+    # Scheduler start
+    sched.start()
 
-        # Scheduler start
-        sched.start()
+except:
 
-    except:
+    # Do not send email if KeyboardInterrupt()
+    if "KeyboardInterrupt()" not in str(sys.exc_info()):
 
-        # Do not send email if KeyboardInterrupt()
-        if "KeyboardInterrupt()" not in str(sys.exc_info()):
-
-                # Send an email if engine fails 
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.starttls()
-                server.login("sheffield.solar.catalogue@gmail.com", "sscerror1234")
+        # Send an email if engine fails 
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login("sheffield.solar.catalogue@gmail.com", "sscerror1234")
  
-                # Compose the email
-                SUBJECT = "SSC Engine failed at " + str(datetime.now())
+        # Compose the email
+        SUBJECT = "SSC Engine failed at " + str(datetime.now())
 
-                FROM = "sheffield.solar.catalogue@gmail.com"
+        FROM = "sheffield.solar.catalogue@gmail.com"
 
-                text1 = "Dear SSC Admins,\n\n" 
-                text2 = "The SSC engine is being restarted due an unexpected error:\n\n" 
-                text3 = str(sys.exc_info()) + "\n" + str(datetime.now()) 
-                text4 = "\n\n SSC Web Service"
+        text1 = "Dear SSC Admins,\n\n" 
+        text2 = "The SSC engine is being restarted due an unexpected error:\n\n" 
+        text3 = str(sys.exc_info()) + "\n" + str(datetime.now()) 
+        text4 = "\n\n SSC Web Service"
         
-                BODY = "\r\n".join(["From: %s" % FROM, "To: %s" % __email__[0],
-                                   "Subject: %s" % SUBJECT , "", text1+text2+text3+text4])
-                server.sendmail(FROM, __email__[0], BODY)
-                server.quit()
+        BODY = "\r\n".join(["From: %s" % FROM, "To: %s" % __email__[0],
+                            "Subject: %s" % SUBJECT , "", text1+text2+text3+text4])
+        server.sendmail(FROM, __email__[0], BODY)
+        server.quit()
 
-
-        else:
-            # Break the while loop if crtl+c pressed
-            break
