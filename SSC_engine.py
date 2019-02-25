@@ -40,7 +40,7 @@ __email__ = ["n.g.gyenge@sheffield.ac.uk"]
 # STEP 1: Interval-based scheduling. This method schedules jobs to be run on
 # selected intervals (in minutes).
 
-interval = 5
+interval = 60
 
 # STEP 2: Lag-time. The downloaded observations cannot be real-time because
 # the JSOC and the ShARC services need time for publising data The lag-time

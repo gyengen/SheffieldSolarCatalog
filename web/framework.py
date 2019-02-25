@@ -385,17 +385,12 @@ def query():
     #index_of_last_record = np.argwhere(mask == True)[-1][0]
 
     # Select the last observation
-    att.sd, att.st = table_all_1[0][0], table_all_1[-1][1]
+    att.sd, att.st = table_all_1[-1][0], table_all_1[-1][1]
     att.ed, att.et = att.sd, att.st
 
-    # SQL command for the last observation
-    att.sql_cmd = "SELECT * FROM continuum_sunspot" + \
-                  " WHERE ((DATE_OBS >= '" + att.sd + \
-                  "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS='" + \
-                  att.sd + "' AND Time_obs>='" + att.st + \
-                  "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS>='" + \
-                  att.sd + "' AND Time_obs<='" + att.et + \
-                  "' AND DATE_OBS='" + att.ed + "'))" 
+    # Initial SQL command, displaying only the last observation
+    att.sql_cmd = "SELECT * FROM continuum_sunspot " + \
+                  "WHERE Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "'" 
 
     # css command
     statistic_height = 0
@@ -510,113 +505,27 @@ def query():
             else:
                 att.sql_values = att.sql_values.replace("AND END", "")
 
+            # Sort by both Date_obs and Time_obs
+            if att.order == 'Time_obs' or att.order == 'Date_obs':
+               att.order = 'Date_obs, Time_obs DESC'
+
             # No filter option
             if att.sql_values != '':
                 att.sql_values = " AND " + att.sql_values
 
-            # If start date and time are not empty
-            if att.sd != '' and att.ed != '':
+            # sql command, if no time interval selected
+            if att.sd == att.ed and att.st == att.et:
+               att.sql_cmd = att.sql_head + att.sunspot_type + \
+                             " WHERE (Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "')" + \
+                             att.sql_values + order_info
 
-                # If start time and time are not empty
-                if att.st != '' and att.et != '':
-
-                    # sql command
-
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE ((DATE_OBS >= '" + att.sd + \
-                        "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS='" + \
-                        att.sd + "' AND Time_obs>='" + att.st + \
-                        "' AND DATE_OBS <='" + att.ed + "') OR (DATE_OBS>='" + \
-                        att.sd + "' AND Time_obs<='" + att.et + \
-                        "' AND DATE_OBS='" + att.ed + "'))" + \
-                        att.sql_values + order_info
-
-
-
-                # Probably not used *------------------------------------------------------------
-                # if start time is empty
-                elif att.st == '' and att.et != '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS >= '" + att.sd + \
-                        "' AND DATE_OBS <='" + att.ed + \
-                        "' AND Time_obs <= '" + att.et + "'" + \
-                        att.sql_values + order_info
-
-                # if end time is not defined
-
-                elif att.st != '' and att.et == '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.p + \
-                        " WHERE DATE_OBS >= '" + att.sd + "' AND " + \
-                        "Time_obs >= '" + att.st + "' AND " + \
-                        "DATE_OBS <= '" + att.ed + "'" + att.sql_values + \
-                        order_info
-
-                # if end time and start time not defined
-                elif att.st == '' and att.et == '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS >= '" + att.sd + "' AND " + \
-                        "DATE_OBS <= '" + att.ed + "'" + att.sql_values + \
-                        order_info
-
-            # If ending date is not defined
-            elif att.sd != '' and att.ed == '':
-
-                # If start time is not empyt
-                if att.st != '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS >= '" + att.sd + "' AND " + \
-                        "Time_obs >= '" + att.st + "'" + att.sql_values + \
-                        order_info
-
-                # if start time is empty
-                elif att.st == '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS >= '" + att.sd + "'" + \
-                        att.sql_values + order_info
-
-            # if end date is not empyt but start date is not defined
-            elif att.sd == '' and att.ed != '':
-
-                # end time is not empty
-                if att.et != '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS <= '" + att.ed + "' AND " + \
-                        "Time_obs <= '" + att.et + "'" + att.sql_values + \
-                        order_info
-
-                # end time is not defined
-                elif att.et == '':
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE DATE_OBS <= '" + att.ed + "'" + \
-                        att.sql_values + order_info
-
-            # Probably not used *------------------------------------------------------------
-
+            # in case of time period selected
             else:
-                if att.sql_values == '' or att.sql_values == ' END':
+               att.sql_cmd = att.sql_head + att.sunspot_type + \
+                             " WHERE ((Date_obs >= '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
+                             " AND (Date_obs <= '"    + att.ed + "' AND Time_obs <= '" + att.et + "'))" + \
+                             att.sql_values + order_info
 
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + order_info
-
-                else:
-
-                    # sql command
-                    att.sql_cmd = att.sql_head + att.sunspot_type + \
-                        " WHERE " + att.sql_values + order_info
 
     # Clear sql_table
     sql_table = []
