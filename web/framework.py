@@ -65,6 +65,9 @@ class att:
     # attribute that should be used in sort
     order = 'Time_obs'
 
+    # Ascending or Descending Order (ASC|DESC)
+    order_asc = 'ASC'
+
     # list of attributes that should be included in the table
     sql_attr = '*'
 
@@ -377,13 +380,6 @@ def query():
     table_all_1, header_all_1 = Create_table(g.db.execute(c1))
     table_all_2, header_all_2 = Create_table(g.db.execute(c2))
 
-    # Select only the last day
-    #dates = np.array(table_all_1)[:,0]
-    #mask = np.in1d(dates, att.ed)
-
-    # Index of the last record of the last day
-    #index_of_last_record = np.argwhere(mask == True)[-1][0]
-
     # Select the last observation
     att.sd, att.st = table_all_1[-1][0], table_all_1[-1][1]
     att.ed, att.et = att.sd, att.st
@@ -437,7 +433,10 @@ def query():
 
             # Construct the sql command
             att.sql_head = 'SELECT ' + att.sql_attr + ' FROM '
-            order_info = ' ORDER BY ' + att.order
+
+            # Sort by both Date_obs and Time_obs
+            if att.order == 'Time_obs' or att.order == 'Date_obs':
+               att.order = 'Date_obs, Time_obs'
 
             # Read the sunspot type, umbra or penumbra
             att.sunspot_type = request.form['sunspot_type']
@@ -446,6 +445,7 @@ def query():
             if att.sunspot_type == 'magnetogram':
                 att.sunspot_type = "magnetogram_sunspot"
                 att.order = request.form['magnetogram_order_by']
+                att.order_asc = request.form['magnetogram_order_asc']
                 att.header_all = header_all_1
                 att.values_min = values_min_mag
                 att.values_max = values_max_mag
@@ -454,6 +454,7 @@ def query():
             elif att.sunspot_type == 'continuum':
                 att.sunspot_type = "continuum_sunspot"
                 att.order = request.form['continnum_order_by']
+                att.order_asc = request.form['continnum_order_asc']
                 att.header_all = header_all_2
                 att.values_min = values_min_cont
                 att.values_max = values_max_cont
@@ -505,10 +506,6 @@ def query():
             else:
                 att.sql_values = att.sql_values.replace("AND END", "")
 
-            # Sort by both Date_obs and Time_obs
-            if att.order == 'Time_obs' or att.order == 'Date_obs':
-               att.order = 'Date_obs, Time_obs DESC'
-
             # No filter option
             if att.sql_values != '':
                 att.sql_values = " AND " + att.sql_values
@@ -517,15 +514,14 @@ def query():
             if att.sd == att.ed and att.st == att.et:
                att.sql_cmd = att.sql_head + att.sunspot_type + \
                              " WHERE (Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "')" + \
-                             att.sql_values + order_info
+                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
 
             # in case of time period selected
             else:
                att.sql_cmd = att.sql_head + att.sunspot_type + \
                              " WHERE ((Date_obs >= '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
-                             " AND (Date_obs <= '"    + att.ed + "' AND Time_obs <= '" + att.et + "'))" + \
-                             att.sql_values + order_info
-
+                             " AND (Date_obs < '"    + att.ed + "' AND Time_obs < '" + att.et + "'))" + \
+                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
 
     # Clear sql_table
     sql_table = []
