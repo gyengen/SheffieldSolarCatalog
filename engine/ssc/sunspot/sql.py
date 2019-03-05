@@ -96,7 +96,7 @@ def create_primary_key(row):
 def create_sunspot_magnetogram_table(c):
 
     # Create table if it does not exist
-    c.execute('''CREATE TABLE IF NOT EXISTS magnetogram_sunspot(
+    c.execute('''CREATE TABLE IF NOT EXISTS magnetogram(
                  Date_obs DATE,
                  Time_obs TIME,
                  Obs_type VARCHAR,
@@ -113,11 +113,11 @@ def create_sunspot_magnetogram_table(c):
                  A_deg2 FLOAT,
                  A_MSH FLOAT,
                  A_km2 FLOAT,
-                 B_Total FLOAT,
-                 B_Mean FLOAT,
-                 B_Min FLOAT,
-                 B_Max FLOAT,
-                 B_Std FLOAT,
+                 P_Total FLOAT,
+                 P_Mean FLOAT,
+                 P_Min FLOAT,
+                 P_Max FLOAT,
+                 P_Std FLOAT,
                  p_key VARCHAR(27),
                  PRIMARY KEY(p_key)
                  );''')
@@ -128,7 +128,7 @@ def create_sunspot_magnetogram_table(c):
 def create_sunspot_continuum_table(c):
 
     # Create table if it does not exist
-    c.execute('''CREATE TABLE IF NOT EXISTS continuum_sunspot(
+    c.execute('''CREATE TABLE IF NOT EXISTS continuum(
                  Date_obs DATE,
                  Time_obs TIME,
                  Obs_type VARCHAR,
@@ -175,7 +175,7 @@ def sunspot_continuum_table(row):
 
         # Create a new row if it does not exist
         try:
-            c.execute("INSERT INTO continuum_sunspot VALUES" +
+            c.execute("INSERT INTO continuum VALUES" +
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:
@@ -186,7 +186,7 @@ def sunspot_continuum_table(row):
 
         # Create a new row if it does not exist
         try:
-            c.execute("INSERT INTO magnetogram_sunspot VALUES" +
+            c.execute("INSERT INTO magnetogram VALUES" +
                       "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
 
         except:

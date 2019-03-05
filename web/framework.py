@@ -38,7 +38,7 @@ class att:
     block_status = [0,0]
 
     # Default sql query command
-    sql_cmd = "SELECT * FROM continuum_sunspot"
+    sql_cmd = "SELECT * FROM continuum"
 
     # start date, end date, start time, end time
     date_formate = '%Y-%m-%d'
@@ -373,26 +373,25 @@ def full_disk():
 def query():
 
     # Default commands
-    c1 = "SELECT * FROM continuum_sunspot"
-    c2 = "SELECT * FROM continuum_sunspot"
+    c1 = "SELECT * FROM continuum"
+    c2 = "SELECT * FROM continuum"
 
     # Get the whole header in the complete table
-    table_all_1, header_all_1 = Create_table(g.db.execute(c1))
-    table_all_2, header_all_2 = Create_table(g.db.execute(c2))
+    table_all, header_all_1 = Create_table(g.db.execute(c1))
+
+    # Save the header
+    att.header_all = header_all_1
 
     # Select the last observation
-    att.sd, att.st = table_all_1[-1][0], table_all_1[-1][1]
+    att.sd, att.st = table_all[-1][0], table_all[-1][1]
     att.ed, att.et = att.sd, att.st
 
     # Initial SQL command, displaying only the last observation
-    att.sql_cmd = "SELECT * FROM continuum_sunspot " + \
+    att.sql_cmd = "SELECT * FROM continuum " + \
                   "WHERE Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "'" 
 
     # css command
     statistic_height = 0
-
-    # Save the header
-    att.header_all = header_all_1
 
     # Check the request method
     if request.method == 'POST':
@@ -529,7 +528,7 @@ def query():
             "<p> -- Error occured when retrieving data.<br></p><br>"
 
         # Default sql command if something is wrong
-        att.sql_cmd = "SELECT * FROM continuum_sunspot"
+        att.sql_cmd = "SELECT * FROM continuum"
 
         # Execute the query
         sql_table = g.db.execute(att.sql_cmd)
@@ -551,7 +550,7 @@ def query():
             "<p> -- No data detected based on your filer.<br></p><br>"
 
         # Default sql command
-        att.sql_cmd = "SELECT * FROM continuum_sunspot"
+        att.sql_cmd = "SELECT * FROM continuum"
 
         # Execute the command
         sql_table = g.db.execute(att.sql_cmd)
@@ -564,29 +563,6 @@ def query():
 
         # Read the lenght of the table
         att.rows = len(table)
-
-    '''
-    # Divide header into two parts
-    att.header1 = []
-    att.header2 = []
-    att.header2_1 = []
-    att.header2_2 = []
-
-    for index in range(0, len(header_all_1)):
-        att.header_all.append(header_all_1[index])
-        if index < 6:
-            att.header1.append(header_all_1[index])
-        elif index >= 6 and index < 16:
-            att.header2.append(header_all_1[index])
-        else:
-            att.header2_1.append(header_all_1[index])
-
-    for index in range(0, len(header_all_2)):
-        if not (header_all_2[index] in header_all_1):
-            att.header_all.append(header_all_2[index])
-        if index >= 16:
-            att.header2_2.append(header_all_2[index])
-    '''
 
     # Create data for downloading
     data = []
@@ -623,13 +599,13 @@ def query():
     # Define the selected row
     if att.sunspot_type == 'magnetogram':
         # Execute the query
-        param.row = table_all_1[att.selected_row]
-        table_live =table_all_1
+        param.row = table_all[att.selected_row]
+        table_live =table_all
 
     else:
         # Execute the query
-        param.row = table_all_2[att.selected_row]
-        table_live = table_all_2
+        param.row = table_all[att.selected_row]
+        table_live = table_all
 
 
     # Define the filename of the associated image

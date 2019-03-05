@@ -52,9 +52,9 @@ lag = 3070
 # for downloading the observations. Please do not use this email address if
 # you are not involved developing this software. Instead, use the official
 # JSOC for validating your own email address.
-# http://jsoc.stanford.edu/ajax/register_emvalidatedail.html
+# http://jsoc.stanford.edu/ajax/register_email.html
 
-email = 'scc@sheffield.ac.uk'
+email = 'ssc@sheffield.ac.uk'
 
 # SETUP -------------------------------------------------------------------'''
 
