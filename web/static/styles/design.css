@@ -161,7 +161,7 @@ table.extrapolation_table input[type="text"]
 
 
 /* Style the tab */
-.tab {
+.tab {se
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
@@ -210,17 +210,18 @@ table.extrapolation_table input[type="text"]
     z-index: 100;
 }*/
 
+
+
+
+
 .windowBar{
+    border-bottom: 1px solid #9e9e9e;
     width: 100%;
     height: 18px;
     cursor: all-scroll;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    background-color: #251801;
+    background-color: #e9ebee;
     margin: 0;
     padding: 0;
-    border: 0.5px #dddfe2;
-
 }
 
 .control_buttons{
@@ -235,6 +236,7 @@ table.extrapolation_table input[type="text"]
 }
 
 .minimum_button{
+    background-color: #6c7075;
     background-image: url("/static/icons/minimize.png");
     background-size: cover;
 
@@ -248,11 +250,13 @@ table.extrapolation_table input[type="text"]
 }*/
 
 .close_button{
+    background-color: #6c7075;
     background-image: url("/static/icons/close.png");
     background-size: cover;
 }
 
 .full_button{
+    background-color: #6c7075;
     background-image: url("/static/icons/reopen.png");
     background-size: cover;
     height: 13px;
@@ -289,11 +293,13 @@ table.extrapolation_table input[type="text"]
 
 .Full_disk{
     margin-top: 1px;
-    color: white;
+    color: #6c7075;
     font-size: 12px;
     cursor: pointer;
     margin-right: 20px;
     float: right;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .windowTitle{
@@ -308,10 +314,12 @@ table.extrapolation_table input[type="text"]
     width: 100%;
     margin-top: 0;
     margin-bottom: 0;
-    color: white;
+    color: #6c7075;
     font-size: 12px;
     display: table-cell;
     vertical-align: middle;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .window1{
@@ -904,7 +912,7 @@ table.extrapolation_table input[type="text"]
 
 body
     {
-        background-color: #e9ebee;
+        background-image: linear-gradient(90deg, #e7eaed 0%, white 14%, white 86%, #e7eaed 100%);
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         width: 100%;
         margin:0;
@@ -913,7 +921,7 @@ body
 
 #wrapper_body
     {
-        background-color: #e9ebee;
+        background-image: linear-gradient(90deg, #e7eaed 0%, white 14%, white 86%, #e7eaed 100%);
         margin-top: 50px;
         width: 100vw;
         height: 100vh;
@@ -1082,18 +1090,6 @@ body
         margin-top: 60px;
     }
 
-#wrapper_image
-    {
-        background-color: #ffffff;
-        width: 35vw;
-        height: 35vw;
-        font-size: 11px;
-        z-index: 1;
-        float: right;
-        margin-top:10px;
-        right:14.5vw;
-    }
-
 #wrapper_image2
     {
         background-color: #ffffff;
@@ -1101,8 +1097,20 @@ body
         height: 35vw;
         font-size: 11px;
         z-index: 1;
+        float: right;
+        margin-top:20px;
+        right:14.5vw;
+    }
+
+#wrapper_image
+    {
+
+        width: 35vw;
+        height: 35vw;
+        font-size: 11px;
+        z-index: 1;
         float: left;
-        margin-top:10px;
+        margin-top:20px;
         left:14.5vw;
     }
 
@@ -1217,11 +1225,15 @@ body
 
 .wrapper_menu
     {
-        /* background-color: rgba(233, 235, 238, 0.7);*/
         width: 290px;
         float: left;
-        /* border-top-right-radius: 10px; */
-        /* border-bottom-right-radius: 10px; */
+        background-image: url("/static/bg.png");
+        background-color: #100902;
+        background-position-y: -480px;
+        background-position-x: -120px;
+        position: absolute;
+        background-repeat: no-repeat;
+
     }
 
 .wrapper_menu table
@@ -1229,6 +1241,7 @@ body
         font-size: 12px;
         line-height:18px;
         float: left;
+	color: #e9ebee;
     }  
 
 .wrapper_menu button
@@ -1238,15 +1251,18 @@ body
 
 .wrapper_menu th
     {
-        font-variant: small-caps;
+	letter-spacing: 1px;
         text-align: left;
         color: #000000;
         font-weight: bold;
+	color: #e9ebee;
+	padding: 15px 0px 0px 0px;
     }
 
 .wrapper_menu td
     {
         transition: all 1000ms;
+	color: #e9ebee;
     }
 
 .wrapper_menu hr
@@ -1255,6 +1271,13 @@ body
         height: 1px;
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
     }
+
+
+#menu_input{
+    text-align: center;
+    width: 100px;
+    color:black;
+}
 
 #filter_menu_showmore{
     display: none;
@@ -1280,14 +1303,23 @@ body
 
 #selectall_button{
     width: 90%;
+    border: none;
+    color: #6c7175;
 }
 
 #clearall_button{
     width: 90%;
+    border: none;
+    color: #6c7175;
 }
 
 #execute_button{
-    width: 90%;
+    width: 98%;
+    border: none;
+    color: #6c7175;
+    padding: 5px 0px 5px 0px;
+    text-align: center;
+    font-size: 14px;
 }
 
 .wrapper_menu_1{

@@ -1,440 +1,430 @@
 <html>
-	<!-- Use CSS -->
-	<head>
-		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
-		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
-		<link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css" type="text/css">
-		<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
-		<script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
-	        <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
-	        <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
-	        <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
-		<script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
-		<script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
-		{{ att_plot.js_resources|safe }}
-                {{ att_plot.css_resources|safe }}
-		{{ att_visual.js_resources|safe }}
-                {{ att_visual.css_resources|safe }}
+   <!-- Use CSS -->
+   <head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+      <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css" type="text/css">
+      <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
+      <script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+      <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
+      <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
+      {{ att_plot.js_resources|safe }}
+      {{ att_plot.css_resources|safe }}
+      {{ att_visual.js_resources|safe }}
+      {{ att_visual.css_resources|safe }}
 
-		<title>SSC - Workstation</title>
-	</head>
+      <title>SSC - Workstation</title>
+   </head>
 
-    <body id = "wrapper_body">
+   <body id = "wrapper_body">
 
-	<div class = "loader">
-		<div class = "blob-r"></div>
-		<div class = "blob-c"></div>
-		<div class = "blob-l"></div>
-		<div class = "blob-m">Please wait.</div>
-	</div>
+      <div class = "loader">
+         <div class = "blob-r"></div>
+         <div class = "blob-c"></div>
+         <div class = "blob-l"></div>
+         <div class = "blob-m">Please wait.</div>
+      </div>
 
-	<div id="fixedheader">
-		<div id="wrap_header">
-			<a href="/">
-				<div class='logo'>
-					<img class="logo_pic" src="/static/logos/ssc.png">
-				</div>
-			</a>
+      <div id="fixedheader">
+         <div id="wrap_header">
+            <a href="/">
+               <div class='logo'>
+                  <img class="logo_pic" src="/static/logos/ssc.png">
+               </div>
+            </a>
+         </div>
+      </div>
 
-		</div>
-	</div>
+      <div id = "search">
+         <input type="text" id="text" value="Search Documentation, type keyword or variable name." onFocus="this.value=''" class="search_input"/>
+         <input type="button" id="btn" value="Search" class="search_button"
+		onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + 			'&check_keywords=yes&area=default');"/>
+      </div>
 
-    	<div id = "search">
-			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
-			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
-		</div>
+      <div id="topmenu">
+         <ul>
 
-		<div id="topmenu">
-			<ul>
+            <li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
 
-				<li id="database_button"><a><img src="static/icons/data.png" class='icon_im'><br>Query</a></li>
+            <li id="plot_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Plot</a></li>
 
-	  			<li id="plot_button"><a><img src="static/icons/plot.png" class='icon_im'><br>Plot</a></li>
+            <li id="message_log_bar"><a><img src="static/icons/terminal.png" class='icon_im'><br>Console</a></li>
 
-	  			<li id="message_log_bar"><a><img src="static/icons/terminal.png" class='icon_im'><br>Console</a></li>
+            <li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
+               <ul>
 
-	  			<li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
-	  				<ul>
-	  					<li>
-	  						<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='./database/sql/ssc_sql.db') }}')">SQLite</button>
-	  					</li>
-	  					<li>
-	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.h5',{{ att.data }})">HDF5</button>
-	  					</li>
-	  					<li>
-	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.csv',{{ att.data }})">CSV</button>
-	  					</li>
-	  					<li>
-	  						<button class="download_options" type="button" onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.txt',{{ att.data }})">TXT</button>
-	  					</li>
-	  				</ul>
-	  			</li>
+                  <li>
 
-				<li id ='sftp'><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>SFTP</a></li>
+                     <button class="download_options" type="button"
+                             onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='./database/sql/ssc_sql.db') }}')">
+                        SQLite
+                     </button>
 
-				<li id='help'><a href="" data-toggle="modal" data-target="#help-modal">
-					<img src="static/icons/help.png" class='icon_im'><br>Help
-				</a></li>
+                  </li>
 
-				<li id='home'><a href="/"><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
+                  <li>
+
+                     <button class="download_options" type="button"
+                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.h5',{{ att.data }})">
+                        HDF5
+                     </button>
+                  
+                  </li>
+
+                  <li>
+
+                     <button class="download_options" type="button"
+                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.csv',{{ att.data }})">
+                        CSV
+                     </button>
+
+                  </li>
+
+                  <li>
+
+                     <button class="download_options" type="button"
+                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.txt',{{ att.data }})">
+                        TXT
+                     </button>
+
+                  </li>
+
+               </ul>
+            </li>
+
+            <li id ='sftp'><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>SFTP</a></li>
+
+            <li id='help'>
+               <a href="" data-toggle="modal" data-target="#help-modal">
+                  <img src="static/icons/help.png" class='icon_im'><br>Help
+               </a>
+            </li>
+
+            <li id='home'><a href="/"><img src="static/icons/home.png" class='icon_im'><br>Home</a></li>
 
 
-	  			
+         </ul>
+      </div>
 
-			</ul>
-		</div>
+      <div class="hidden">
 
-	<div class="hidden">
+         <form method="POST">
 
-		<form method="POST">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
 
-		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-							&times;
-						</button>
-						<h4 class="modal-title" id="myModalLabel">
-							Set Values
-						</h4>
-					</div>
-					<div class="modal-body">
-						<div id="type1_header">
-							<table cellpadding="5" style="font-size: 15">
-								<tr>
-									<th></th>
-									<th style="text-align: center;">Minimum</th>
-									<th></th>
-									<th style="text-align: center;">Maximum</th>
-								</tr>
-								{% for num in range(5,21) %}
-								<tr>
-									<td>{{ header_all_1[num] }}: </td>
-									<td align="center">
-										<input type="text" name="values_min_magnetogram" class="value_input" value="{{ att.values_min[num-5] }}">
-									</td>
-									<td>~</td>
-									<td align="center">
-										<input type="text" name="values_max_magnetogram" class="value_input" value="{{ att.values_max[num-5] }}">
-									</td>
-								</tr>
-								{% endfor %}
-							</table>
-						</div>
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" id="myModalLabel">Set Values</h4>
+                     </div>
 
-						<div id="type2_header">
-							<table cellpadding="5" style="font-size: 15">
-								<tr>
-									<th></th>
-									<th style="text-align: center;">Minimum</th>
-									<th></th>
-									<th style="text-align: center;">Maximum</th>
-								</tr>
-								{% for num in range(5,21) %}
-								<tr>
-									<td>{{ header_all_2[num] }}: </td>
-									<td align="center">
-										<input type="text" name="values_min_continuum" class="value_input" value="{{ att.values_min[num-5] }}">
-									</td>
-									<td>~</td>
-									<td align="center">
-										<input type="text" name="values_max_continuum" class="value_input" value="{{ att.values_max[num-5] }}">
-									</td>
-								</tr>
-								{% endfor %}
-							</table>
-						</div>
-					</div>
-					<!-- data-dismiss="modal" -->
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" id="filter-clear">Clear</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-					</div>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal -->
-		</div>
-		<!-- Help Modal-->
-		<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-							&times;
-						</button>
-						<h4 class="modal-title" id="help-modal-label">
-							How to Use SSC.
-						</h4>
-					</div>
-					<div class="modal-body">
-						<div id="type1_header">
-							<h6>This is content</h6>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
-					</div>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal -->
-		</div>
-		<!-- SQLite query info -->
+                     <div class="modal-body">
+                        <div id="type1_header">
+                           <table cellpadding="5" style="font-size: 15">
+                              <tr>
+
+                                 <th></th>
+
+                                 <th style="text-align: center;">Minimum</th>
+
+                                 <th></th>
+
+                                 <th style="text-align: center;">Maximum</th>
+
+                              </tr>
+
+                              {% for i in range(5,21) %}
+                                 <tr>
+
+                                    <td>{{ att.header_all[i] }}: </td>
+
+                                    <td align="center">
+                                       <input type="text"
+                                              name="values_min"
+                                              class="value_input"
+                                              value="{{ att.values_min[i - 5] }}">
+                                    </td>
+
+                                    <td>~</td>
+
+                                    <td align="center">
+                                       <input type="text"
+                                              name="values_max"
+                                              class="value_input"
+                                              value="{{ att.values_max[i - 5] }}">
+                                    </td>
+
+                                 </tr>
+                              {% endfor %}
+
+                           </table>
+                        </div>
+                     </div>
+
+                     <!-- data-dismiss="modal" -->
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="filter-clear">Clear</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                     </div>
+
+                  </div><!-- /.modal-content -->
+               </div><!-- /.modal -->
+            </div>
+
+            <!-- Help Modal-->
+            <div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="help-modal-label">Quick Guidance</h4>
+
+                     </div>
+
+                     <div class="modal-body">
+                        <div id="type1_header">
+
+                           <h6>Coming soon.</h6>
+
+                        </div>
+                     </div>
+
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+
+                  </div><!-- /.modal-content -->
+               </div><!-- /.modal -->
+            </div>
+
 	    <!-- Menu -->
-	    <div id = "side_menu">
-	    	
+            <div id = "side_menu">
 	    	<div class = "wrapper_menu">
 
-	    		<!-- Filter -->
-		    	<div id = "filter_menu" class="top=position">
-						<table>
-							<tr><th>Query</th></tr>
-							<tr>
-								<td>
-									<p>&nbspFrom:&nbsp</p>
-								</td>
-								<td>
-									<input type="text" name="start_date" id="sd" style="text-align: center;width: 100px" value="{{ att.sd }}">
-								</td>
-								<td>
-									<input type="text" name="start_time" id="st" style="text-align: center;width: 100px" value="{{ att.st }}">
-								</td>
-							</tr>
+	    	   <!-- Quary -->
+	    	   <div id = "filter_menu" class="top=position">
+	    	   
+	    	   <table>
+	    	      <tr>
+	    	         <th>Time Period</th>
+	    	      </tr>
 
-							<tr>
-								<td>
-									<p>&nbsp To &nbsp</p>
-								</td>
-								<td>
-									<input type="text" name="end_date" id="ed" style="text-align: center;width: 100px" value="{{ att.ed }}">
-								</td>
-								<td>
-									<input type="text" name="end_time" id="et" style="text-align: center;width: 100px" value="{{ att.et }}">
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<p>Type:&nbsp</p>
-								</td>
-								<td>
-									<select class="sunspot" name="sunspot_type" id="sunspot_type" onchange="change_sunspot_type();">
-										{%if att.sunspot_type == 'magnetogram_sunspot' %}
-										<option value="continuum">Continuum</option>
-										<option value="magnetogram" selected="selected">Magnetogram</option>
-										{%elif att.sunspot_type == 'continuum_sunspot' %}
-										<option value="continuum" selected="selected">Continuum</option>
-										<option value="magnetogram">Magnetogram</option>
-										{% else %}
-										<option value="continuum">Continuum</option>
-										<option value="magnetogram">Magnetogram</option>
+	    	      <tr>
+	    	         <td>
+	    	            <p>&nbspFrom:&nbsp</p>
+	    	         </td>
 
-										{% endif %} 
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<p>Sorted by:&nbsp</p>
-								</td>
-								<td>
-									<select name="continnum_order_by" id="c_order_by">
-										{%for name in header_all_2%}
-										{%if name == att.order%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-									<select name="magnetogram_order_by" id="m_order_by" class="hide">
-										{%for name in header_all_1%}
-										{%if name == att.order%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<p>Order:&nbsp</p>
-								</td>
-								<td>
-									<select name="continnum_order_asc" id="c_order_by">
+	    	         <td>
+	    	             <input type="text"
+	    	                    name="start_date"
+	    	                    id="sd"
+	    	      	    	    style="text-align: center;width: 90px; color:black; border:none;"
+	    	                    value="{{ att.sd }}">
+	    	         </td>
 
-										<option value="ASC" selected="selected"> Ascending </option>
-										<option value="DESC"> Descending </option>
+	    	         <td>
+	    	             <input type="text"
+	    	                    name="start_time"
+	    	                    id="st"
+	    	      	    	    style="text-align: center;width: 90px; color:black; border:none;"
+	    	                    value="{{ att.st }}">
 
-									</select>
-									<select name="magnetogram_order_asc" id="m_order_by" class="hide">
-										
-										<option value="ASC" selected="selected"> Ascending </option>
-										<option value="DESC"> Descending </option>
+	    	         </td>
+	    	      </tr>
 
-									</select>
-								</td>
+	    	      <tr>
+	    	         <td>
+	    	            <p>&nbsp To &nbsp</p>
+	    	         </td>
 
+	    	         <td>
+	    	            <input type="text"
+	    	      	    	   name="end_date"
+	    	      	    	   id="ed"
+	    	      	    	   style="text-align: center;width: 90px; color:black; border:none;"
+	    	      	    	   value="{{ att.ed }}">
+	    	         </td>
 
-							</tr>
-						</table>
+	    	         <td>
+	    	            <input type="text"
+	    	                   name="end_time"
+	    	                   id="et"
+	    	                   style="text-align: center;width: 90px; color:black; border:none;"
+	    	                   value="{{ att.et }}">
+	    	         </td>
+	    	      </tr>
 
-						<div class="hide">
-							{% for num in range(0,5,2) %}
-									<input type="checkbox" name="attributes" value="{{ att.header1[num] }}" checked="checked" />
-									<input type="checkbox" name="attributes" value="{{ att.header1[num+1] }}" checked="checked" />
-							{% endfor %}
-						</div>		
+	    	      <tr><th>Observation</th></tr>
+	    	      <tr>
 
-						<table width="98%">
-							{% for num in range(0,5,2) %}
-							<tr>
-								<td class="side_menu_header">
-									{{ att.header2[num] }} 
-								</td>
-								<td class="side_menu_checkbox">
-									{% if att.header2[num] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" />
-										{% endif %}
-								</td>
-								<td class="side_menu_header">
-									{{ att.header2[num+1] }} 
-								</td>
-								<td class="side_menu_checkbox">
-									{% if att.header2[num+1] in header %}
-											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}"/>
-										{% endif %}
-								</td>
-							</tr>
-							{% endfor %}		
-						</table>
+	    	         <td>
+	    	            <p>Wavelength:&nbsp</p>
+	    	         </td>
 
-						<div id="filter_menu_showmore">
-							<table width="98%">
-								{% for num in range(6,9,2) %}
-								<tr>
-									<td class="side_menu_header">
-										{{ att.header2[num] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2[num] in header %}
-												<input type="checkbox" name="attributes" value="{{ att.header2[num] }}" checked="checked" />
-											{% else %}
-												<input type="checkbox" name="attributes" value="{{ att.header2[num] }}"/>
-											{% endif %}
-									</td>
-									<td class="side_menu_header">
-										{{ att.header2[num+1] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2[num+1] in header %}
-												<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}" checked="checked" />
-											{% else %}
-												<input type="checkbox" name="attributes" value="{{ att.header2[num+1] }}"/>
-											{% endif %}
-									</td>
-								</tr>
-								{% endfor %}
+	    	         <td>
+	    	            <select class="sunspot"
+	    	                    name="sunspot_type"
+	    	                    id="sunspot_type"
+   	                            style="text-align: center;width: 100px; color:black;">
 
-								{% for num in range(0,5,2) %}
-								<tr>
-									<td class="side_menu_header">
-										{{ att.header2_1[num] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2_1[num] in header %}
-											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num] }}" disabled="disabled"/>
-										{% endif %}
-									</td>
-									{% if (5//2 == (5-1)//2) and (num != 4) %}
-									<td class="side_menu_header">
-										{{ att.header2_1[num+1] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2_1[num+1] in header %}
-											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num+1] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" class="magnetogram" value="{{ att.header2_1[num+1] }}" disabled="disabled"/>
-										{% endif %}
-									</td>
-									{% else %}
-									<td></td>
-									<td></td>
-									{% endif %}
-								</tr>
-								{% endfor %}
+	    	               {%if att.sunspot_type == 'magnetogram' %}
+	    	                  <option value="continuum">Continuum</option>
+	    	                  <option value="magnetogram" selected="selected">Magnetogram</option>
+	    	               {%elif att.sunspot_type == 'continuum' %}
+	    	                  <option value="continuum" selected="selected">Continuum</option>
+	    	                  <option value="magnetogram">Magnetogram</option>				
+	    	               {% endif %} 
 
-								{% for num in range(0,5,2) %}
-								<tr>
-									<td class="side_menu_header">
-										{{ att.header2_2[num] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2_2[num] in header %}
-											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num] }}" disabled="disabled"/>
-										{% endif %}
-									</td>
-									{% if (5//2 == (5-1)//2) and (num != 4) %}
-									<td class="side_menu_header">
-										{{ att.header2_2[num+1] }} 
-									</td>
-									<td class="side_menu_checkbox">
-										{% if att.header2_2[num+1] in header %}
-											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num+1] }}" checked="checked" />
-										{% else %}
-											<input type="checkbox" name="attributes" class="continuum" value="{{ att.header2_2[num+1] }}" disabled="disabled" />
-										{% endif %}
-									</td>
-									{% else %}
-									<td></td>
-									<td></td>
-									{% endif %}
-								</tr>
-								{% endfor %}
-								<input type="hidden" onload="change_sunspot_type()">					
-							</table>
-							<button type="button" onclick="hide()" id="hide_button">Hide</button>
-						</div>
-						<button type="button" onclick="showmore()" id="show_button">Show More</button>
+	    	            </select>
+	    	         </td>
+	    	      </tr>
 
+	    	      <tr><th>Sorting</th></tr>
 
-						
-						<table width="98%" style="margin-top: 5px;margin-bottom: 5px;">
-							<tr>
-								<td colspan="3">
-									<button type="button" style="width: 50%;margin-left: 20%;margin-bottom: 10px;" data-toggle="modal" data-target="#myModal">
-										Set Values
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<button type="button" id="selectall_button">Select All</button>	
-								</td>
-								<td>
-									<button type="button" id="clearall_button">Clear All</button>	
-								</td>
-								<td>
-									<input type=submit value="Execute" id="execute_button">	
-								</td>
-							</tr>
-						</table>
-					</form>
-				</div>
+	    	      <tr>
+	    	         <td>
+	    	            <p>Sorted by:&nbsp</p>
+	    	         </td>
 
+	    	         <td>
+	    	            <select name="order_by"
+	    	                    id="c_order_by"
+	    	                    style="text-align: center;width: 100px; color:black;">
+	    	               {%for name in att.header_all%}
 
+	    	                  {%if name == att.order%}
+	    	                     <option value="{{ name }}" selected="selected"> {{ name }} </option>
+	    	                  {%else%}
+	    	                     <option value="{{ name }}"> {{ name }} </option>
+	    	                  {% endif %}
+
+	    	               {% endfor %}
+	    	            </select>
+	    	         </td>
+	    	      </tr>
+
+	    	      <tr>
+	    	         <td>
+	    	            <p>Order:&nbsp</p>
+	    	         </td>
+
+	    	         <td>
+	    	            <select name="order_asc"
+	    	                    id="c_order_by"
+	    	                    style="text-align: center;width: 100px; color:black;">
+
+	    	               <option value="ASC" selected="selected"> Ascending </option>
+	    	               <option value="DESC"> Descending </option>
+
+	    	            </select>
+	    	         </td>
+	    	      </tr>
+
+	    	      <tr><th>Filtering</th></tr>
+
+	    	      </table>
+	    	         <table width="98%">
+	    	            {% for i in range(5,21,2) %}
+	    	               <tr>
+	    	                  <td class="side_menu_header">
+	    	                     {{ att.header_all[i] }} 
+	    	                  </td>
+	    	                  
+	    	                  <td class="side_menu_checkbox">
+	    	                     <input type="checkbox"
+	    	                            name="attributes"
+	    	                            value="{{ att.header_all[i] }}"
+	    	                            checked="checked" />
+	    	                  </td>
+
+	    	                  <td class="side_menu_header">
+	    	                     {{ att.header_all[i + 1] }} 
+	    	                  </td>
+	    	                  
+	    	                  <td class="side_menu_checkbox">
+	    	                     <input type="checkbox"
+	    	                            name="attributes"
+	    	                            value="{{ att.header_all[i + 1] }}"
+	    	                            checked="checked" />
+	    	                  </td>
+	    	               </tr>
+	    	            {% endfor %}		
+	    	         </table>
+					
+	    	         <table width="96%" style="margin-top: 10px;">
+
+	    	            <tr>
+
+	    	               <td>
+	    	                  <button type="button"
+	    	                          id="selectall_button"
+	    	                          data-toggle="modal"
+	    	                          data-target="#myModal"
+	    	                          style="text-align: center; color:black;">Set Values</button>
+	    	               </td>
+
+	    	               <td>
+	    	                  <button type="button"
+	    	                  	  id="selectall_button"
+	    	                  	  style="text-align: center; color:black;">Select All</button>	
+	    	               </td>
+	    	               <td>
+	    	                  <button type="button"
+	    	                  	  id="clearall_button"
+	    	                  	  style="text-align: center; color:black;">Clear All</button>	
+	    	               </td>
+
+	    	            </tr>
+
+	    	            <tr>
+	    	         </table>
+
+	    	         <table width="96%" style="margin-top: 15px; margin-bottom: 10px;">
+
+	    	            <tr>
+
+	    	               <td>
+	    	                  <input type=submit value="Execute" id="execute_button">	
+	    	               </td>
+
+	    	            </tr>
+
+	    	         </table>
+
+	    	      </form>
+	    	   </div>
     		</div>
-    	</div>
+	    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

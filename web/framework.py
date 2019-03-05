@@ -60,16 +60,16 @@ class att:
     attributes = []
 
     # sunspot type (umbra or penumbra)
-    sunspot_type = 'continuum_sunspot'
+    sunspot_type = 'continuum'
 
     # attribute that should be used in sort
-    order = 'Time_obs'
+    order = 'Date_obs'
 
     # Ascending or Descending Order (ASC|DESC)
     order_asc = 'ASC'
 
     # list of attributes that should be included in the table
-    sql_attr = '*'
+    sql_attr = ''
 
     # first part of the query
     sql_head = ''
@@ -373,7 +373,7 @@ def full_disk():
 def query():
 
     # Default commands
-    c1 = "SELECT * FROM magnetogram_sunspot"
+    c1 = "SELECT * FROM continuum_sunspot"
     c2 = "SELECT * FROM continuum_sunspot"
 
     # Get the whole header in the complete table
@@ -391,6 +391,9 @@ def query():
     # css command
     statistic_height = 0
 
+    # Save the header
+    att.header_all = header_all_1
+
     # Check the request method
     if request.method == 'POST':
 
@@ -399,9 +402,6 @@ def query():
 
         if 'sunspot_type' in request.form:
 
-            # clear attritubes
-            att.sql_attr = ''
-
             # Define the investigated period
             att.sd = request.form['start_date']
             att.ed = request.form['end_date']
@@ -409,17 +409,10 @@ def query():
             att.et = request.form['end_time']
 
             # Get the attributes from the form
-            att.sql_values = ' '
             att.attributes = request.values.getlist('attributes')
 
-            # Minimum and maximum values for filtering the data
-            values_min_mag = request.values.getlist('values_min_magnetogram')
-            values_max_mag = request.values.getlist('values_max_magnetogram')
-            values_min_cont = request.values.getlist('values_min_continuum')
-            values_max_cont = request.values.getlist('values_max_continuum')
-
-            # Define block status
-            att.block_status = [1, len(att.attributes)]
+            print('--------attributes---------------')
+            print(att.attributes)
 
             # set sql head
             if len(att.attributes) == 0:
@@ -427,38 +420,30 @@ def query():
 
             # Read the sql attributes
             else:
+                att.sql_attr = 'Date_obs,Time_obs,Obs_type,Fea_type,NOAA,'
                 for a in range(len(att.attributes)):
                     att.sql_attr = att.sql_attr + att.attributes[a] + ','
                 att.sql_attr = att.sql_attr + 'p_key'
 
-            # Construct the sql command
-            att.sql_head = 'SELECT ' + att.sql_attr + ' FROM '
+            # Minimum and maximum values for filtering the data
+            att.values_min = request.values.getlist('values_min')
+            att.values_max = request.values.getlist('values_max')
+
+            # Define block status
+            att.block_status = [1, len(att.attributes)]
 
             # Sort by both Date_obs and Time_obs
+            att.order = request.form['order_by']
+            att.order_asc = request.form['order_asc']
+
             if att.order == 'Time_obs' or att.order == 'Date_obs':
                att.order = 'Date_obs, Time_obs'
 
             # Read the sunspot type, umbra or penumbra
             att.sunspot_type = request.form['sunspot_type']
 
-            # set the type of the sunspot in the query
-            if att.sunspot_type == 'magnetogram':
-                att.sunspot_type = "magnetogram_sunspot"
-                att.order = request.form['magnetogram_order_by']
-                att.order_asc = request.form['magnetogram_order_asc']
-                att.header_all = header_all_1
-                att.values_min = values_min_mag
-                att.values_max = values_max_mag
-
-            # set the type of the sunspot in the query
-            elif att.sunspot_type == 'continuum':
-                att.sunspot_type = "continuum_sunspot"
-                att.order = request.form['continnum_order_by']
-                att.order_asc = request.form['continnum_order_asc']
-                att.header_all = header_all_2
-                att.values_min = values_min_cont
-                att.values_max = values_max_cont
-
+            att.sql_values = ' '
+ 
             # set the range of attributes in the query
             for number in range(5, len(att.header_all) - 1):
                 min_value = att.values_min[number - 5]
@@ -510,6 +495,9 @@ def query():
             if att.sql_values != '':
                 att.sql_values = " AND " + att.sql_values
 
+            # Construct the sql command
+            att.sql_head = 'SELECT ' + att.sql_attr + ' FROM '
+
             # sql command, if no time interval selected
             if att.sd == att.ed and att.st == att.et:
                att.sql_cmd = att.sql_head + att.sunspot_type + \
@@ -522,10 +510,12 @@ def query():
                              " WHERE ((Date_obs >= '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
                              " AND (Date_obs < '"    + att.ed + "' AND Time_obs < '" + att.et + "'))" + \
                              att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
+    print('------------------------------')
+    print(att.sql_cmd)
 
     # Clear sql_table
     sql_table = []
-
+    sql_table = g.db.execute(att.sql_cmd)
     # Send the query to sqlite
     try:
 
@@ -575,6 +565,7 @@ def query():
         # Read the lenght of the table
         att.rows = len(table)
 
+    '''
     # Divide header into two parts
     att.header1 = []
     att.header2 = []
@@ -595,6 +586,7 @@ def query():
             att.header_all.append(header_all_2[index])
         if index >= 16:
             att.header2_2.append(header_all_2[index])
+    '''
 
     # Create data for downloading
     data = []
@@ -629,7 +621,7 @@ def query():
         att.selected_row = int(request.form['AR_ID'])
 
     # Define the selected row
-    if att.sunspot_type == 'magnetogram_sunspot':
+    if att.sunspot_type == 'magnetogram':
         # Execute the query
         param.row = table_all_1[att.selected_row]
         table_live =table_all_1
@@ -877,8 +869,6 @@ def query():
                            data=data,
                            header=header,
                            info=info,
-                           header_all_1=header_all_1,
-                           header_all_2=header_all_2,
                            statistic_height=statistic_height)
 
 
