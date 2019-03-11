@@ -977,6 +977,7 @@ body
 }
 
 #wrapper_table_block{
+    height: 40vw;
     width: 71vw;
     left: 14.5vw;
     top: 10px;
@@ -1003,8 +1004,8 @@ body
 
 #wrapper_table
     {
-        overflow-y:hidden;
-        overflow-x:hidden;
+        overflow-y:scroll;
+        overflow-x:scroll;
         width: 100%;
         height: 100%;
     }
@@ -1122,10 +1123,10 @@ body
 
 .bokeh_plot{
     position: absolute;
-    width: 600px;
-    height: 340px;
-    left: 25%;
-    top: 15%;
+    width: 50vw;
+    height: 30vw;
+    left: 14.5vw;
+    top: 80vw;
 }
 
 #figure{
@@ -1185,15 +1186,47 @@ body
     {
         position: fixed;
         width: 290px;
+        height: 130px;
         top: 50px;
-        margin-left: 55px;
+        margin-left: 0px;
         background-color: #ffffff;
         z-index: 0;
         border: 0px solid;
         border-color: #aaabac;
-        height: 75px;
+        width: 290px;
+        float: left;
+        background-image: url("/static/bg.png");
+        background-color: #100902;
+        background-position-y: -480px;
+        background-position-x: -120px;
+        position: absolute;
+        background-repeat: no-repeat;
         display: none; 
     }
+
+#plotting_menu table
+   {
+        font-size: 12px;
+        line-height: 23px;
+        float: left;
+        color: #e9ebee;
+        width: 96%;
+        margin: 20px 0px 0px 10px;
+   }
+
+#plotting_menu table select
+   {
+        width: 120px;	
+        color: black;
+   }
+
+#plotting_menu table input[type="number"] 
+   {
+        width: 120px;
+        height: 20px;
+        color: black;
+   }
+
 
 #download_menu
 {
@@ -1226,6 +1259,7 @@ body
 .wrapper_menu
     {
         width: 290px;
+        height: 505px;
         float: left;
         background-image: url("/static/bg.png");
         background-color: #100902;
@@ -1307,6 +1341,13 @@ body
     color: #6c7175;
 }
 
+#set_button{
+    width: 90%;
+    border: none;
+    color: #6c7175;
+}
+
+
 #clearall_button{
     width: 90%;
     border: none;
@@ -1314,10 +1355,10 @@ body
 }
 
 #execute_button{
+    background-color: #3684ff;
     width: 98%;
     border: none;
-    color: #6c7175;
-    padding: 5px 0px 5px 0px;
+    color: #e9eff8;
     text-align: center;
     font-size: 14px;
 }
@@ -1338,7 +1379,7 @@ body
 .wrapper_menu_3{
     width: 290px;
     height: 112px;
-    margin-top: 5px;
+    margin: -10px 0px 0px 10px;
 }
 /* ---------------------- MENU PROPERTIES*/
 

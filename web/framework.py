@@ -369,6 +369,11 @@ def full_disk():
     return render_template('full_disk.html')
 
 
+@app.route('/download.html', methods=['GET', 'POST'])
+def download():
+    return render_template('download.html')
+
+
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
 
@@ -409,9 +414,6 @@ def query():
 
             # Get the attributes from the form
             att.attributes = request.values.getlist('attributes')
-
-            print('--------attributes---------------')
-            print(att.attributes)
 
             # set sql head
             if len(att.attributes) == 0:
@@ -509,8 +511,6 @@ def query():
                              " WHERE ((Date_obs >= '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
                              " AND (Date_obs < '"    + att.ed + "' AND Time_obs < '" + att.et + "'))" + \
                              att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
-    print('------------------------------')
-    print(att.sql_cmd)
 
     # Clear sql_table
     sql_table = []
@@ -834,8 +834,9 @@ def query():
             for x in range(0, att.list_length):
 
                 # Define the corners of the window
-                left = 100 + 20 * x
-                top = 20 * x
+                print(x)
+                left = x
+                top = x * 350
                 att.position_left.append(left)
                 att.position_top.append(top)
 

@@ -40,8 +40,13 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
     t = np.array(table)
     hist = t.T[header.index(hist_index)]
 
+    # Remove None if present
+    hist = hist[hist != np.array(None)]
+
+
     # Histogram calculation
     histv, edges = np.histogram(hist, density=False, bins=int(bin_n))
+    print(histv, edges)
 
     # Error bar calculation
     yerrs = np.sqrt(histv)
@@ -70,7 +75,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             m, s = stats.norm.fit(hist)
 
             # Create legend
-            legend = 'Normal ' + 'STD = ' + str(m) + ' ' + 'AVG = ' + str(s) + ')'
+            legend = 'Normal ' + 'STD = ' + str(round(m,2)) + ', ' + 'AVG = ' + str(round(s,2)) + ')'
 
             # now get theoretical values in our interval
             pdf_fit = stats.norm.pdf(lnspc, m, s)
@@ -95,7 +100,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
     if density == 'no': pdf_fit = pdf_fit * total * d_bin
 
     # Plot window initialisation
-    p = figure(tools=TOOLS, logo="grey", plot_width=600, plot_height=338, y_range=(0, max(histv) * 1.5))
+    p = figure(tools=TOOLS, plot_width=650, plot_height=350, y_range=(0, max(histv) * 1.5), sizing_mode='scale_both')
 
     # plot the histogram
     p.quad(top=histv, bottom=0, left=edges[:-1], right=edges[1:], fill_color=color, line_color=None, alpha=0.45, legend="PDF")
@@ -117,9 +122,11 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
 
 
     # Fancy style
-    p.grid.grid_line_color = "white"
-    p.background_fill_color = "#e9ebee"
+    p.grid.grid_line_color = "#e9ebee"
+    p.background_fill_color = "white"
     p.xaxis.axis_label = str(hist_index)
+    p.border_fill_color = "#e9ebee"
+    p.legend.label_text_font_size = '10pt'
     if density == 'yes': p.yaxis.axis_label = "PDF"
     else: p.yaxis.axis_label = "Frequency"
 
@@ -164,7 +171,7 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
         radii = normalise_axis * scaling
 
     # Plot window initialisation
-    p = figure(tools=TOOLS, logo="grey", plot_width=600, plot_height=338)
+    p = figure(tools=TOOLS, plot_width=600, plot_height=338)
 
     #Plot the data
     p.circle(x, y, radius=radii, line_color=None, fill_color=colors, fill_alpha=0.75)
@@ -191,7 +198,7 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
     yl = np.array(yl)[idx]
 
     # Plot window initialisation
-    p = figure(tools=TOOLS, logo="grey", plot_width=600, plot_height=338)
+    p = figure(tools=TOOLS, plot_width=600, plot_height=338)
 
     #Plot the data
     p.line(xl, yl, alpha=0.9, line_width=2, color = line_col)
@@ -276,11 +283,12 @@ def Generate_position_data(hdulist, hdulist_full):
 
 
 def subpanel_live_plot(p, obs, table, selected_row):
+    ''' Live histogram below the AR'''
 
     # Initialise the subpanel
     k = figure(tools="save",
-               plot_width=p.plot_width,
-               plot_height=int(p.plot_height / 2))
+               plot_width=300,
+               plot_height=80)
 
     # Using smaller image to save computation time
     obs = scipy.ndimage.interpolation.zoom(obs,.5)
@@ -291,7 +299,10 @@ def subpanel_live_plot(p, obs, table, selected_row):
     # Save some memory
     obs_flat = np.array(obs_flat, dtype="f4")
 
-    # Calculate the histogram
+    # Remove NaN's
+    obs_flat = obs_flat[~np.isnan(obs_flat)]
+
+    # Calculate the histogram, removing NaN if present
     hist, edges = np.histogram(obs_flat, bins='rice')
 
     # Covert to logarithmic scale
@@ -345,7 +356,7 @@ def subpanel_live_plot(p, obs, table, selected_row):
     # Save the umbra and penumbra id
     umbra, penumbra = [], []
 
-    # Read the sunspot positions in the histogram from the table
+    # Read the sunspot intensity position in the histogram from the table
     for row in table:
 
         # The selected sunspot
@@ -378,6 +389,9 @@ def subpanel_live_plot(p, obs, table, selected_row):
 
         # The other sunspots
         else:
+
+            if row[17] == None:
+               row[17] = np.nan 
 
             # The x coordinate
             spot_x.append(float(row[17]))
@@ -569,9 +583,10 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     y1, x1 = 0, 0
     y2, x2 = np.shape(obs)[0], np.shape(obs)[1]
 
+
     # Setup the dimensions
     plot_width = 300
-    plot_height = int((300. / x2) * y2)
+    plot_height = 200
 
     # Calculate the positions in arcsecs
     asec_x, asec_y = Generate_position_data(hdulist, hdulist_full)
@@ -583,12 +598,31 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     # Define the toolbox for the HTML image visualisation
     TOOLS = "pan,zoom_in,zoom_out,save"
 
+    # Set the X and Y ranges for the plot
+    if (x2 / y2) <= 1.5:
+
+       # Picture is stretched into y dimension, cropping only y
+       rx1, rx2 = x1, x2
+
+       # New y range
+       ry1 = (y2 - (rx2 / 1.5)) / 2
+       ry2 = y2 - ((y2 - (rx2 / 1.5)) / 2)
+
+    else:
+
+       # Picture is stretched into x dimension, cropping only x
+       ry1, ry2 = y1, y2
+
+       # New y range
+       rx1 = (x2 - (ry2 * 1.5)) / 2
+       rx2 = x2 - ((x2 - (ry2 * 1.5)) / 2)
+
     # Initialise the figure window
     p = figure(tools=TOOLS,
                plot_width=plot_width,
                plot_height=plot_height,
-               x_range=(x1, x2),
-               y_range=(y1, y2),
+               x_range=(rx1, rx2),
+               y_range=(ry1, ry2),
                toolbar_location="right")
 
     p.select(BoxSelectTool).select_every_mousemove = False
@@ -866,3 +900,4 @@ def Create_live_fulldisk(full_path, selected_row, full):
 
     if full is True:
         return script_html, div_html, header_table
+

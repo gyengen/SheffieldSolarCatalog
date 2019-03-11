@@ -46,7 +46,7 @@ interval = 60
 # the JSOC and the ShARC services need time for publising data The lag-time
 # defines a period of time between the present and the observations.
 
-lag = 3070
+lag = 2070
 
 # STEP 2: Email address. The JSOC service requires a registred email address
 # for downloading the observations. Please do not use this email address if

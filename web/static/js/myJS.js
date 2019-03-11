@@ -20,15 +20,6 @@ function downloadFile(fileName, url) {
     aTag.click();
 }
 
-function changeImage(number){
-	if (number > 12248) {
-		document.getElementById("image").src = '/static/example.png';
-	}else{
-		document.getElementById("image").src = '/static/example_' + number + '.png';
-	}
-	
-}
-
 function showmore(){
   document.getElementById("filter_menu_showmore").style.display="block";
   document.getElementById("show_button").style.display="none";
@@ -77,52 +68,44 @@ function change_plot_type()
    if (type != "none" && type != "kde") {
      if (type == "scatter_2d")
         {
-           $("#plotting_menu").css("height","155px");
-           $(".wrapper_menu_2").css("height","140px");
+           $("#plotting_menu").css("height","245px");
            $(".scatter_2d_plot").addClass("plot_menu_shown")
         }
       else
         {
-           $(".wrapper_menu_2").css("height","90px");
            $(".scatter_2d_plot").removeClass("plot_menu_shown");
         }
       if (type == "histogram")
         {
-           $("#plotting_menu").css("height","180px");
-           $(".wrapper_menu_2").css("height","140px");
+           $("#plotting_menu").css("height","270px");
            $(".histogram_plot").addClass("plot_menu_shown")
         }
       else
         {
-           $(".wrapper_menu_2").css("height","90px");
            $(".histogram_plot").removeClass("plot_menu_shown");
         }
         
       if (type == "biv_hist")
         {
-           $("#plotting_menu").css("height","141px");
-           $(".wrapper_menu_2").css("height","140px");
+           $("#plotting_menu").css("height","225px");
            $(".biv_histogram_plot").addClass("plot_menu_shown")
         }
       else
         {
-           $(".wrapper_menu_2").css("height","90px");
            $(".biv_histogram_plot").removeClass("plot_menu_shown");
         }
 
       if (type == "line")
         {
-           $("#plotting_menu").css("height","136px");
-           $(".wrapper_menu_2").css("height","140px");
+           $("#plotting_menu").css("height","225px");
            $(".line_plot").addClass("plot_menu_shown")
         }
       else
         {
-           $(".wrapper_menu_2").css("height","90px");
            $(".line_plot").removeClass("plot_menu_shown");
         } 
     }else{
-      $("#plotting_menu").css("height","75px");
+      $("#plotting_menu").css("height","130px");
       $(".line_plot").removeClass("plot_menu_shown");
       $(".biv_histogram_plot").removeClass("plot_menu_shown");
       $(".histogram_plot").removeClass("plot_menu_shown");

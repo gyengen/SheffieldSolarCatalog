@@ -55,46 +55,10 @@
 
             <li id="message_log_bar"><a><img src="static/icons/terminal.png" class='icon_im'><br>Console</a></li>
 
-            <li><a id="download_button"><img src="static/icons/download.png" class='icon_im'><br>Download</a>
-               <ul>
+            <li><a id="download_button"
+                   onclick="openInNewTab('download.html');">
+                   <img src="static/icons/download.png" class='icon_im'><br>Download</a>
 
-                  <li>
-
-                     <button class="download_options" type="button"
-                             onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='./database/sql/ssc_sql.db') }}')">
-                        SQLite
-                     </button>
-
-                  </li>
-
-                  <li>
-
-                     <button class="download_options" type="button"
-                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.h5',{{ att.data }})">
-                        HDF5
-                     </button>
-                  
-                  </li>
-
-                  <li>
-
-                     <button class="download_options" type="button"
-                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.csv',{{ att.data }})">
-                        CSV
-                     </button>
-
-                  </li>
-
-                  <li>
-
-                     <button class="download_options" type="button"
-                             onclick="createAndDownloadFile('{{ att.sunspot_type+'_'+att.sd+'_'+ att.ed }}.txt',{{ att.data }})">
-                        TXT
-                     </button>
-
-                  </li>
-
-               </ul>
             </li>
 
             <li id ='sftp'><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>SFTP</a></li>
@@ -364,7 +328,7 @@
 
 	    	               <td>
 	    	                  <button type="button"
-	    	                          id="selectall_button"
+	    	                          id="set_button"
 	    	                          data-toggle="modal"
 	    	                          data-target="#myModal"
 	    	                          style="text-align: center; color:black;">Set Values</button>
@@ -403,595 +367,576 @@
     		</div>
 	    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	    <div id = "plotting_menu">
-	    	<div class = "wrapper_menu">
-		    	<div class = "wrapper_menu_3">
-			    	<form method="post">
-			    	<table name="test" id="test">
-			    	 	<tr><a id="create_plot"></a><th>Create Plot</th></a></tr>
-			    	 	<tr>
-			    	 		<td> Plot Type: </td>
-			    	 		<td>
-					    	 	<select name="plot_type" id="plot_type" onchange="change_plot_type();">
-					    	 		<option value="none">Please Select</option>
-					    	 		<option value="histogram">Histogram</option>
-					    	 		<option value="kde">Kernel Density Estimation</option>
-					    	 		<option value="biv_hist">Bivariate Histogram</option>
-					    	 		<option value="line">Line plot</option>
-					    	 		<option value="scatter_2d">Scatter Plot</option>
-					    	 	</select>
-			  				</td>
-			  			</tr>
+    		<!--<div class = "wrapper_menu8888">
+    		   <div class = "wrapper_menu_3888">-->
+    		      <form method="post">
+    		         <table name="test" id="test">
 
-			  			<tr class="plot_menu histogram_plot">
-								<td> Values: </td>
-								<td>
-									<select name="v">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == v%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-						</tr>
+    		            <tr><a id="create_plot"></a><th>Create Plot &nbsp</th></a></tr>
+    		            <tr>
 
-						<tr class="plot_menu histogram_plot">
-							<td> Normed: </td>
-							<td>
-								<select name="histogram_den">
-									<option value=yes> Yes </option>
-									<option value=no> No </option>
-								</select>
-							</td>	
-						</tr>
+    		               <td> Plot Type: </td>
+    		               <td>
+    		                  <select name="plot_type"
+    		                          id="plot_type"
+    		                          onchange="change_plot_type();">
 
-						<tr class="plot_menu histogram_plot">
-							<td> Fit Distribution: </td>
-							<td>
-								<select name="histogram_fit">
-									<option value=Normal> Normal </option>
-									<option value=Gamma> Gamma </option>
-									<option value=Beta> Beta </option>
-								</select>
-							</td>	
-						</tr>
+    		                     <option value="none">Please Select</option>
+    		                     <option value="histogram">Histogram</option>
+    		                     <option value="biv_hist">Bivariate Histogram</option>
+    		                     <option value="line">Line plot</option>
+    		                     <option value="scatter_2d">Scatter Plot</option>
+    		                  </select>
+    		               </td>
 
-						<tr class="plot_menu histogram_plot">
-							<td> Color: </td>
-							<td>
-								<select name="histogram_col">
-									<option value=#022440> Blue </option>
-									<option value=black> Black </option>
-									<option value=darkred> Red </option>
-									<option value=gold> Yellow </option>
-									<option value=green> Green </option>
-								</select>
-							</td>	
-						</tr>
+    		            </tr>
 
-						<tr class="plot_menu histogram_plot">
-							<td> Bin number: </td>
-							<td>
-								<input name="histogram_bin" type="number" value="20">
-							</td>	
-						</tr>
+    		            <tr class="plot_menu histogram_plot">
 
+    		               <th>Properties: &nbsp</th>
 
-			  			<tr class="plot_menu biv_histogram_plot">
-								<td> Values 1: </td>
-								<td>
-									<select name="biv_v">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == v%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-						</tr>
+    		            </tr>
 
-			  			<tr class="plot_menu biv_histogram_plot">
-								<td> Values 2: </td>
-								<td>
-									<select name="biv_w">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == v%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-						</tr>
+    		            <tr class="plot_menu histogram_plot">
 
-						<tr class="plot_menu biv_histogram_plot">
-							<td> Bin Size: </td>
-							<td>
-								<input name="biv_w_bin" type="number" value="20">
-							</td>	
-						</tr>
+    		               <td> Values: </td>
+    		               <td>
+    		                  <select name="v">
+    		                     <option value=None> None </option>
+    		                     {%for name in header%}
+    		                        {%if name == v%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>
 
+    		            </tr>
 
-			  			<tr class="plot_menu line_plot">
-								<td> X-axis: </td>
-								<td>
-									<select name="xl">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == xl%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-						</tr>
-						<tr class="plot_menu line_plot">
-							<td> Y-axis: </td>
-							<td>
-								<select name="yl">
-									<option value=None> None </option>
-									{%for name in header%}
-									{%if name == yl%}
-										<option value="{{ name }}" selected="selected"> {{ name }} </option>
-									{%else%}
-										<option value="{{ name }}"> {{ name }} </option>
-									{% endif %}
-									{% endfor %}
-								</select>
-							</td>	
-						</tr>
+    		            <tr class="plot_menu histogram_plot">
 
-						<tr class="plot_menu line_plot">
-							<td> Color: </td>
-							<td>
-								<select name="line_col">
-									<option value=#022440> Blue </option>
-									<option value=black> Black </option>
-									<option value=darkred> Red </option>
-									<option value=gold> Yellow </option>
-									<option value=green> Green </option>
-								</select>
-							</td>	
-						</tr>
+    		               <td> Normed: </td>
+    		               <td>
+    		                  <select name="histogram_den">
+    		                     <option value=yes> Yes </option>
+    		                     <option value=no> No </option>
+    		                  </select>
+    		               </td>	
 
-			  			<tr class="plot_menu scatter_2d_plot">
-								<td> X-axis: </td>
-								<td>
-									<select name="x">
-										<option value=None> None </option>
-										{%for name in header%}
-										{%if name == x%}
-											<option value="{{ name }}" selected="selected"> {{ name }} </option>
-										{%else%}
-											<option value="{{ name }}"> {{ name }} </option>
-										{% endif %}
-										{% endfor %}
-									</select>
-								</td>
-						</tr>
-						<tr class="plot_menu scatter_2d_plot">
-							<td> Y-axis: </td>
-							<td>
-								<select name="y">
-									<option value=None> None </option>
-									{%for name in header%}
-									{%if name == y%}
-										<option value="{{ name }}" selected="selected"> {{ name }} </option>
-									{%else%}
-										<option value="{{ name }}"> {{ name }} </option>
-									{% endif %}
-									{% endfor %}
-								</select>
-							</td>	
-						</tr>
+    		            </tr>
 
-						<tr class="plot_menu scatter_2d_plot">
-							<td> Color: </td>
-							<td>
-								<select name="c">
-									<option value=None> None </option>
-									{%for name in header%}
-									{%if name == c%}
-										<option value="{{ name }}" selected="selected"> {{ name }} </option>
-									{%else%}
-										<option value="{{ name }}"> {{ name }} </option>
-									{% endif %}
-									{% endfor %}
-								</select>
-							</td>	
-						</tr>		
+    		            <tr class="plot_menu histogram_plot">
 
-						<tr class="plot_menu scatter_2d_plot">
-							<td> Marker Size: </td>
-							<td>
-								<select name="s">
-									<option value=None> None </option>
-									{%for name in header%}
-									{%if name == s%}
-										<option value="{{ name }}" selected="selected"> {{ name }} </option>
-									{%else%}
-										<option value="{{ name }}"> {{ name }} </option>
-									{% endif %}
-									{% endfor %}
-								</select>
-							</td>	
-						</tr>	
-						<tr>
-							<td>
-								<input id="static_execute" type="submit" value="Execute">
-							</td>
-						</tr>
-					</table>
-		    	</div>
-    		</div>
-    	</div>
+    		               <td> Fit Distribution: </td>
+    		               <td>
+    		                  <select name="histogram_fit">
+    		                     <option value=Normal> Normal </option>
+    		                     <option value=Gamma> Gamma </option>
+    		                     <option value=Beta> Beta </option>
+    		                  </select>
+    		               </td>	
+    		            </tr>
 
-    	{% for num in range(att.list_length) %}
-    		<div style="position: relative;top: {{ att.position_top[num] }}px;left: {{ att.position_left[num] }}px;">
-				{{ att_plot.div_frame_list[num]|safe }}
-			</div>
-		{% endfor %}
+    		            <tr class="plot_menu histogram_plot">
 
-    	<!-- {% for div_frame in div_frame_list %}
-    		<div>
-				{{ div_frame|safe }}
-			</div>
-		{% endfor %} -->
-    	</form>
-    	<!-- Menu -->
+    		               <td> Color: </td>
+    		               <td>
+    		                  <select name="histogram_col">
+    		                     <option value=#022440> Blue </option>
+    		                     <option value=black> Black </option>
+    		                     <option value=darkred> Red </option>
+    		                     <option value=gold> Yellow </option>
+    		                     <option value=green> Green </option>
+    		                  </select>
+    		               </td>
+	
+    		            </tr>
 
-		<!-- SQLite query -->	
-    	<!-- <div id="wrapper_sql">	
-			
-		</div> -->
-		<!-- SQLite query -->
-<!-- 			<div id="wrapper_menu_bar">
-			<div class="wrapper_menu_button" id="reset_button">
-				<p>Reset</p>
-			</div>
-			<div class="wrapper_menu_button" id="help_button">
-				<p>Help</p>
-			</div>
-		</div> -->
-		<!-- AR image -->
+    		            <tr class="plot_menu histogram_plot">
 
-    	<div class="draggable_window z-position" id="wrapper_image">
-    		<div class="windowBar" id = "wrapper_image_windowBar">
-	    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
-	    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
-	    		<div class="windowTitle">
-	    			<p>AR</p>
-	    		</div>
-	    		<div class="Full_disk" onclick="openInNewTab('extrapolation.html');">
-	    			<div class="full_button"></div>
-	    				Extrapolation
-	    		</div>
+    		               <td> Bin number: </td>
+    		               <td>
+    		                  <input name="histogram_bin"
+    		                         type="number"
+    		                         value="20">
+    		               </td>	
+    		            </tr>
+
+    		            <tr class="plot_menu biv_histogram_plot">
+
+    		               <th>Properties: &nbsp</th>
+
+    		            </tr>
+
+    		            <tr class="plot_menu biv_histogram_plot">
+
+    		               <td> Values 1: </td>
+    		               <td>
+    		                  <select name="biv_v">
+
+    		                     <option value=None> None </option>
+    		                     {%for name in header%}
+
+    		                        {%if name == v%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>
+
+    		            </tr>
+
+    		            <tr class="plot_menu biv_histogram_plot">
+
+    		               <td> Values 2: </td>
+    		               <td>
+    		                  <select name="biv_w">
+
+    		                     <option value=None> None </option>
+
+    		                     {%for name in header%}
+  
+    		                        {%if name == v%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>
+
+    		            </tr>
+
+    		            <tr class="plot_menu biv_histogram_plot">
+
+    		               <td> Bin Size: </td>
+    		               <td>
+    		                  <input name="biv_w_bin"
+    		                         type="number"
+    		                         value="20">
+    		               </td>
+	
+    		            </tr>
+
+    		            <tr class="plot_menu line_plot">
+
+    		               <th>Properties: &nbsp</th>
+
+    		            </tr>
+
+    		            <tr class="plot_menu line_plot">
+
+    		               <td> X-axis: </td>
+    		               <td>
+    		                  <select name="xl">
+    		                     <option value=None> None </option>
+    		                     {%for name in header%}
+
+    		                        {%if name == xl%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>
+
+    		            </tr>
+
+    		            <tr class="plot_menu line_plot">
+
+    		               <td> Y-axis: </td>
+    		               <td>
+    		                  <select name="yl">
+    		                     <option value=None> None </option>
+    		                     {%for name in header%}
+
+    		                        {%if name == yl%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>	
+
+    		            </tr>
+
+    		            <tr class="plot_menu line_plot">
+
+    		               <td> Color: </td>
+    		               <td>
+    		                  <select name="line_col">
+    		                     <option value=#022440> Blue </option>
+    		                     <option value=black> Black </option>
+    		                     <option value=darkred> Red </option>
+    		                     <option value=gold> Yellow </option>
+    		                     <option value=green> Green </option>
+    		                  </select>
+    		               </td>
+	
+    		            </tr>
+
+    		            <tr class="plot_menu scatter_2d_plot">
+
+    		               <th>Properties: &nbsp</th>
+
+    		            </tr>
+
+    		            <tr class="plot_menu scatter_2d_plot">
+
+    		               <td> X-axis: </td>
+    		               <td>
+    		                  <select name="x">
+    		                     <option value=None> None </option>
+
+    		                     {%for name in header%}
+    		                        {%if name == x%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>
+
+    		            </tr>
+
+    		            <tr class="plot_menu scatter_2d_plot">
+
+    		               <td> Y-axis: </td>
+    		               <td>
+    		                  <select name="y">
+    		                     <option value=None> None </option>
+
+    		                     {%for name in header%}
+    		                        {%if name == y%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>	
+
+    		            </tr>
+
+    		            <tr class="plot_menu scatter_2d_plot">
+
+    		               <td> Color: </td>
+    		               <td>
+    		                  <select name="c">
+    		                     <option value=None> None </option>
+
+    		                     {%for name in header%}
+    		                        {%if name == c%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>	
+    		            </tr>		
+
+    		            <tr class="plot_menu scatter_2d_plot">
+
+    		               <td> Marker Size: </td>
+    		               <td>
+    		                  <select name="s">
+    		                     <option value=None> None </option>
+
+    		                     {%for name in header%}
+    		                        {%if name == s%}
+    		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
+    		                        {%else%}
+    		                           <option value="{{ name }}"> {{ name }} </option>
+    		                        {% endif %}
+    		                     {% endfor %}
+    		                  </select>
+    		               </td>	
+
+    		            </tr>	
+    		            
+    		         </table>
+
+	    	         <table>
+
+	    	            <tr>
+
+	    	               <td>
+	    	                  <input type=submit value="Execute" id="execute_button">	
+	    	               </td>
+
+	    	            </tr>
+
+	    	         </table>
+
+    		      </form>
+    		   <!--</div>
+    		</div>-->
+             </div>
+
+             {% for num in range(att.list_length) %}
+                <div style="position: relative;
+                           top: {{ att.position_top[num] }}px;
+                           left: {{ att.position_left[num] }}px;"> {{ att_plot.div_frame_list[num]|safe }}
+                </div>
+             {% endfor %}
+
+             <div class="draggable_window z-position" id="wrapper_image">
+                <div class="windowBar" id = "wrapper_image_windowBar">
+                   <div class="control_buttons close_button" id="wrapper_image_close_button"></div>
+                   <div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
+                   <div class="windowTitle">
+                      <p>AR</p>
+                   </div>
+                   <div class="Full_disk" onclick="openInNewTab('extrapolation.html');">
+                      <div class="full_button"></div>
+                         Extrapolation
+                   </div>
 	    	</div>
 
 	    	<div id="AR_plot">
-	    		{{ att_visual.visual_div|safe }}
+	    	   {{ att_visual.visual_div|safe }}
 	    	</div>
+             </div>
 
-		</div>
-		{{ att_visual.visual_script|safe }}
+             {{ att_visual.visual_script|safe }}
 
-    	<div class="draggable_window z-position" id="wrapper_image2">
+             <div class="draggable_window z-position" id="wrapper_image2">
     		<div class="windowBar" id = "wrapper_image_windowBar">
-	    		<div class="control_buttons close_button" id="wrapper_image_close_button"></div>
-	    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
-	    		<div class="windowTitle">
-	    			<p>Full Disk</p>
-	    		</div>
-	    		<div class="Full_disk" onclick="openInNewTab('full_disk.html');">
-	    			<div class="full_button"></div>
-	    				Full screen
-	    			</div>
+                   <div class="control_buttons close_button" id="wrapper_image_close_button"></div>
+                   <div class="control_buttons minimum_button" id="wrapper_image_minimum_button"></div>
+                   <div class="windowTitle">
+                      <p>Full Disk</p>
+                   </div>
+                   <div class="Full_disk" onclick="openInNewTab('full_disk.html');">
+                      <div class="full_button"></div>
+                         Full screen
+                   </div>
 	    	</div>
 
 	    	<div id="AR_plot">
-	    		{{ att_visual.visual_div_full|safe }}
+                   {{ att_visual.visual_div_full|safe }}
 	    	</div>
+             </div>
+
+             {{ att_visual.visual_script_full|safe }}
+
+             <div class="draggable_window z-position" id="wrapper_table_block">
+                <!-- control button -->
+
+                <div class="windowBar" id = "wrapper_table_windowBar">
+                   <div class="control_buttons close_button" id="wrapper_table_close_button"></div>
+                   <div class="control_buttons minimum_button" id="wrapper_table_minimum_button"></div>
+                   <div class="windowTitle">
+                      <p>Data Table</p>
+                   </div>
+	    	</div>
+
+                <div id="wrapper_table_info">
+                   <div id = "wrapper_table">						
+                      <table>
+                         <thead>
+                            <tr>
+
+                               {%for name in header%}
+                                  <th> {{ name }} </th>
+                               {% endfor %}
+
+                            </tr>
+                         </thead>
+
+                         <tbody>
+
+                            {%for row in range(att.rows)%}
+                               <tr>
+                                  {% for col in range(att.columns) %}
+
+                                     {% if col == 4 %}
+                                        <form method="post">
+                                           <td>
+                                              <button name="AR_ID" type="submit" value={{row}}>
+
+                                                 {% if row == att.selected_row %}
+                                                    <div id="selected_row">
+                                                       {{table[row][col]}}
+                                                    </div>
+                                                 {% else %}
+                                                    <div id="buttom_color">
+                                                       {{table[row][col]}}
+                                                    </div>	
+                                                 {% endif %}
+
+                                              </button>
+                                           </td>
+                                        </form>
+                                     
+                                     {% else %}
+                                        <td>
+
+                                           {% if row == att.selected_row %}
+                                              <div id="selected_row">
+                                                 {{ table[row][col] }}
+                                              </div>
+                                           {% else %}
+                                              <div id="unselected_row">
+                                                 {{ table[row][col] }}
+                                              </div>
+                                           {% endif %}
+
+                                        </td>
+                                     {% endif %}
+
+                                  {% endfor %}
+                               </tr>
+
+                            {% endfor %}
+                         </tbody>
+                      </table>
+                   </div>
 		</div>
-		{{ att_visual.visual_script_full|safe }}
+	     </div>
 
-		<!-- 
-    	<div class="draggable_window z-position" id="wrapper_image2">
-    		<div class="windowBar" id = "wrapper_image_windowBar">
-	    		<div class="control_buttons close_button" id="wrapper_image_close_button2"></div>
-	    		<div class="control_buttons minimum_button" id="wrapper_image_minimum_button2"></div>
-	    		<div class="windowTitle">
-	    			<p>Full Disk</p>
-	    		</div>
-	    	</div>
-
-
-
-		</div>-->
-
-
-
-		
-<!-- 		<div id="bokeh_plot">
-			<div class="windowBar" id = "bokeh_plot_windowBar">
-				<div class="control_buttons close_button" id="bokeh_plot_close_button"></div>
-	    		<div class="control_buttons minimum_button" id="bokeh_plot_minimum_button"></div>
-	    		<div class="windowTitle">
-	    			<p>{{ plot_type }}</p>
-	    		</div>
-	    	</div>
-			<div id="figure">{{ div|safe }}</div>
-		</div> -->
-		
-		
-		<!-- {{ script }} -->
-		<!-- AR image -->
-
-		<div class="draggable_window z-position" id="wrapper_table_block">
-			<!-- control button -->
-
-			<div class="windowBar" id = "wrapper_table_windowBar">
-				<div class="control_buttons close_button" id="wrapper_table_close_button"></div>
-	    		<div class="control_buttons minimum_button" id="wrapper_table_minimum_button"></div>
-	    		<div class="windowTitle">
-	    			<p>Data Table</p>
-	    		</div>
-	    	</div>
-
-			<div id="wrapper_table_info">
-				<div id = "wrapper_table">						
-					<table>
-						<thead>
-							<tr>
-								{%for name in header%}
-									<th> {{ name }} </th>
-								{% endfor %}
-							</tr>
-						</thead>
-						<tbody>
-							{%for row in range(att.rows)%}
-							    <tr>
-								{% for col in range(att.columns) %}
-									{% if col == 4 %}
-										<form method="post">
-							    			<td>
-												<button name="AR_ID" type="submit" value={{row}}>
-													{% if row == att.selected_row %}
-														<div id="selected_row">
-															{{table[row][col]}}
-														</div>
-													{% else %}
-														<div id="buttom_color">
-															{{table[row][col]}}
-														</div>	
-													{% endif %}
-
-												</button>
-											</td>
-										</form>
-									{% else %}
-										<td>
-											{% if row == att.selected_row %}
-												<div id="selected_row">
-													{{ table[row][col] }}
-												</div>
-											{% else %}
-												<div id="unselected_row">
-													{{ table[row][col] }}
-												</div>
-											{% endif %}
-										</td>
-									{% endif %}
-								{% endfor %}
-							    </tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-
-    	<div id="message_log">
+	     <div id="message_log">
     		<div id="message_log_bar"></div>
     		<h3>Message Log</h3>
+
     		<!-- SQLite query info -->	
 	    	<div class="message_log_messages">
-	    		<div style="color: white;">
-	    		<strong>Query information</strong><br>
-					<p>Number of rows: {{ info[0] }}</p> 
-					<p>Number of columns: {{ info[1] }}</p> 
-					<p>Number of active regions: {{ info[0] }}</p> 
-					<p>Timespan: {{ info[0] }}</p> 
-				</div>
-			</div>
+	    	   <div style="color: white;">
 
-			<div class="message_log_messages">
-				{% if att.error_message != '' %}
-					<strong>Terminal</strong><br>
-					<div style="color: red;">
-						{{ att.error_message|safe }}
-					</div>
-				{% else %}
-					No error message.
-				{% endif %}
-			</div>
-    	</div>
+	    	      <strong>Query information</strong><br>
+	    	      <p>Number of rows: {{ info[0] }}</p> 
+	    	      <p>Number of columns: {{ info[1] }}</p> 
+	    	      <p>Number of active regions: {{ info[0] }}</p> 
+	    	      <p>Timespan: {{ info[0] }}</p> 
+	    	   </div>
+	    	</div>
 
-		<div id="fixedWindowBar">
-			<div class ="window1" id="a">
-				<p>Full Disk</p>
-			</div>
-			<div class ="window1" id="b">
-				<p>Data Table</p>
-			</div>
-			<div class ="window1" id="c">
-				<p>Active Region</p>
-			</div>
-			<!-- <div class ="window1" id="c">
-				<p>{{ plot_type }}</p>
-			</div> -->
-			{% for div_minimize_block in att_plot.div_minimize_block_list %}
-				{{ div_minimize_block|safe }}
-			{% endfor %}
-		</div>
+	    	<div class="message_log_messages">
+	    	   {% if att.error_message != '' %}
+	    	      <strong>Terminal</strong><br>
+	    	      <div style="color: red; margin-left:50px">
+	    	         {{ att.error_message|safe }}
+	    	      </div>
+	    	   {% else %}
+	    	      <div style="color: white; margin-left:50px">No error message.</div>
+	    	   {% endif %}
 
-	{% for bokeh_script in att_plot.bokeh_script_list %}
-			{{ bokeh_script|safe }}
-	{% endfor %}
+	    	</div>
+	     </div>
 
-    </div>
-    </body>
+	     <div id="fixedWindowBar">
+	        <div class ="window1" id="a">
+	           <p>Full Disk</p>
+	        </div>
 
-    <script>
-    	laydate.render({
-		    elem: '#sd'
-		    ,lang: 'en'
-		  });
+	        <div class ="window1" id="b">
+	           <p>Data Table</p>
+	        </div>
 
-		    laydate.render({
-		    elem: '#ed'
-		    ,lang: 'en'
-		  });
+	        <div class ="window1" id="c">
+	           <p>Active Region</p>
+	        </div>
+ 
+	        {% for div_minimize_block in att_plot.div_minimize_block_list %}
+	           {{ div_minimize_block|safe }}
+	        {% endfor %}
 
-		  laydate.render({ 
-		    elem: '#st'
-		    ,lang:'en'
-		    ,type: 'time'
-		  });
+	     </div>
 
-		  laydate.render({
-		    elem: '#et'
-		    ,lang:'en'
-		    ,type: 'time'
-		  });
-    </script>
-    <script>
-    	$(function(){
-    		if ({{att.block_status[0]}}==1) {
-	    		$('#database_button').addClass('menu-open');
-			    $('#side_menu').css('left','0');
+	     {% for bokeh_script in att_plot.bokeh_script_list %}
+	        {{ bokeh_script|safe }}
+	     {% endfor %}
 
-			    $('#statistics_button').addClass('table-close');
+	  </div>
 
-			    $('#wrapper_table_block').css('bottom','0');
-			    if ({{att.block_status[1]}} <= 7 ) {
-			    	$('#wrapper_table_block').css('width','28%');
-			    }
-			    else if({{att.block_status[1]}} >= 17){
-			    	
-			    }
-			    else{
-			    	var t = 4 * {{att.block_status[1]}} + '%';
-			    	$('#wrapper_table_block').css('width',t);
-			    }
-		    }
-		});
-    </script>
+   </body>
+
+   <script>
+   laydate.render({
+		   elem: '#sd'
+		   ,lang: 'en' });
+
+		   laydate.render({
+		   elem: '#ed'
+		   ,lang: 'en'});
+
+		   laydate.render({ 
+		   elem: '#st'
+		   ,lang:'en'
+		   ,type: 'time'});
+
+		   laydate.render({
+		   elem: '#et'
+		   ,lang:'en'
+		   ,type: 'time'});
+   </script>
+
+   <script>
+      $(function(){
+         if ({{att.block_status[0]}}==1) {
+
+            $('#database_button').addClass('menu-open');
+            $('#side_menu').css('left','0');
+            $('#statistics_button').addClass('table-close');
+            $('#wrapper_table_block').css('bottom','0');
+
+            if ({{att.block_status[1]}} <= 7 ) {
+               $('#wrapper_table_block').css('width','28%');}
+
+            else if({{att.block_status[1]}} >= 17){}
+
+            else{
+               var t = 4 * {{att.block_status[1]}} + '%';
+               $('#wrapper_table_block').css('width',t);}
+         }});
+   </script>
 
 
-    <script>
-    	$(function(){
-    		if ({{att.block_status[0]}}==1) {
-	    		$('#plot_button').addClass('plot-open');
-			    $('#plotting_menu').css('left','0');
+   <script>
+      $(function(){
+         if ({{att.block_status[0]}}==1) {
 
-			    $('#statistics_button').addClass('table-close');
+            $('#plot_button').addClass('plot-open');
+            $('#plotting_menu').css('left','0');
+            $('#statistics_button').addClass('table-close');
+            $('#wrapper_table_block').css('bottom','0');
 
-			    $('#wrapper_table_block').css('bottom','0');
-			    if ({{att.block_status[1]}} <= 7 ) {
-			    	$('#wrapper_table_block').css('width','28%');
-			    }
-			    else if({{att.block_status[1]}} >= 17){
-			    	
-			    }
-			    else{
-			    	var t = 4 * {{att.block_status[1]}} + '%';
-			    	$('#wrapper_table_block').css('width',t);
-			    }
-		    }
-		});
-    </script>
+               if ({{att.block_status[1]}} <= 7 ) {
+                  $('#wrapper_table_block').css('width','28%');}
 
+               else if({{att.block_status[1]}} >= 17){}
+
+               else{
+                  var t = 4 * {{att.block_status[1]}} + '%';
+                  $('#wrapper_table_block').css('width',t);}
+         }});
+   </script>
+
+   <script>
 
 
+      $(function(){
+         if ("{{att.error_message}}" == '') {
+            $("#message_log").css("right","-230px");
+            $("#message_log_bar").addClass('table-close');}
+      });
 
-    <script>
-    	$(function(){
-    		if ({{att_plot.plot_status}}==1) {
-    			$('#wrapper_image').css('display','none');
-    			$('#a').css('display','table')
-    			$('#wrapper_table_block').css('bottom','0').css('display','none');
-    			$('#b').css('display','table')
-    		}
-    	});
-    </script>
-    <script>
-    	$(function(){
-    		if ("{{att.sunspot_type}}"=="magnetogram_sunspot") {
-    			$("#c_order_by").addClass("hide")
-			    $("#type1_header").css("display","block");
-				$("#type2_header").css("display","none");
-    		}
-    		else if ("{{att.sunspot_type}}"=="continuum_sunspot"){
-    			$("#m_order_by").addClass("hide")
-    			$("#type2_header").css("display","block");
-    			$("#type1_header").css("display","none");
-    		}
-    	});
-    	$(function(){
-    		if ({{statistic_height}} != 0) {
-			  	if ({{statistic_height}} < 400) {
-			    	$("#wrapper_table_block").css("height","{{statistic_height}}");
-    			}else{
-    				$("#wrapper_table_block").css("height","400");
-    			}
-    		}
-    	});
-    	$(function(){
-    		if ("{{att.error_message}}" == '') {
-			    $("#message_log").css("right","-230px");
-			    $("#message_log_bar").addClass('table-close');
-    		}
-    	});
+   </script>
 
-
-
-
-
-    </script>
 </html>
