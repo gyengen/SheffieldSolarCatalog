@@ -771,7 +771,7 @@
                                            <td>
                                               <button name="AR_ID" type="submit" value={{row}}>
 
-                                                 {% if row == att.selected_row %}
+                                                 {% if row == session['ARID'] %}
                                                     <div id="selected_row">
                                                        {{table[row][col]}}
                                                     </div>
@@ -788,7 +788,7 @@
                                      {% else %}
                                         <td>
 
-                                           {% if row == att.selected_row %}
+                                           {% if row == session['ARID'] %}
                                               <div id="selected_row">
                                                  {{ table[row][col] }}
                                               </div>
@@ -829,12 +829,11 @@
 
 	    	<div class="message_log_messages">
 	    	   {% if att.error_message != '' %}
-	    	      <strong>Terminal</strong><br>
-	    	      <div style="color: red; margin-left:50px">
+	    	      <div style="color: red; margin-left:50px; font-size: 15px;">
 	    	         {{ att.error_message|safe }}
 	    	      </div>
 	    	   {% else %}
-	    	      <div style="color: white; margin-left:50px">No error message.</div>
+	    	      <div style="color: white; margin-left:50px; font-size: 15px;">No error.</div>
 	    	   {% endif %}
 
 	    	</div>
@@ -899,11 +898,7 @@
             if ({{att.block_status[1]}} <= 7 ) {
                $('#wrapper_table_block').css('width','28%');}
 
-            else if({{att.block_status[1]}} >= 17){}
 
-            else{
-               var t = 4 * {{att.block_status[1]}} + '%';
-               $('#wrapper_table_block').css('width',t);}
          }});
    </script>
 
@@ -920,22 +915,22 @@
                if ({{att.block_status[1]}} <= 7 ) {
                   $('#wrapper_table_block').css('width','28%');}
 
-               else if({{att.block_status[1]}} >= 17){}
-
-               else{
-                  var t = 4 * {{att.block_status[1]}} + '%';
-                  $('#wrapper_table_block').css('width',t);}
          }});
    </script>
 
    <script>
-
-
       $(function(){
          if ("{{att.error_message}}" == '') {
             $("#message_log").css("right","-230px");
             $("#message_log_bar").addClass('table-close');}
+
+         if ("{{att.error_message}}" != '') {
+            $("#message_log").css("top","50px");
+            $("#message_log_bar").removeClass('table-close');}
+
       });
+
+
 
    </script>
 

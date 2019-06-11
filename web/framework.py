@@ -54,9 +54,6 @@ class att:
     # rows of the table
     rows = 0
 
-    # selected row id
-    selected_row = 0
-
     # list of all attributes in the table
     attributes = []
 
@@ -464,7 +461,6 @@ def download_data():
 
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
-
     # Default commands
     c1 = "SELECT * FROM continuum"
     c2 = "SELECT * FROM continuum"
@@ -690,19 +686,22 @@ def query():
         print ("dwdw")
         print ()
         # The index of the selected row
-        att.selected_row = int(request.form['AR_ID'])
-        session['ARID'] = att.selected_row
+        selected_row = int(request.form['AR_ID'])
+        session['ARID'] = selected_row
     elif ('ARID' in session):
-        att.selected_row = session['ARID']
+        selected_row = session['ARID']
+    else:
+        session['ARID'] = 0
+        selected_row = 0
     # Define the selected row
     if att.sunspot_type == 'magnetogram':
         # Execute the query
-        param.row = table_all[att.selected_row]
+        param.row = table_all[selected_row]
         table_live =table_all
 
     else:
         # Execute the query
-        param.row = table_all[att.selected_row]
+        param.row = table_all[selected_row]
         table_live = table_all
 
 
