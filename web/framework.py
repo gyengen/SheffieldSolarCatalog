@@ -7,7 +7,7 @@ flask.py
 ----------------------------------------------------------------------------'''
 
 
-from flask import Flask, render_template, request, g, send_from_directory
+from flask import Flask, render_template, request, g, send_from_directory, session
 from gevent.pywsgi import WSGIServer
 from .python.extrapolation import *
 from flask import redirect, url_for
@@ -225,6 +225,7 @@ class download:
 
 
 app = Flask(__name__)
+app.secret_key = os.urandom(16)
 
 # Add the defined classes to the global namespace
 app.add_template_global(att, 'att')
@@ -686,10 +687,13 @@ def query():
 
     # Create the AR and Full disk plots
     if keyword_check(request.form, 'AR_ID') is True:
-
+        print ("dwdw")
+        print ()
         # The index of the selected row
         att.selected_row = int(request.form['AR_ID'])
-
+        session['ARID'] = att.selected_row
+    elif ('ARID' in session):
+        att.selected_row = session['ARID']
     # Define the selected row
     if att.sunspot_type == 'magnetogram':
         # Execute the query
