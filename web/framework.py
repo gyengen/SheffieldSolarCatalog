@@ -7,7 +7,7 @@ flask.py
 ----------------------------------------------------------------------------'''
 
 
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, send_from_directory
 from gevent.pywsgi import WSGIServer
 from .python.extrapolation import *
 from flask import redirect, url_for
@@ -22,6 +22,7 @@ import os
 import datetime
 import sys
 import string
+import uuid
 
 monkey.patch_all()
 
@@ -214,6 +215,11 @@ class param:
 
     row = []
 
+class download:
+
+    table = []
+
+    header = []
 
 # Define global variables --------------------------------------------------'''
 
@@ -248,11 +254,6 @@ def index():
 
     # The index page is static but handled by Flask
     return render_template('index.html')
-
-@app.route('/download.html')
-def download_extrapolation():
-    return render_template('download.html')
-
 
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
@@ -370,8 +371,94 @@ def full_disk():
 
 
 @app.route('/download.html', methods=['GET', 'POST'])
-def download():
-    return render_template('download.html')
+def download_data():
+
+    # Delete TMP files older than 1 day
+    os.system('find ' + str(os.getcwd()) + '/database/tmp/ -type f -mtime +1 -exec rm {} \;')
+
+    set_date = np.unique(download.table[:,0] + ' ' + download.table[:,1])
+
+    # Download the data from the query
+    if request.method == 'POST':
+
+        #Create unique filename for the request
+        uid = str(uuid.uuid4())[:8]
+
+        fname = 'SSC_' + uid
+
+        if request.form['download_option'] == 'SQL':
+
+            # Download the full SQL database
+            return send_from_directory(directory=str(os.getcwd()) + '/database/sql/',
+                                       filename='ssc_sql.db', as_attachment=True)
+
+        if request.form['download_option'] == 'HDF5': 
+
+            import pandas as pd
+
+            #df = pd.DataFrame(data=download.table, columns=download.header)
+
+            test = download.table[:,0]
+            print(test)
+            df = pd.DataFrame({'A',test})
+
+            df.to_hdf(str(os.getcwd()) + '/database/tmp/' + fname + '.h5', key='SSC', mode='w')
+
+            # Send the data to the user
+            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+                                       filename=fname + '.h5', as_attachment=True)
+            
+        if request.form['download_option'] == 'TXT':
+            print(tuple(download.header))
+            # Define the string format
+            form = '%10s %10s %10s %10s %7s %4s %8s %8s %8s %9s %8s %8s %8s %7s %7s %14s %14s %14s %14s %14s %14s'
+
+            # Save the requested data
+            np.savetxt(str(os.getcwd()) + '/database/tmp/' + fname + '.txt',
+                       np.array(download.table),
+                       header=form % tuple(download.header),
+                       comments='',
+                       delimiter = ' ',
+                       fmt = form)
+
+            # Send the data to the user
+            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+                                       filename=fname + '.txt', as_attachment=True)
+
+        if request.form['download_option'] == 'CSV': 
+
+            # Save the requested data
+            np.savetxt(str(os.getcwd()) + '/database/tmp/' + fname + '.csv',
+                       np.array(download.table),
+                       header=str(download.header),
+                       delimiter = ',',
+                       fmt = '%s')
+
+            # Send the data to the user
+            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+                                       filename=fname + '.csv', as_attachment=True)
+
+
+        if request.form['download_option'] == 'Submit':
+
+            # Send the data to the user
+            full_disk_date = request.form['full_disk_date']
+
+            # Convert the date and time to filenames
+            date = ''.join(full_disk_date.split()[0].split('-'))
+            time = ''.join(full_disk_date.split()[1].split(':'))
+            date_time = date + '_' + time
+
+            # Build the path and file name
+            dir_path =  str(os.getcwd()) + '/database/img/AR' + full_disk_date.split()[0] + '/png/'
+            fname = [dir_path + 'hmi.ssc.full_disk.continuum.' + date_time + '.png',
+                     dir_path + 'hmi.ssc.full_disk.magnetogram.' + date_time + '.png']
+
+
+            return render_template('download.html', set_date = set_date, fname = fname)
+
+
+    return render_template('download.html', set_date = set_date, fname = '')
 
 
 @app.route('/workstation.html', methods=['GET', 'POST'])
@@ -505,16 +592,23 @@ def query():
                              " WHERE (Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "')" + \
                              att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
 
-            # in case of time period selected
+            # in case of diffrent times on the same date
+            elif att.sd == att.ed:
+               att.sql_cmd = att.sql_head + att.sunspot_type + \
+                             " WHERE (Date_obs = '" + att.sd + "' AND Time_obs >= '" + att.st + "' AND Time_obs <= '" + att.et + "')" + \
+                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
+
+            # in case difffrent dates
             else:
                att.sql_cmd = att.sql_head + att.sunspot_type + \
-                             " WHERE ((Date_obs >= '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
-                             " AND (Date_obs < '"    + att.ed + "' AND Time_obs < '" + att.et + "'))" + \
+                             " WHERE ((Date_obs = '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
+                             " OR (Date_obs > '" + att.sd + "' AND Date_obs < '" + att.ed + "')" + \
+                             " OR (Date_obs = '"    + att.ed + "' AND Time_obs <= '" + att.et + "'))" + \
                              att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
 
     # Clear sql_table
     sql_table = []
-    sql_table = g.db.execute(att.sql_cmd)
+
     # Send the query to sqlite
     try:
 
@@ -525,7 +619,7 @@ def query():
 
         # Error if sending failed
         att.error_message = att.error_message + \
-            "<p> -- Error occured when retrieving data.<br></p><br>"
+            "<p> - Error occured when retrieving data.<br></p><br>"
 
         # Default sql command if something is wrong
         att.sql_cmd = "SELECT * FROM continuum"
@@ -547,7 +641,7 @@ def query():
 
         # Error if the table is empyt
         att.error_message = att.error_message + \
-            "<p> -- No data detected based on your filer.<br></p><br>"
+            "<p> - No Data for selected time period. <br></p><br>"
 
         # Default sql command
         att.sql_cmd = "SELECT * FROM continuum"
@@ -839,6 +933,13 @@ def query():
                 top = x * 350
                 att.position_left.append(left)
                 att.position_top.append(top)
+
+    # Replace None's with -99999
+    table = np.array(table)
+    table[table == None] = -9999 
+
+    # Save the table and header globally for the download function()
+    download.table, download.header = table, header
 
     # Render the front end
     return render_template('workstation.html',
