@@ -461,6 +461,35 @@ def download_data():
 
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
+    if not ("sunspot_type" in session):
+        session['block_status'] = [0,0]
+        session['sql_cmd'] = "SELECT * FROM continuum"
+        session['date_formate'] = '%Y-%m-%d'
+        session['time_formate'] = '%H:%M:%S'
+        session['sd'] = ''
+        session['st'] = ''
+        session['ed'] = ''
+        session['et'] = ''
+        session['columns'] = 0
+        session['rows'] = 0
+        session['attributes'] = []
+        session['sunspot_type'] = 'continuum'
+        session['order'] = 'Date_obs'
+        session['order_asc'] = 'ASC'
+        session['sql_attr'] = ''
+        session['sql_head'] = ''
+        session['sql_values'] = ' '
+        session['header_all'] = []
+        session['header1'] = []
+        session['header2'] = []
+        session['header2_1'] = []
+        session['header2_2'] = []
+        session['values_min'] = [0]*21
+        session['values_max'] = [0]*21
+        session['error_message'] = ''
+        session['list_length'] = 0
+        session['position_left'] = []
+        session['position_top'] = []
     # Default commands
     c1 = "SELECT * FROM continuum"
     c2 = "SELECT * FROM continuum"
@@ -469,15 +498,15 @@ def query():
     table_all, header_all_1 = Create_table(g.db.execute(c1))
 
     # Save the header
-    att.header_all = header_all_1
+    session['header_all'] = header_all_1
 
     # Select the last observation
-    att.sd, att.st = table_all[-1][0], table_all[-1][1]
-    att.ed, att.et = att.sd, att.st
+    session['sd'], session['st'] = table_all[-1][0], table_all[-1][1]
+    session['ed'], session['et'] = session['sd'], session['st']
 
     # Initial SQL command, displaying only the last observation
-    att.sql_cmd = "SELECT * FROM continuum " + \
-                  "WHERE Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "'" 
+    session['sql_cmd'] = "SELECT * FROM continuum " + \
+                  "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "'" 
 
     # css command
     statistic_height = 0
@@ -486,53 +515,53 @@ def query():
     if request.method == 'POST':
 
         # clear the error message
-        att.error_message = ''
+        session['error_message'] = ''
 
         if 'sunspot_type' in request.form:
 
             # Define the investigated period
-            att.sd = request.form['start_date']
-            att.ed = request.form['end_date']
-            att.st = request.form['start_time']
-            att.et = request.form['end_time']
+            session['sd'] = request.form['start_date']
+            session['ed'] = request.form['end_date']
+            session['st'] = request.form['start_time']
+            session['et'] = request.form['end_time']
 
             # Get the attributes from the form
-            att.attributes = request.values.getlist('attributes')
+            session['attributes'] = request.values.getlist('attributes')
 
             # set sql head
-            if len(att.attributes) == 0:
-                att.sql_attr = '*'
+            if len(session['attributes']) == 0:
+                session['sql_attr'] = '*'
 
             # Read the sql attributes
             else:
-                att.sql_attr = 'Date_obs,Time_obs,Obs_type,Fea_type,NOAA,'
-                for a in range(len(att.attributes)):
-                    att.sql_attr = att.sql_attr + att.attributes[a] + ','
-                att.sql_attr = att.sql_attr + 'p_key'
+                session['sql_attr'] = 'Date_obs,Time_obs,Obs_type,Fea_type,NOAA,'
+                for a in range(len(session['attributes'])):
+                    session['sql_attr'] = session['sql_attr'] + session['attributes'][a] + ','
+                session['sql_attr'] = session['sql_attr'] + 'p_key'
 
             # Minimum and maximum values for filtering the data
-            att.values_min = request.values.getlist('values_min')
-            att.values_max = request.values.getlist('values_max')
+            session['values_min'] = request.values.getlist('values_min')
+            session['values_max'] = request.values.getlist('values_max')
 
             # Define block status
-            att.block_status = [1, len(att.attributes)]
+            session['block_status'] = [1, len(session['attributes'])]
 
             # Sort by both Date_obs and Time_obs
-            att.order = request.form['order_by']
-            att.order_asc = request.form['order_asc']
+            session['order'] = request.form['order_by']
+            session['order_asc'] = request.form['order_asc']
 
-            if att.order == 'Time_obs' or att.order == 'Date_obs':
-               att.order = 'Date_obs, Time_obs'
+            if session['order'] == 'Time_obs' or session['order'] == 'Date_obs':
+               session['order'] = 'Date_obs, Time_obs'
 
             # Read the sunspot type, umbra or penumbra
-            att.sunspot_type = request.form['sunspot_type']
+            session['sunspot_type'] = request.form['sunspot_type']
 
-            att.sql_values = ' '
+            session['sql_values'] = ' '
  
             # set the range of attributes in the query
-            for number in range(5, len(att.header_all) - 1):
-                min_value = att.values_min[number - 5]
-                max_value = att.values_max[number - 5]
+            for number in range(5, len(session['header_all']) - 1):
+                min_value = session['values_min'][number - 5]
+                max_value = session['values_max'][number - 5]
                 if min_value == '':
                     min_value = '0'
                 if max_value == '':
@@ -544,9 +573,9 @@ def query():
                 except Exception as e:
 
                     # Send the error message to the user
-                    att.error_message = att.error_message + "<p> -- " + \
+                    session['error_message'] = session['error_message'] + "<p> -- " + \
                         "Wrong input when setting attributes.(" + \
-                        att.header_all[number] + ">> minimum:  " + \
+                        session['header_all'][number] + ">> minimum:  " + \
                         min_value + ", maximum:  " + max_value + ")</p><br>"
                     continue
 
@@ -555,9 +584,9 @@ def query():
                     if int(min_value) < int(max_value):
 
                         # sql command for filtering the values
-                        att.sql_values = att.sql_values + \
-                            att.header_all[number] + " >= " + min_value + \
-                            " AND " + att.header_all[number] + " <= " + \
+                        session['sql_values'] = session['sql_values'] + \
+                            session['header_all'][number] + " >= " + min_value + \
+                            " AND " + session['header_all'][number] + " <= " + \
                             max_value + " AND "
 
                     # attribute error
@@ -568,40 +597,40 @@ def query():
                             ", maximum:  " + max_value + ")</p><br>"
 
             # Close the filter command
-            att.sql_values = att.sql_values + "END"
-            if att.sql_values == " END":
-                att.sql_values = att.sql_values.replace(" END", "")
+            session['sql_values'] = session['sql_values'] + "END"
+            if session['sql_values'] == " END":
+                session['sql_values'] = session['sql_values'].replace(" END", "")
 
             # Close and continue the filter command
             else:
-                att.sql_values = att.sql_values.replace("AND END", "")
+                session['sql_values'] = session['sql_values'].replace("AND END", "")
 
             # No filter option
-            if att.sql_values != '':
-                att.sql_values = " AND " + att.sql_values
+            if session['sql_values'] != '':
+                session['sql_values'] = " AND " + session['sql_values']
 
             # Construct the sql command
-            att.sql_head = 'SELECT ' + att.sql_attr + ' FROM '
+            session['sql_head'] = 'SELECT ' + session['sql_attr'] + ' FROM '
 
             # sql command, if no time interval selected
-            if att.sd == att.ed and att.st == att.et:
-               att.sql_cmd = att.sql_head + att.sunspot_type + \
-                             " WHERE (Date_obs = '" + att.sd + "' AND Time_obs = '" + att.st + "')" + \
-                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
+            if session['sd'] == session['ed'] and session['st'] == session['et']:
+               session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
+                             " WHERE (Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "')" + \
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
 
             # in case of diffrent times on the same date
-            elif att.sd == att.ed:
-               att.sql_cmd = att.sql_head + att.sunspot_type + \
-                             " WHERE (Date_obs = '" + att.sd + "' AND Time_obs >= '" + att.st + "' AND Time_obs <= '" + att.et + "')" + \
-                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
+            elif session['sd'] == session['ed']:
+               session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
+                             " WHERE (Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "' AND Time_obs <= '" + session['et'] + "')" + \
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
 
             # in case difffrent dates
             else:
-               att.sql_cmd = att.sql_head + att.sunspot_type + \
-                             " WHERE ((Date_obs = '" + att.sd + "' AND Time_obs >= '" + att.st + "')" + \
-                             " OR (Date_obs > '" + att.sd + "' AND Date_obs < '" + att.ed + "')" + \
-                             " OR (Date_obs = '"    + att.ed + "' AND Time_obs <= '" + att.et + "'))" + \
-                             att.sql_values + ' ORDER BY ' + att.order + ' ' + att.order_asc
+               session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
+                             " WHERE ((Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "')" + \
+                             " OR (Date_obs > '" + session['sd'] + "' AND Date_obs < '" + session['ed'] + "')" + \
+                             " OR (Date_obs = '"    + session['ed'] + "' AND Time_obs <= '" + session['et'] + "'))" + \
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
 
     # Clear sql_table
     sql_table = []
@@ -610,50 +639,50 @@ def query():
     try:
 
         # Execute the query
-        sql_table = g.db.execute(att.sql_cmd)
+        sql_table = g.db.execute(session['sql_cmd'])
 
     except Exception as e:
 
         # Error if sending failed
-        att.error_message = att.error_message + \
+        session['error_message'] = session['error_message'] + \
             "<p> - Error occured when retrieving data.<br></p><br>"
 
         # Default sql command if something is wrong
-        att.sql_cmd = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum"
 
         # Execute the query
-        sql_table = g.db.execute(att.sql_cmd)
+        sql_table = g.db.execute(session['sql_cmd'])
 
     # Create the sql table
     table, header = Create_table(sql_table)
 
     try:
         # Save the lenght of the table
-        att.columns = len(table[0])
+        session['columns'] = len(table[0])
 
         # Read the lenght of the table
-        att.rows = len(table)
+        session['rows'] = len(table)
 
     except Exception as e:
 
         # Error if the table is empyt
-        att.error_message = att.error_message + \
+        session['error_message'] = session['error_message'] + \
             "<p> - No Data for selected time period. <br></p><br>"
 
         # Default sql command
-        att.sql_cmd = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum"
 
         # Execute the command
-        sql_table = g.db.execute(att.sql_cmd)
+        sql_table = g.db.execute(session['sql_cmd'])
 
         # Create the data table
         table, header = Create_table(sql_table)
 
         # Read the lenght of the table
-        att.columns = len(table[0])
+        session['columns'] = len(table[0])
 
         # Read the lenght of the table
-        att.rows = len(table)
+        session['rows'] = len(table)
 
     # Create data for downloading
     data = []
@@ -694,7 +723,7 @@ def query():
         session['ARID'] = 0
         selected_row = 0
     # Define the selected row
-    if att.sunspot_type == 'magnetogram':
+    if session['sunspot_type'] == 'magnetogram':
         # Execute the query
         param.row = table_all[selected_row]
         table_live =table_all
@@ -769,7 +798,7 @@ def query():
 
             # Error if no data, handle_the_exception_somehow
             except Exception as e:
-                att.error_message = att.error_message + \
+                session['error_message'] = session['error_message'] + \
                     "<p> -- Creating line plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -797,7 +826,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                att.error_message = att.error_message + \
+                session['error_message'] = session['error_message'] + \
                     "<p> -- Creating scatter plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -822,7 +851,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                att.error_message = att.error_message + \
+                session['error_message'] = session['error_message'] + \
                     "<p> -- Creating histogram plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -850,7 +879,7 @@ def query():
 
             # Error if no data
             except Exception as e:
-                att.error_message = att.error_message + \
+                session['error_message'] = session['error_message'] + \
                     "<p> -- Creating bivariate plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
 
@@ -924,18 +953,18 @@ def query():
                 new_bokeh_script_list = new_bokeh_script_list.append(bs)
 
         # Position of the plot windows
-        att.list_length = len(att_plot.div_frame_list)
-        if att.list_length != 0:
-            att.position_left = []
-            att.position_top = []
-            for x in range(0, att.list_length):
+        session['list_length'] = len(att_plot.div_frame_list)
+        if session['list_length'] != 0:
+            session['position_left'] = []
+            session['position_top'] = []
+            for x in range(0, session['list_length']):
 
                 # Define the corners of the window
                 print(x)
                 left = x
                 top = x * 350
-                att.position_left.append(left)
-                att.position_top.append(top)
+                session['position_left'].append(left)
+                session['position_top'].append(top)
 
     # Replace None's with -99999
     table = np.array(table)

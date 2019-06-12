@@ -106,13 +106,13 @@
                               {% for i in range(5,21) %}
                                  <tr>
 
-                                    <td>{{ att.header_all[i] }}: </td>
+                                    <td>{{ session['header_all'][i] }}: </td>
 
                                     <td align="center">
                                        <input type="text"
                                               name="values_min"
                                               class="value_input"
-                                              value="{{ att.values_min[i - 5] }}">
+                                              value="{{ session['values_min'][i - 5] }}">
                                     </td>
 
                                     <td>~</td>
@@ -121,7 +121,7 @@
                                        <input type="text"
                                               name="values_max"
                                               class="value_input"
-                                              value="{{ att.values_max[i - 5] }}">
+                                              value="{{ session['values_max'][i - 5] }}">
                                     </td>
 
                                  </tr>
@@ -190,7 +190,7 @@
 	    	                    name="start_date"
 	    	                    id="sd"
 	    	      	    	    style="text-align: center;width: 90px; color:black; border:none;"
-	    	                    value="{{ att.sd }}">
+	    	                    value="{{ session['sd'] }}">
 	    	         </td>
 
 	    	         <td>
@@ -198,7 +198,7 @@
 	    	                    name="start_time"
 	    	                    id="st"
 	    	      	    	    style="text-align: center;width: 90px; color:black; border:none;"
-	    	                    value="{{ att.st }}">
+	    	                    value="{{ session['st'] }}">
 
 	    	         </td>
 	    	      </tr>
@@ -213,7 +213,7 @@
 	    	      	    	   name="end_date"
 	    	      	    	   id="ed"
 	    	      	    	   style="text-align: center;width: 90px; color:black; border:none;"
-	    	      	    	   value="{{ att.ed }}">
+	    	      	    	   value="{{ session['ed'] }}">
 	    	         </td>
 
 	    	         <td>
@@ -221,7 +221,7 @@
 	    	                   name="end_time"
 	    	                   id="et"
 	    	                   style="text-align: center;width: 90px; color:black; border:none;"
-	    	                   value="{{ att.et }}">
+	    	                   value="{{ session['et'] }}">
 	    	         </td>
 	    	      </tr>
 
@@ -238,10 +238,10 @@
 	    	                    id="sunspot_type"
    	                            style="text-align: center;width: 100px; color:black;">
 
-	    	               {%if att.sunspot_type == 'magnetogram' %}
+	    	               {%if session['sunspot_type'] == 'magnetogram' %}
 	    	                  <option value="continuum">Continuum</option>
 	    	                  <option value="magnetogram" selected="selected">Magnetogram</option>
-	    	               {%elif att.sunspot_type == 'continuum' %}
+	    	               {%elif session['sunspot_type'] == 'continuum' %}
 	    	                  <option value="continuum" selected="selected">Continuum</option>
 	    	                  <option value="magnetogram">Magnetogram</option>				
 	    	               {% endif %} 
@@ -261,9 +261,9 @@
 	    	            <select name="order_by"
 	    	                    id="c_order_by"
 	    	                    style="text-align: center;width: 100px; color:black;">
-	    	               {%for name in att.header_all%}
+	    	               {%for name in session['header_all']%}
 
-	    	                  {%if name == att.order%}
+	    	                  {%if name == session['order']%}
 	    	                     <option value="{{ name }}" selected="selected"> {{ name }} </option>
 	    	                  {%else%}
 	    	                     <option value="{{ name }}"> {{ name }} </option>
@@ -298,24 +298,24 @@
 	    	            {% for i in range(5,21,2) %}
 	    	               <tr>
 	    	                  <td class="side_menu_header">
-	    	                     {{ att.header_all[i] }} 
+	    	                     {{ session['header_all'][i] }} 
 	    	                  </td>
 	    	                  
 	    	                  <td class="side_menu_checkbox">
 	    	                     <input type="checkbox"
 	    	                            name="attributes"
-	    	                            value="{{ att.header_all[i] }}"
+	    	                            value="{{ session['header_all'][i] }}"
 	    	                            checked="checked" />
 	    	                  </td>
 
 	    	                  <td class="side_menu_header">
-	    	                     {{ att.header_all[i + 1] }} 
+	    	                     {{ session['header_all'][i + 1] }} 
 	    	                  </td>
 	    	                  
 	    	                  <td class="side_menu_checkbox">
 	    	                     <input type="checkbox"
 	    	                            name="attributes"
-	    	                            value="{{ att.header_all[i + 1] }}"
+	    	                            value="{{ session['header_all'][i + 1] }}"
 	    	                            checked="checked" />
 	    	                  </td>
 	    	               </tr>
@@ -689,10 +689,10 @@
     		</div>-->
              </div>
 
-             {% for num in range(att.list_length) %}
+             {% for num in range(session['list_length']) %}
                 <div style="position: relative;
-                           top: {{ att.position_top[num] }}px;
-                           left: {{ att.position_left[num] }}px;"> {{ att_plot.div_frame_list[num]|safe }}
+                           top: {{ session['position_top'][num] }}px;
+                           left: {{ session['position_left'][num] }}px;"> {{ att_plot.div_frame_list[num]|safe }}
                 </div>
              {% endfor %}
 
@@ -762,9 +762,9 @@
 
                          <tbody>
 
-                            {%for row in range(att.rows)%}
+                            {%for row in range(session['rows'])%}
                                <tr>
-                                  {% for col in range(att.columns) %}
+                                  {% for col in range(session['columns']) %}
 
                                      {% if col == 4 %}
                                         <form method="post">
@@ -828,9 +828,9 @@
 	    	</div>
 
 	    	<div class="message_log_messages">
-	    	   {% if att.error_message != '' %}
+	    	   {% if session['error_message'] != '' %}
 	    	      <div style="color: red; margin-left:50px; font-size: 15px;">
-	    	         {{ att.error_message|safe }}
+	    	         {{ session['error_message']|safe }}
 	    	      </div>
 	    	   {% else %}
 	    	      <div style="color: white; margin-left:50px; font-size: 15px;">No error.</div>
@@ -888,14 +888,14 @@
 
    <script>
       $(function(){
-         if ({{att.block_status[0]}}==1) {
+         if ({{session['block_status'][0]}}==1) {
 
             $('#database_button').addClass('menu-open');
             $('#side_menu').css('left','0');
             $('#statistics_button').addClass('table-close');
             $('#wrapper_table_block').css('bottom','0');
 
-            if ({{att.block_status[1]}} <= 7 ) {
+            if ({{session['block_status'][1]}} <= 7 ) {
                $('#wrapper_table_block').css('width','28%');}
 
 
@@ -905,14 +905,14 @@
 
    <script>
       $(function(){
-         if ({{att.block_status[0]}}==1) {
+         if ({{session['block_status'][0]}}==1) {
 
             $('#plot_button').addClass('plot-open');
             $('#plotting_menu').css('left','0');
             $('#statistics_button').addClass('table-close');
             $('#wrapper_table_block').css('bottom','0');
 
-               if ({{att.block_status[1]}} <= 7 ) {
+               if ({{session['block_status'][1]}} <= 7 ) {
                   $('#wrapper_table_block').css('width','28%');}
 
          }});
@@ -920,11 +920,11 @@
 
    <script>
       $(function(){
-         if ("{{att.error_message}}" == '') {
+         if ("{{session['error_message']}}" == '') {
             $("#message_log").css("right","-230px");
             $("#message_log_bar").addClass('table-close');}
 
-         if ("{{att.error_message}}" != '') {
+         if ("{{session['error_message']}}" != '') {
             $("#message_log").css("top","50px");
             $("#message_log_bar").removeClass('table-close');}
 
