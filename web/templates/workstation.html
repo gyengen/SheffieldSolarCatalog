@@ -13,8 +13,8 @@
       <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
       <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
-      {{ att_plot.js_resources|safe }}
-      {{ att_plot.css_resources|safe }}
+      {{ js_resources|safe }}
+      {{ css_resources|safe }}
       {{ att_visual.js_resources|safe }}
       {{ att_visual.css_resources|safe }}
 
@@ -692,7 +692,7 @@
              {% for num in range(session['list_length']) %}
                 <div style="position: relative;
                            top: {{ session['position_top'][num] }}px;
-                           left: {{ session['position_left'][num] }}px;"> {{ att_plot.div_frame_list[num]|safe }}
+                           left: {{ session['position_left'][num] }}px;"> {{ div_frame_list[num]|safe }}
                 </div>
              {% endfor %}
 
@@ -852,13 +852,13 @@
 	           <p>Active Region</p>
 	        </div>
  
-	        {% for div_minimize_block in att_plot.div_minimize_block_list %}
+	        {% for div_minimize_block in div_minimize_block_list %}
 	           {{ div_minimize_block|safe }}
 	        {% endfor %}
 
 	     </div>
 
-	     {% for bokeh_script in att_plot.bokeh_script_list %}
+	     {% for bokeh_script in bokeh_script_list %}
 	        {{ bokeh_script|safe }}
 	     {% endfor %}
 

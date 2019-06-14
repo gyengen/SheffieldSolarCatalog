@@ -461,6 +461,8 @@ def download_data():
 
 @app.route('/workstation.html', methods=['GET', 'POST'])
 def query():
+
+    #Create all the session items needed for the code to run if they do not already exist
     if not ("sunspot_type" in session):
         session['block_status'] = [0,0]
         session['sql_cmd'] = "SELECT * FROM continuum"
@@ -490,6 +492,7 @@ def query():
         session['list_length'] = 0
         session['position_left'] = []
         session['position_top'] = []
+        session['plots'] = []
     # Default commands
     c1 = "SELECT * FROM continuum"
     c2 = "SELECT * FROM continuum"
@@ -712,8 +715,6 @@ def query():
 
     # Create the AR and Full disk plots
     if keyword_check(request.form, 'AR_ID') is True:
-        print ("dwdw")
-        print ()
         # The index of the selected row
         selected_row = int(request.form['AR_ID'])
         session['ARID'] = selected_row
@@ -755,14 +756,9 @@ def query():
     att_visual.css_resources = INLINE.render_css()
 
 
-    # Display the plot(s)
+    #If the user has tried to add a plot add the information to create it to the plots list in sessions
+
     if keyword_check(request.form, 'plot_type') is True:
-
-        global script, div
-        # Define some local variables
-        script = ''
-        active_bokeh = []
-
         # plot attributes for line plot
         xl = request.form['xl']
         yl = request.form['yl']
@@ -786,118 +782,173 @@ def query():
         biv_w = request.form['biv_w']
         biv_w_bin = request.form['biv_w_bin']
 
-        # Line plot
+        #Save the information to create a line plot if that is what the user tried to add
         if request.form['plot_type'] == 'line':
+            session['plots'].append({"plot_type": "Line Plot",
+                                                         "xl": xl,
+                                                         "yl": yl,
+                                                         "line_col":line_col})
+
+        #Save the information to create a scatter plot if that is what the user tried to add
+        elif request.form['plot_type'] == 'scatter_2d':
+            session['plots'].append({"plot_type": "Scatter Plot",
+                                                         "x": x,
+                                                         "y": y,
+                                                         "s": s,
+                                                         "c": c})
+
+        #Save the information to create a histogram if that is what the user tried to add
+        elif request.form['plot_type'] == 'histogram': 
+            session['plots'].append({"plot_type": "Histogram Plot",
+                                                         "v": v,
+                                                         "density": density,
+                                                         "fit": fit,
+                                                         "color": color,
+                                                         "bin_n": bin_n})
+
+        #Save the information to create a Bivariate Histogram if that is what the user tried to add
+        elif request.form['plot_type'] == 'biv_hist':
+            session['plots'].append({"plot_type": "Bivariate Histogram",
+                                                         "biv_v": biv_v,
+                                                         "biv_w": biv_w,
+                                                         "biv_w_bin": biv_w_bin})
+
+    
+    #Create variables needed to display the plots
+    js_resources = ''
+    css_resources = ''
+    plot_times = 0
+    div_frame_list = []
+    div_minimize_block_list = []
+    bokeh_script_list = []
+    bokeh_index_list = []
+
+    #Variables to keep track of errors
+    plots_index = 0
+    error_list = []
+
+    # Display the plot(s)
+    for plot in session['plots']:
+        plot_status = 0
+        global script, div
+        # Define some local variables
+        script = ''
+        active_bokeh = []
+
+        # Line plot
+        if plot['plot_type'] == 'Line Plot':
 
             # operation_that_can_throw_ioerror
             try:
 
                 # Create the actual plot and save the Bokeh script
                 script, div = Create_live_2D_line_plot(table, header,
-                                                       xl, yl, line_col)
+                                                       plot['xl'], plot['yl'], plot['line_col'])
 
             # Error if no data, handle_the_exception_somehow
             except Exception as e:
                 session['error_message'] = session['error_message'] + \
                     "<p> -- Creating line plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                error_list.append(plots_index)
 
             # Set few varaibles, if try is not failed
             # another_operation_that_can_throw_ioerror
             else:
-                att_plot.plot_status = 1
-                att_plot.plot_type = "Line Plot"
-                att_plot.plot_times = att_plot.plot_times + 1
+                plot_status = 1
+                plot_times = plot_times + 1
 
             # Render the script for the front end
             # something_we_always_need_to_do
             finally:
-                att_plot.js_resources = INLINE.render_js()
-                att_plot.css_resources = INLINE.render_css()
+                js_resources = INLINE.render_js()
+                css_resources = INLINE.render_css()
 
         # 2-d scatter plot
-        elif request.form['plot_type'] == 'scatter_2d':
+        elif plot['plot_type'] == "Scatter Plot":
 
             try:
 
                 # Create the actual plot and save the Bokeh script
                 script, div = Create_live_2D_scatter_plot(table, header,
-                                                          x, y, c, s)
+                                                          plot['x'], plot['y'], plot['c'], plot['s'])
 
             # Error if no data
             except Exception as e:
                 session['error_message'] = session['error_message'] + \
                     "<p> -- Creating scatter plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                error_list.append(plots_index)
 
             # Set few varaibles
             else:
-                att_plot.plot_status = 1
-                att_plot.plot_type = "Scatter Plot"
-                att_plot.plot_times = att_plot.plot_times + 1
+                plot_status = 1
+                plot_times = plot_times + 1
 
             # Render the script for the front end
             finally:
-                att_plot.js_resources = INLINE.render_js()
-                att_plot.css_resources = INLINE.render_css()
+                js_resources = INLINE.render_js()
+                css_resources = INLINE.render_css()
 
         # Histogram
-        elif request.form['plot_type'] == 'histogram':
+        elif plot['plot_type'] == "Histogram Plot":
             try:
                 # Create the actual plot and save the Bokeh script
-                script, div = Create_live_histogram_plot(table, header, v,
-                                                         density, fit, bin_n,
-                                                         color)
+                script, div = Create_live_histogram_plot(table, header, plot['v'],
+                                                         plot['density'], plot['fit'], plot['bin_n'],
+                                                         plot['color'])
 
             # Error if no data
             except Exception as e:
                 session['error_message'] = session['error_message'] + \
                     "<p> -- Creating histogram plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                error_list.append(plots_index)
+
 
             # Set few varaibles
             else:
-                att_plot.plot_status = 1
-                att_plot.plot_type = "Histogram Plot"
-                att_plot.plot_times = att_plot.plot_times + 1
+                plot_status = 1
+                plot_times = plot_times + 1
 
             # Render the script for the front end
             finally:
-                att_plot.js_resources = INLINE.render_js()
-                att_plot.css_resources = INLINE.render_css()
+                js_resources = INLINE.render_js()
+                css_resources = INLINE.render_css()
 
         # Bivariate Histogram
-        elif request.form['plot_type'] == 'biv_hist':
+        elif plot['plot_type'] == "Bivariate Histogram":
             try:
 
                 # Create the actual plot and save the Bokeh script
                 script, div = Create_live_bivariate_histogram_plot(table,
                                                                    header,
-                                                                   biv_v,
-                                                                   biv_w,
-                                                                   biv_w_bin)
+                                                                   plot['biv_v'],
+                                                                   plot['biv_w'],
+                                                                   plot['biv_w_bin'])
 
             # Error if no data
             except Exception as e:
                 session['error_message'] = session['error_message'] + \
                     "<p> -- Creating bivariate plot failed.</p><br> <p>" + \
                     str(e) + "</p><br>"
+                error_list.append(plots_index)
 
             # Set few varaibles
             else:
-                att_plot.plot_status = 1
-                att_plot.plot_type = "Bivariate Histogram"
-                att_plot.plot_times = att_plot.plot_times + 1
+                plot_status = 1
+                plot_times = plot_times + 1
 
             # Render the script for the front end
             finally:
-                att_plot.js_resources = INLINE.render_js()
-                att_plot.css_resources = INLINE.render_css()
+                js_resources = INLINE.render_js()
+                css_resources = INLINE.render_css()
 
         # Create the div frame for the plots
-        if att_plot.plot_status == 1:
+        if plot_status == 1:
             # Create div_frame and bokeh_script
-            div_frame, div_minimize_block, bokeh_script = Bokehscript(att_plot,
+            temp = type('object', (object,), {'plot_type' : plot['plot_type'], 'plot_times' : plot_times})
+            div_frame, div_minimize_block, bokeh_script = Bokehscript(temp,
                                                                       div,
                                                                       script)
 
@@ -906,15 +957,17 @@ def query():
             div_minimize_block = ''
             bokeh_script = ''
 
+
+
         active_bokeh = request.values.getlist('bokeh')
 
         # Send the plot scripts to the front end
         if script != '' and div != '' and div_frame != '':
-            att_plot.div_frame_list.append(div_frame)
-            att_plot.div_minimize_block_list.append(div_minimize_block)
-            att_plot.bokeh_script_list.append(bokeh_script)
-            att_plot.bokeh_index_list.append(str(att_plot.plot_times))
-            active_bokeh.append(str(att_plot.plot_times))
+            div_frame_list.append(div_frame)
+            div_minimize_block_list.append(div_minimize_block)
+            bokeh_script_list.append(bokeh_script)
+            bokeh_index_list.append(str(plot_times))
+            active_bokeh.append(str(plot_times))
 
         # New plot windows if there are more than one plot request
         new_div_frame_list = []
@@ -923,37 +976,37 @@ def query():
 
         # Append new windows
         if active_bokeh != []:
-            att_plot.plot_status = 1
-            for index in range(0, len(att_plot.div_frame_list)):
+            plot_status = 1
+            for index in range(0, len(div_frame_list)):
                 for active_index in active_bokeh:
-                    if active_index == att_plot.bokeh_index_list[index - 1]:
+                    if active_index == bokeh_index_list[index - 1]:
 
-                        df = att_plot.div_frame_list[index - 1]
+                        df = div_frame_list[index - 1]
                         new_div_frame_list.append(df)
 
-                        dv = att_plot.div_minimize_block_list[index - 1]
+                        dv = div_minimize_block_list[index - 1]
                         new_div_minimize_block_list.append(dv)
 
-                        bs = att_plot.bokeh_script_list[index - 1]
+                        bs = bokeh_script_list[index - 1]
                         new_bokeh_script_list.append(bs)
                         break
 
         else:
-            if len(att_plot.div_frame_list) != 0:
+            if len(div_frame_list) != 0:
 
-                df = att_plot.div_frame_list[len(att_plot.div_frame_list) - 1]
+                df = div_frame_list[len(att_plot.div_frame_list) - 1]
                 new_div_frame_list = new_div_frame_list.append(df)
 
                 dn = div_minimize_block_list[len(div_minimize_block_list) - 1]
                 new_div_minimize_block_list = \
                     new_div_minimize_block_list.append(dn)
 
-                pkl = len(att_plot.bokeh_script_list)
-                bs = att_plot.bokeh_script_list[pkl - 1]
+                pkl = len(bokeh_script_list)
+                bs = bokeh_script_list[pkl - 1]
                 new_bokeh_script_list = new_bokeh_script_list.append(bs)
 
         # Position of the plot windows
-        session['list_length'] = len(att_plot.div_frame_list)
+        session['list_length'] = len(div_frame_list)
         if session['list_length'] != 0:
             session['position_left'] = []
             session['position_top'] = []
@@ -965,6 +1018,11 @@ def query():
                 top = x * 350
                 session['position_left'].append(left)
                 session['position_top'].append(top)
+
+        plots_index = plots_index + 1
+
+    for plot in error_list:
+        del session['plots'][plot]
 
     # Replace None's with -99999
     table = np.array(table)
@@ -979,7 +1037,12 @@ def query():
                            data=data,
                            header=header,
                            info=info,
-                           statistic_height=statistic_height)
+                           statistic_height=statistic_height,
+                           js_resources = js_resources,
+                           css_resources = css_resources,
+                           div_frame_list = div_frame_list,
+                           div_minimize_block_list = div_minimize_block_list,
+                           bokeh_script_list = bokeh_script_list)
 
 
 def start(ip, port):
