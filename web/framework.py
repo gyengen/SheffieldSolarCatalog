@@ -7,7 +7,7 @@ flask.py
 ----------------------------------------------------------------------------'''
 
 
-from flask import Flask, render_template, request, g, send_from_directory, session
+from flask import Flask, render_template, request, g, send_from_directory, session, make_response
 from gevent.pywsgi import WSGIServer
 from .python.extrapolation import *
 from flask import redirect, url_for
@@ -755,6 +755,16 @@ def query():
     att_visual.js_resources = INLINE.render_js()
     att_visual.css_resources = INLINE.render_css()
 
+    if 'deleted_plots' in request.cookies:
+        deleted_plots = (request.cookies.get('deleted_plots')).split(',')
+        deleted_plots.remove('')
+        deleted_plots = list(map(int, deleted_plots))
+        deleted_plots.sort(reverse = True)
+        for plot in deleted_plots:
+            if len(session['plots']) >= plot:
+                del session['plots'][plot-1]
+        
+
 
     #If the user has tried to add a plot add the information to create it to the plots list in sessions
 
@@ -1032,7 +1042,22 @@ def query():
     download.table, download.header = table, header
 
     # Render the front end
-    return render_template('workstation.html',
+    if 'deleted_plots' in request.cookies:
+        resp = make_response(render_template('workstation.html',
+                           table=table,
+                           data=data,
+                           header=header,
+                           info=info,
+                           statistic_height=statistic_height,
+                           js_resources = js_resources,
+                           css_resources = css_resources,
+                           div_frame_list = div_frame_list,
+                           div_minimize_block_list = div_minimize_block_list,
+                           bokeh_script_list = bokeh_script_list))
+        resp.set_cookie('deleted_plots', '', expires=0)
+        return resp
+    else:
+        return render_template('workstation.html',
                            table=table,
                            data=data,
                            header=header,

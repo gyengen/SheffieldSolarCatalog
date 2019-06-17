@@ -32,12 +32,15 @@ def Bokehscript(att_plot, div, script):
         $(function() {
             $("#bokeh_plot_minimum_button''' + str(att_plot.plot_times) + '''").click(function(){
                 $("#''' + str(att_plot.plot_times) + '''").css('display','none');
-                $("#minimize_button''' + str(att_plot.plot_times) + '''").css('display','table')
+                $("#minimize_button''' + str(att_plot.plot_times) + '''").css('display','table');
             });
             $("#bokeh_plot_close_button''' + str(att_plot.plot_times) + '''").click(function(){
                 $("#''' + str(att_plot.plot_times) + '''").css('display','none');
                 $("#minimize_button''' + str(att_plot.plot_times) + '''").css('display','none')
                 $("#plot''' + str(att_plot.plot_times) + '''").removeAttr('name');
+                var deleted_plots = document.cookie.replace(/(?:(?:^|.*;\s*)deleted_plots\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                deleted_plots += ",''' + str(att_plot.plot_times) + '''";
+                document.cookie ="deleted_plots=" + deleted_plots
             });
             $("#minimize_button''' + str(att_plot.plot_times) + '''").click(function(){
                 $("#''' + str(att_plot.plot_times) + '''").css('display','block');
