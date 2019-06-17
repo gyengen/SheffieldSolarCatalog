@@ -755,18 +755,24 @@ def query():
     att_visual.js_resources = INLINE.render_js()
     att_visual.css_resources = INLINE.render_css()
 
+    #remove plots the user closed
     if 'deleted_plots' in request.cookies:
+        #Get the plots to remove and sperate them into a list
         deleted_plots = (request.cookies.get('deleted_plots')).split(',')
         deleted_plots.remove('')
+        #Order the plots so that they are removed in descending order so as not to interfere with
+        #the rest of the deletions
         deleted_plots = list(map(int, deleted_plots))
         deleted_plots.sort(reverse = True)
+        #Remove deleted plots
         for plot in deleted_plots:
             if len(session['plots']) >= plot:
                 del session['plots'][plot-1]
         
 
 
-    #If the user has tried to add a plot add the information to create it to the plots list in sessions
+    #If the user has tried to add a plot add the information to create it to the plots list in
+    #sessions
 
     if keyword_check(request.form, 'plot_type') is True:
         # plot attributes for line plot
