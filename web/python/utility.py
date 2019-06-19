@@ -269,7 +269,7 @@ def html_image_path(row, directory):
                   str(date).replace('-', '') + '_' +
                   str(time).replace(':', '') + '.fits')
 
-    path = directory + '/database/img/AR' + str(date) + '/fits/'
+    path = directory + '/web/static/database/img/AR' + str(date) + '/fits/'
     AR = path + fname_AR
 
     full = path + fname_full

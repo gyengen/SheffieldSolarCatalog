@@ -161,7 +161,7 @@ def sunspot_continuum_table(row):
 
     # Define working directory
     cwd = os.getcwd()
-    path = os.path.abspath(os.path.join(cwd, os.pardir)) + '/SheffieldSolarCatalog/database/sql/'
+    path = os.path.abspath(os.path.join(cwd, os.pardir)) + '/SheffieldSolarCatalog/web/static/database/sql/'
 
     # Connect to the local databas/
     c = s3.connect(path + 'ssc_sql.db')

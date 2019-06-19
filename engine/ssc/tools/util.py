@@ -58,7 +58,7 @@ def fname(date, obs_type, NOAA, extension):
 
     # Find the parent directory
     path = os.path.abspath(os.path.join(str(os.getcwd()), os.pardir))
-    path = path + '/SheffieldSolarCatalog/database/img/AR' + date.split(' ')[0] + subfolder
+    path = path + '/SheffieldSolarCatalog/web/static/database/img/AR' + date.split(' ')[0] + subfolder
 
     # Create the folder if it does not exist
     os.makedirs(path, exist_ok = True)

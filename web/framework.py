@@ -372,7 +372,7 @@ def full_disk():
 def download_data():
 
     # Delete TMP files older than 1 day
-    os.system('find ' + str(os.getcwd()) + '/database/tmp/ -type f -mtime +1 -exec rm {} \;')
+    os.system('find ' + str(os.getcwd()) + '/web/static/database/tmp/ -type f -mtime +1 -exec rm {} \;')
 
     set_date = np.unique(download.table[:,0] + ' ' + download.table[:,1])
 
@@ -387,7 +387,7 @@ def download_data():
         if request.form['download_option'] == 'SQL':
 
             # Download the full SQL database
-            return send_from_directory(directory=str(os.getcwd()) + '/database/sql/',
+            return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/sql/',
                                        filename='ssc_sql.db', as_attachment=True)
 
         if request.form['download_option'] == 'HDF5': 
@@ -400,10 +400,10 @@ def download_data():
             print(test)
             df = pd.DataFrame({'A',test})
 
-            df.to_hdf(str(os.getcwd()) + '/database/tmp/' + fname + '.h5', key='SSC', mode='w')
+            df.to_hdf(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.h5', key='SSC', mode='w')
 
             # Send the data to the user
-            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+            return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/tmp/',
                                        filename=fname + '.h5', as_attachment=True)
             
         if request.form['download_option'] == 'TXT':
@@ -412,7 +412,7 @@ def download_data():
             form = '%10s %10s %10s %10s %7s %4s %8s %8s %8s %9s %8s %8s %8s %7s %7s %14s %14s %14s %14s %14s %14s'
 
             # Save the requested data
-            np.savetxt(str(os.getcwd()) + '/database/tmp/' + fname + '.txt',
+            np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.txt',
                        np.array(download.table),
                        header=form % tuple(download.header),
                        comments='',
@@ -420,20 +420,20 @@ def download_data():
                        fmt = form)
 
             # Send the data to the user
-            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+            return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/tmp/',
                                        filename=fname + '.txt', as_attachment=True)
 
         if request.form['download_option'] == 'CSV': 
 
             # Save the requested data
-            np.savetxt(str(os.getcwd()) + '/database/tmp/' + fname + '.csv',
+            np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.csv',
                        np.array(download.table),
                        header=str(download.header),
                        delimiter = ',',
                        fmt = '%s')
 
             # Send the data to the user
-            return send_from_directory(directory=str(os.getcwd()) + '/database/tmp/',
+            return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/tmp/',
                                        filename=fname + '.csv', as_attachment=True)
 
 
@@ -448,7 +448,7 @@ def download_data():
             date_time = date + '_' + time
 
             # Build the path and file name
-            dir_path =  str(os.getcwd()) + '/database/img/AR' + full_disk_date.split()[0] + '/png/'
+            dir_path =  str(os.getcwd()) + '/web/static/database/img/AR' + full_disk_date.split()[0] + '/png/'
             fname = [dir_path + 'hmi.ssc.full_disk.continuum.' + date_time + '.png',
                      dir_path + 'hmi.ssc.full_disk.magnetogram.' + date_time + '.png']
 
@@ -1082,7 +1082,7 @@ def start(ip, port):
 
     # Connect the database from the engine.
     directory = Path(__file__).parents[2]
-    DATABASE = str(directory) + '/SheffieldSolarCatalog/database/sql/ssc_sql.db'
+    DATABASE = str(directory) + '/SheffieldSolarCatalog/web/static/database/sql/ssc_sql.db'
 
     # Use gevent WSGI server instead of the Flask
     #http = WSGIServer((ip, port), app.wsgi_app, keyfile=str(directory) + '/certs/server.key', certfile=str(directory) + '/certs/server.crt')
