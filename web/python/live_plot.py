@@ -157,27 +157,45 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
         colors = ['#7800e2'] * len(x)
 
     else:
-        #c = t.T[header.index(c)]
-        #colors = ["#%02x%02x%02x" % (int(r), int(g), int(b))
-        #          for r, g, b, _ in 255*plt.cm.viridis(mpl.colors.Normalize()(c))]
         colors = [c] * len(x)
 
+    if (x_index == "Date_obs" or x_index == "Time_obs") or (y_index == "Date_obs" or y_index == "Time_obs"):
+        #Convert strings to dates if required
+        if (x_index == "Date_obs"):
+            x = [datetime.strptime(date, '%Y-%m-%d').date() for date in x]
+        elif (x_index == "Time_obs"):
+            x = [datetime.strptime(date, '%H:%M:%S').date() for date in x]
+        if (y_index == "Date_obs"):
+            y = [datetime.strptime(date, '%Y-%m-%d').date() for date in y]
+        elif (y_index == "Time_obs"):
+            y = [datetime.strptime(date, '%H:%M:%S').date() for date in y]
 
-    normalise_axis = abs(max(x) - min(x)) / 100
-
-    if s == 'None':
-        radii = normalise_axis
+        # Plot window initialisation
+        if (x_index == "Date_obs" or x_index == "Time_obs") and (y_index == "Date_obs" or y_index == "Time_obs"):
+            p = figure(tools=TOOLS,x_axis_type="datetime",y_axis_type="datetime", plot_width=600, plot_height=338)
+        elif (x_index == "Date_obs" or x_index == "Time_obs"):
+            p = figure(tools=TOOLS,x_axis_type="datetime",plot_width=600, plot_height=338)
+        elif (y_index == "Date_obs" or y_index == "Time_obs"):
+            p = figure(tools=TOOLS,y_axis_type="datetime",plot_width=600, plot_height=338)
+        #Plot the data
+        p.circle(x, y, line_color=None, fill_color=colors, fill_alpha=0.75)
 
     else:
-        s = t.T[header.index(s)]
-        scaling = (s - min(s)) / (max(s) - min(s)) * 2
-        radii = normalise_axis * scaling
+        normalise_axis = abs(max(x) - min(x)) / 100
 
-    # Plot window initialisation
-    p = figure(tools=TOOLS, plot_width=600, plot_height=338)
+        if s == 'None':
+            radii = normalise_axis
 
-    #Plot the data
-    p.circle(x, y, radius=radii, line_color=None, fill_color=colors, fill_alpha=0.75)
+        else:
+            s = t.T[header.index(s)]
+            scaling = (s - min(s)) / (max(s) - min(s)) * 2
+            radii = normalise_axis * scaling
+
+        # Plot window initialisation
+        p = figure(tools=TOOLS, plot_width=600, plot_height=338)
+
+        #Plot the data
+        p.circle(x, y, radius=radii, line_color=None, fill_color=colors, fill_alpha=0.75)
 
     # Fancy style
     p.grid.grid_line_color = "white"
