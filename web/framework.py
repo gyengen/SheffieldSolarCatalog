@@ -1047,6 +1047,8 @@ def query():
     # Save the table and header globally for the download function()
     download.table, download.header = table, header
 
+    valid_plot_options = [x for x in header if x != "Obs_type" and x != "Fea_type" ]
+
     # Render the front end
     if 'deleted_plots' in request.cookies:
         resp = make_response(render_template('workstation.html',
@@ -1059,7 +1061,8 @@ def query():
                            css_resources = css_resources,
                            div_frame_list = div_frame_list,
                            div_minimize_block_list = div_minimize_block_list,
-                           bokeh_script_list = bokeh_script_list))
+                           bokeh_script_list = bokeh_script_list,
+                           valid_plot_options = valid_plot_options))
         resp.set_cookie('deleted_plots', '', expires=0)
         return resp
     else:
@@ -1073,7 +1076,8 @@ def query():
                            css_resources = css_resources,
                            div_frame_list = div_frame_list,
                            div_minimize_block_list = div_minimize_block_list,
-                           bokeh_script_list = bokeh_script_list)
+                           bokeh_script_list = bokeh_script_list,
+                           valid_plot_options = valid_plot_options)
 
 
 def start(ip, port):
