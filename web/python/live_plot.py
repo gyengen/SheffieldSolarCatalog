@@ -156,9 +156,7 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
         colors = ['#7800e2'] * len(x)
 
     else:
-        c = t.T[header.index(c)]
-        colors = ["#%02x%02x%02x" % (int(r), int(g), int(b))
-                  for r, g, b, _ in 255*plt.cm.viridis(mpl.colors.Normalize()(c))]
+        colors = [c] * len(x)
 
     normalise_axis = abs(max(x) - min(x)) / 100
 
