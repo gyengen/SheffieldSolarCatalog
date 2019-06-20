@@ -211,8 +211,8 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
 
     t = np.array(table)
 
-    xl = np.array(t.T[header.index(xl_index)])
-    yl = np.array(t.T[header.index(yl_index)])
+    xl = delete_nonetype_in_rows(t.T[header.index(xl_index)])
+    yl = delete_nonetype_in_rows(t.T[header.index(yl_index)])
 
     #Convert strings to dates if required
     if (xl_index == "Date_obs"):
@@ -235,6 +235,8 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
         p = figure(tools=TOOLS,x_axis_type="datetime",plot_width=600, plot_height=338)
     elif (yl_index == "Date_obs" or yl_index == "Time_obs"):
         p = figure(tools=TOOLS,y_axis_type="datetime",plot_width=600, plot_height=338)
+    else:
+        p = figure(tools=TOOLS,plot_width=600, plot_height=338)
 
     #Plot the data
     p.line(xl, yl, alpha=0.9, line_width=2, color = line_col)
