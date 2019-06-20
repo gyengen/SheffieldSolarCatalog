@@ -14,6 +14,7 @@ from scipy import stats
 import numpy as np
 import sunpy.cm
 import cv2
+from datetime import datetime
 
 
 TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
@@ -156,7 +157,11 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
         colors = ['#7800e2'] * len(x)
 
     else:
+        #c = t.T[header.index(c)]
+        #colors = ["#%02x%02x%02x" % (int(r), int(g), int(b))
+        #          for r, g, b, _ in 255*plt.cm.viridis(mpl.colors.Normalize()(c))]
         colors = [c] * len(x)
+
 
     normalise_axis = abs(max(x) - min(x)) / 100
 
@@ -191,12 +196,27 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
     xl = np.array(t.T[header.index(xl_index)])
     yl = np.array(t.T[header.index(yl_index)])
 
+    #Convert strings to dates if required
+    if (xl_index == "Date_obs"):
+        xl = [datetime.strptime(date, '%Y-%m-%d').date() for date in xl]
+    elif (xl_index == "Time_obs"):
+        xl = [datetime.strptime(date, '%H:%M:%S').date() for date in xl]
+    if (yl_index == "Date_obs"):
+        yl = [datetime.strptime(date, '%Y-%m-%d').date() for date in yl]
+    elif (yl_index == "Time_obs"):
+        yl = [datetime.strptime(date, '%H:%M:%S').date() for date in yl]
+
     idx   = np.argsort(xl)
     xl = np.array(xl)[idx]
     yl = np.array(yl)[idx]
 
     # Plot window initialisation
-    p = figure(tools=TOOLS, plot_width=600, plot_height=338)
+    if (xl_index == "Date_obs" or xl_index == "Time_obs") and (yl_index == "Date_obs" or yl_index == "Time_obs"):
+        p = figure(tools=TOOLS,x_axis_type="datetime",y_axis_type="datetime", plot_width=600, plot_height=338)
+    elif (xl_index == "Date_obs" or xl_index == "Time_obs"):
+        p = figure(tools=TOOLS,x_axis_type="datetime",plot_width=600, plot_height=338)
+    elif (yl_index == "Date_obs" or yl_index == "Time_obs"):
+        p = figure(tools=TOOLS,y_axis_type="datetime",plot_width=600, plot_height=338)
 
     #Plot the data
     p.line(xl, yl, alpha=0.9, line_width=2, color = line_col)
