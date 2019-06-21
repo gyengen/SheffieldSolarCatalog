@@ -1,13 +1,97 @@
-<!DOCTYPE html>
 <html>
-	<head>
-	<script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
-	</head>
-    <body>
+   <!-- Use CSS -->
+   <head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+      <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css" type="text/css">
+      <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
+      <script src="{{ url_for('static',filename='js/laydate.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
+      <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
+      <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
+      {{ att_plot.js_resources|safe }}
+      {{ att_plot.css_resources|safe }}
+      {{ att_visual.js_resources|safe }}
+      {{ att_visual.css_resources|safe }}
 
-		<button class="download_options" type="button" onclick="downloadFile('ssc_sql.db','{{ url_for('static',filename='database/sql/ssc_sql.db') }}')">SQLlite</button>
+      <title>SSC - Download</title>
+   </head>
 
-    </body>
-</html> 
+   <body id = "wrapper_body">
+
+      <div class = "loader">
+         <div class = "blob-r"></div>
+         <div class = "blob-c"></div>
+         <div class = "blob-l"></div>
+         <div class = "blob-m">Please wait.</div>
+      </div>
+
+      <div id="fixedheader">
+         <div id="wrap_header">
+            <a href="/">
+               <div class='logo'>
+                  <img class="logo_pic" src="/static/logos/ssc.png">
+               </div>
+            </a>
+         </div>
+      </div>
+
+      <div id = "search">
+         <input type="text" id="text" value="Search Documentation, type keyword or variable name." onFocus="this.value=''" class="search_input"/>
+         <input type="button" id="btn" value="Search" class="search_button"
+		onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + 			'&check_keywords=yes&area=default');"/>
+      </div>
 
 
+      <div id = "download_frame">
+         
+         <form method="post">
+
+         <p>Download the data table:</p>
+
+            <div id = "download_data">
+               <input type="submit" name="download_option" value="SQL" class="button-sql">
+               <input type="submit" name="download_option" value="HDF5" class="button-hdf5">
+               <input type="submit" name="download_option" value="CSV" class="button-csv">
+               <input type="submit" name="download_option" value="TXT" class="button-txt">
+            </div>
+
+         <p>Download the full disk images:
+
+            <select name="full_disk_date">
+               {% for key in set_date %}
+                  <option value= "{{key}}"> {{key}} </option>
+               {% endfor %}
+            </select>
+
+            <select name="full_disk_type">
+                  <option value= 'continuum'> Continuum </option>
+                  <option value= 'magnetogram'> Magnetogram </option>
+            </select>
+
+            <input type="submit" name="download_option" value="Submit">
+
+         </p>
+	
+
+
+         <p>Download the ARs:</p>
+
+            <div id = "download_data">
+               <input type="submit" name="download_option" value="SQL">
+               <input type="submit" name="download_option" value="HDF5">
+            </div>
+
+         </form>
+      </div>
+
+
+
+   </body>
+
+
+</html>

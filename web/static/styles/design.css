@@ -257,7 +257,7 @@ table.extrapolation_table input[type="text"]
 
 .full_button{
     background-color: #6c7075;
-    background-image: url("/static/icons/reopen.png");
+    background: url("/static/icons/reopen.png");
     background-size: cover;
     height: 13px;
     width: 13px;
@@ -958,6 +958,74 @@ body
 }
 
 
+#download_frame{
+    width: 50%;
+    margin: 80px auto 0px auto;
+}
+
+#download_frame p{
+
+    margin: 40px 0px 0px 80px;
+}
+
+#download_data{
+    width: 75%;
+    margin: 20px auto auto auto;
+}
+
+#download_data input.button-sql {
+    color: black;
+    background: url(/static/icons/sql.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    border: none;
+    cursor: pointer;
+    width: 52px;
+    padding-top: 55px;
+    margin: 0 20px 0 20px;
+    vertical-align: middle;
+}
+#download_data input.button-hdf5 {
+    color: black;
+    background: url(/static/icons/hdf5.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    border: none;
+    cursor: pointer;
+    width: 55px;
+    padding-top: 55px;
+    margin: 0 20px 0 20px;
+    vertical-align: middle;
+}
+#download_data input.button-csv {
+    color: black;
+    background: url(/static/icons/csv.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    border: none;
+    cursor: pointer;
+    width: 52px;
+    padding-top: 55px;
+    margin: 0 20px 0 20px;
+    vertical-align: middle;
+}
+#download_data input.button-txt {
+    color: black;
+    background: url(/static/icons/txt.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    border: none;
+    cursor: pointer;
+    width: 52px;
+    padding-top: 55px;
+    margin: 0 20px 0 20px;
+    vertical-align: middle;
+}
+
 /* ----------------------QUERY TABLE PROPERTIES*/
 
 #buttom_color{
@@ -1199,7 +1267,6 @@ body
         background-color: #100902;
         background-position-y: -480px;
         background-position-x: -120px;
-        position: absolute;
         background-repeat: no-repeat;
         display: none; 
     }
@@ -1401,7 +1468,7 @@ body
     background-color: #100902;
     background-position-y: -480px;
     background-position-x: -120px;
-    position: absolute;
+    position: fixed;
     background-repeat: no-repeat;
     top: -100px;
     left:0px;
