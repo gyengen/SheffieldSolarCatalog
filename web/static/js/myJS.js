@@ -343,15 +343,28 @@ $(function () {
   })
 });
 
-$(function() {
-  $(".z-position").mousedown(function(){
-    $(".z-position").removeClass("top-position");
-    $(this).addClass("top-position");
+$(function(){
+  $('#filter-clear').click(function(){
+    $("[class='value_input']").val('0');
   });
 });
 
 $(function(){
-  $('#filter-clear').click(function(){
-    $("[class='value_input']").val('0');
+  $('.z-position').mousedown(function(){
+    $(this).css('z-index', 9999);
+    var list = $('.z-position').sort(function (a,b) {
+      if (a.style.zIndex == '') {
+          a.style.zIndex = 1
+      }
+      if (b.style.zIndex == '') {
+          b.style.zIndex = 1
+      }
+      return (parseInt(a.style.zIndex,10)) > (parseInt(b.style.zIndex,10));
+    });
+    var i = 1
+    $.each(list, function(index,value) {
+      $(this).css('z-index', i);
+      i = i + 1;
+    });
   });
 });
