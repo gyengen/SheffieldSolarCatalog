@@ -235,6 +235,8 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
         p = figure(tools=TOOLS,x_axis_type="datetime",plot_width=600, plot_height=338)
     elif (yl_index == "Date_obs" or yl_index == "Time_obs"):
         p = figure(tools=TOOLS,y_axis_type="datetime",plot_width=600, plot_height=338)
+    else:
+        p = figure(tools=TOOLS,plot_width=600, plot_height=338)
 
     #Plot the data
     p.line(xl, yl, alpha=0.9, line_width=2, color = line_col)
