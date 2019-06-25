@@ -13,8 +13,8 @@
       <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
       <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
-      {{ att_plot.js_resources|safe }}
-      {{ att_plot.css_resources|safe }}
+      {{ js_resources|safe }}
+      {{ css_resources|safe }}
       {{ att_visual.js_resources|safe }}
       {{ att_visual.css_resources|safe }}
 
@@ -47,14 +47,18 @@
       </div>
 
 
-      <div id = "download_frame">
+      <div id = "download_frame" class = "hidden">
          
          <form method="post">
+
+         <p>Download all the data:</p>
+            <div id = "download_data">
+               <input type="submit" name="download_option" value="SQL" class="button-sql">
+            </div>
 
          <p>Download the data table:</p>
 
             <div id = "download_data">
-               <input type="submit" name="download_option" value="SQL" class="button-sql">
                <input type="submit" name="download_option" value="HDF5" class="button-hdf5">
                <input type="submit" name="download_option" value="CSV" class="button-csv">
                <input type="submit" name="download_option" value="TXT" class="button-txt">
@@ -80,6 +84,11 @@
 
 
          <p>Download the ARs:</p>
+            {% for AR_img in AR_paths %}
+               <div class="download_AR_div">
+	          <img src="{{AR_img}}" class= "download_AR_img"/>
+               </div>
+	    {% endfor %}
 
             <div id = "download_data">
                <input type="submit" name="download_option" value="SQL">

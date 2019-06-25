@@ -370,11 +370,78 @@ def full_disk():
 
 @app.route('/download.html', methods=['GET', 'POST'])
 def download_data():
-
+    session['error_message'] = ""
     # Delete TMP files older than 1 day
     os.system('find ' + str(os.getcwd()) + '/web/static/database/tmp/ -type f -mtime +1 -exec rm {} \;')
 
-    set_date = np.unique(download.table[:,0] + ' ' + download.table[:,1])
+    # Clear sql_table
+    sql_table = []
+
+    # Send the query to sqlite
+    try:
+
+        # Execute the query
+        sql_table = g.db.execute(session['sql_cmd'])
+
+    except Exception as e:
+
+        # Error if sending failed
+        session['error_message'] = session['error_message'] + \
+            "<p> - Error occured when retrieving data.<br></p><br>"
+
+        # Default sql command if something is wrong
+        session['sql_cmd'] = "SELECT * FROM continuum"
+
+        # Execute the query
+        sql_table = g.db.execute(session['sql_cmd'])
+
+    # Create the sql table
+    table, header = Create_table(sql_table)
+
+    try:
+        # Save the lenght of the table
+        session['columns'] = len(table[0])
+
+        # Read the lenght of the table
+        session['rows'] = len(table)
+
+    except Exception as e:
+
+        # Error if the table is empyt
+        session['error_message'] = session['error_message'] + \
+            "<p> - No Data for selected time period. <br></p><br>"
+
+        # Default sql command
+        session['sql_cmd'] = "SELECT * FROM continuum"
+
+        # Execute the command
+        sql_table = g.db.execute(session['sql_cmd'])
+
+        # Create the data table
+        table, header = Create_table(sql_table)
+
+        # Read the lenght of the table
+        session['columns'] = len(table[0])
+
+        # Read the lenght of the table
+        session['rows'] = len(table)
+
+    table = np.array(table)
+    table[table == None] = -9999 
+    set_date = np.unique(table[:,0] + ' ' + table[:,1])
+
+    NOAA_already_seen = []
+    rows = []
+    for x in table:
+        if not (x[4] in NOAA_already_seen):
+            NOAA_already_seen.append(x[4])
+            rows.append(x)
+
+    AR_paths = []
+    for AR in rows:
+        path_AR, param.path_full = png_image_path(AR, os.getcwd())
+        AR_paths.append(path_AR)
+
 
     # Download the data from the query
     if request.method == 'POST':
@@ -396,9 +463,9 @@ def download_data():
 
             #df = pd.DataFrame(data=download.table, columns=download.header)
 
-            test = download.table[:,0]
-            print(test)
-            df = pd.DataFrame({'A',test})
+            test = table[:,0]
+
+            df = pd.DataFrame(test)
 
             df.to_hdf(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.h5', key='SSC', mode='w')
 
@@ -407,14 +474,14 @@ def download_data():
                                        filename=fname + '.h5', as_attachment=True)
             
         if request.form['download_option'] == 'TXT':
-            print(tuple(download.header))
+            print(tuple(header))
             # Define the string format
             form = '%10s %10s %10s %10s %7s %4s %8s %8s %8s %9s %8s %8s %8s %7s %7s %14s %14s %14s %14s %14s %14s'
 
             # Save the requested data
             np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.txt',
-                       np.array(download.table),
-                       header=form % tuple(download.header),
+                       np.array(table),
+                       header=form % tuple(header),
                        comments='',
                        delimiter = ' ',
                        fmt = form)
@@ -427,8 +494,8 @@ def download_data():
 
             # Save the requested data
             np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.csv',
-                       np.array(download.table),
-                       header=str(download.header),
+                       np.array(table),
+                       header=str(header),
                        delimiter = ',',
                        fmt = '%s')
 
@@ -453,10 +520,10 @@ def download_data():
                      dir_path + 'hmi.ssc.full_disk.magnetogram.' + date_time + '.png']
 
 
-            return render_template('download.html', set_date = set_date, fname = fname)
+            return render_template('download.html', set_date = set_date, fname = fname, AR_paths = AR_paths)
 
 
-    return render_template('download.html', set_date = set_date, fname = '')
+    return render_template('download.html', set_date = set_date, fname = '', AR_paths = AR_paths)
 
 
 @app.route('/workstation.html', methods=['GET', 'POST'])

@@ -1550,6 +1550,15 @@ body
     cursor: pointer;
     border-radius: 10px;
 }
+
+.download_AR_div{
+    display:inline-block;
+    width:30%
+}
+
+.download_AR_img{
+    width:100%
+}
 /* ---------------------- MENU PROPERTIES*/
 .mytext
     {
