@@ -535,10 +535,6 @@ def query():
         session['sql_cmd'] = "SELECT * FROM continuum"
         session['date_formate'] = '%Y-%m-%d'
         session['time_formate'] = '%H:%M:%S'
-        session['sd'] = ''
-        session['st'] = ''
-        session['ed'] = ''
-        session['et'] = ''
         session['columns'] = 0
         session['rows'] = 0
         session['attributes'] = []
@@ -570,12 +566,14 @@ def query():
     # Save the header
     session['header_all'] = header_all_1
 
-    # Select the last observation
-    session['sd'], session['st'] = table_all[-1][0], table_all[-1][1]
-    session['ed'], session['et'] = session['sd'], session['st']
+    # Select the last observation if none saved from old requests
+    if not ("sd" in session):
+        session['sd'], session['st'] = table_all[-1][0], table_all[-1][1]
+        session['ed'], session['et'] = session['sd'], session['st']
 
-    # Initial SQL command, displaying only the last observation
-    session['sql_cmd'] = "SELECT * FROM continuum " + \
+    # Initial SQL command, displaying only the last observation if none saved from old requests
+    if not ("sql_cmd" in session):
+        session['sql_cmd'] = "SELECT * FROM continuum " + \
                   "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "'" 
 
     # css command
@@ -793,14 +791,13 @@ def query():
     # Define the selected row
     if session['sunspot_type'] == 'magnetogram':
         # Execute the query
-        param.row = table_all[selected_row]
+        param.row = table[selected_row]
         table_live =table_all
 
     else:
         # Execute the query
-        param.row = table_all[selected_row]
-        table_live = table_all
-
+        param.row = table[selected_row]
+        table_live = table
 
     # Define the filename of the associated image
     param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
@@ -1118,6 +1115,7 @@ def query():
     hist_plot_options = [x for x in general_plot_options if x != "Date_obs" and x != "Time_obs"]
 
     # Render the front end
+
     if 'deleted_plots' in request.cookies:
         resp = make_response(render_template('workstation.html',
                            table=table,
