@@ -1559,6 +1559,13 @@ body
 .download_AR_img{
     width:100%
 }
+
+.download_AR_button{
+    background: none;
+    border: none;
+    height: auto;
+}
+
 /* ---------------------- MENU PROPERTIES*/
 .mytext
     {

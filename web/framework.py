@@ -23,6 +23,7 @@ import datetime
 import sys
 import string
 import uuid
+import re
 
 monkey.patch_all()
 
@@ -457,7 +458,7 @@ def download_data():
             return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/sql/',
                                        filename='ssc_sql.db', as_attachment=True)
 
-        if request.form['download_option'] == 'HDF5': 
+        elif request.form['download_option'] == 'HDF5': 
 
             import pandas as pd
 
@@ -473,7 +474,7 @@ def download_data():
             return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/tmp/',
                                        filename=fname + '.h5', as_attachment=True)
             
-        if request.form['download_option'] == 'TXT':
+        elif request.form['download_option'] == 'TXT':
             print(tuple(header))
             # Define the string format
             form = '%10s %10s %10s %10s %7s %4s %8s %8s %8s %9s %8s %8s %8s %7s %7s %14s %14s %14s %14s %14s %14s'
@@ -490,7 +491,7 @@ def download_data():
             return send_from_directory(directory=str(os.getcwd()) + '/web/static/database/tmp/',
                                        filename=fname + '.txt', as_attachment=True)
 
-        if request.form['download_option'] == 'CSV': 
+        elif request.form['download_option'] == 'CSV': 
 
             # Save the requested data
             np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.csv',
@@ -504,7 +505,7 @@ def download_data():
                                        filename=fname + '.csv', as_attachment=True)
 
 
-        if request.form['download_option'] == 'Submit':
+        elif request.form['download_option'] == 'Submit':
 
             # Send the data to the user
             full_disk_date = request.form['full_disk_date']
@@ -522,6 +523,10 @@ def download_data():
 
             return render_template('download.html', set_date = set_date, fname = fname, AR_paths = AR_paths)
 
+        else:
+            image_name =  (re.findall("[^/]+$",request.form['download_option']))
+            directory = re.findall(".*\/",request.form['download_option'])
+            return send_from_directory(directory=os.getcwd() + '/web' +directory[0],filename = image_name[0], as_attachment=True)
 
     return render_template('download.html', set_date = set_date, fname = '', AR_paths = AR_paths)
 
