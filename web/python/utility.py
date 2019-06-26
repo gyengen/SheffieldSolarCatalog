@@ -198,6 +198,23 @@ def Create_table(table):
 
     return table, header
 
+def Get_primary_key(table):
+    ''' Get the primary key values from the SQLite query
+
+    Parameter
+    ---------
+        table - SQLite query output
+    Returns
+    -------
+        p_keys - list of the primary keys'''
+
+    # Save the selected rows
+    table = table.fetchall()
+
+    p_keys = list(map(lambda row: row[-1], table))
+
+    return p_keys
+
 
 def Query_info(table):
     ''' Basic query information.
@@ -242,7 +259,7 @@ def keyword_check(form, string):
     return False
 
 def png_image_path(row, directory):
-    '''Build the full path of the observation based on html request.
+    '''Build the full path of the observation based on html request to the png file.
 
     Parameters
     ----------
@@ -251,7 +268,7 @@ def png_image_path(row, directory):
 
     Returns
     -------
-        Filename of the associated image of the row
+        Filename of the associated png image of the row
 
     '''
 
@@ -265,6 +282,7 @@ def png_image_path(row, directory):
                 '.png')
 
     fname_full = ('hmi.ssc.fulldisk.' + str(obs_type) + '.' +
+
                   str(date).replace('-', '') + '_' +
                   str(time).replace(':', '') + '.fits')
 

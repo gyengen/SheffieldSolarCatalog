@@ -561,7 +561,8 @@ def query():
     c2 = "SELECT * FROM continuum"
 
     # Get the whole header in the complete table
-    table_all, header_all_1 = Create_table(g.db.execute(c1))
+    full_sql_table = g.db.execute(c1)
+    table_all, header_all_1 = Create_table(full_sql_table)
 
     # Save the header
     session['header_all'] = header_all_1
@@ -581,7 +582,8 @@ def query():
 
     # Check the request method
     if request.method == 'POST':
-
+        #Reset the row number to not cause errors
+        session['ARID'] = 0
         # clear the error message
         session['error_message'] = ''
 
@@ -708,7 +710,17 @@ def query():
 
         # Execute the query
         sql_table = g.db.execute(session['sql_cmd'])
-
+        print (1)
+        #Get primary keys if id not in attributes
+        if not ("id" in session["attributes"]):
+            #Get primary keys
+            p_keys = g.db.execute(session['sql_cmd'])
+            print (1)
+            temp_row = Get_primary_key(p_keys)
+            print (1)
+            unedited_full_sql_table = g.db.execute(c1)
+            print (1)
+            actual_row = Get_primary_key(unedited_full_sql_table)
     except Exception as e:
 
         # Error if sending failed
@@ -788,16 +800,45 @@ def query():
     else:
         session['ARID'] = 0
         selected_row = 0
+
     # Define the selected row
     if session['sunspot_type'] == 'magnetogram':
-        # Execute the query
-        param.row = table[selected_row]
         table_live =table_all
+        # Execute the query
+        if table == table_all:
+            param.row = table_all[selected_row]
+
+        elif ("id" in session["attributes"]):
+            temp_row = table[selected_row]
+            param.row = next(row for row in table_all if row[0] == temp_row[0] and \
+                                                         row[1] == temp_row[1] and \
+                                                         row[2] == temp_row[2] and \
+                                                         row[3] == temp_row[3] and \
+                                                         row[4] == temp_row[4] and \
+                                                         row[5] == temp_row[5])
+
+        else:
+            param.row = table_all[actual_row.index(temp_row)]
 
     else:
+        table_live =table_all
         # Execute the query
-        param.row = table[selected_row]
-        table_live = table
+        if table == table_all:
+            param.row = table_all[selected_row]
+
+        elif ("id" in session["attributes"]):
+            temp_row = table[selected_row]
+            param.row = next(row for row in table_all if row[0] == temp_row[0] and \
+                                                         row[1] == temp_row[1] and \
+                                                         row[2] == temp_row[2] and \
+                                                         row[3] == temp_row[3] and \
+                                                         row[4] == temp_row[4] and \
+                                                         row[5] == temp_row[5])
+
+        else:
+            temp_row = temp_row[selected_row]
+            param.row = table_all[actual_row.index(temp_row)]
+
 
     # Define the filename of the associated image
     param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
