@@ -1553,7 +1553,7 @@ body
 
 .download_AR_div{
     display:inline-block;
-    width:30%
+    width:32%
 }
 
 .download_AR_img{
@@ -1577,7 +1577,7 @@ body
     border: none;
     width: 50%;
     display: block;
-    margin-left: auto;
+    margin-left: 21;
     margin-right: auto;
 }
 
