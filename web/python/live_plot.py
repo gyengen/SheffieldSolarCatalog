@@ -91,7 +91,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             mean = stats.gamma.mean(ag, bg, cg)
             std = stats.gamma.std(ag, bg, cg)
 
-            legend = 'Gamma ' + 'STD = ' + str(std) + ', ' + 'AVG = ' + str(mean)
+            legend = 'Gamma ' + 'STD = ' + str(round(std,2)) + ', ' + 'AVG = ' + str(round(mean,2))
 
             # Fit the histogram
             pdf_fit = stats.gamma.pdf(lnspc, ag, bg,cg) 
@@ -105,7 +105,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             # Create legend (maybe accurate)
             mean = stats.beta.mean(ab, bb, cb, db)
             std = stats.beta.std(ab, bb, cb, db)
-            legend = 'Beta ' + 'STD = ' + str(std) + ', ' + 'AVG = ' + str(mean)
+            legend = 'Beta ' + 'STD = ' + str(round(std,2)) + ', ' + 'AVG = ' + str(round(mean,2))
 
             # Fit 
             pdf_fit = stats.beta.pdf(lnspc, ab, bb,cb, db) 
