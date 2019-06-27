@@ -371,7 +371,10 @@ def full_disk():
 
 @app.route('/download.html', methods=['GET', 'POST'])
 def download_data():
+
+    # Reset error message
     session['error_message'] = ""
+
     # Delete TMP files older than 1 day
     os.system('find ' + str(os.getcwd()) + '/web/static/database/tmp/ -type f -mtime +1 -exec rm {} \;')
 
@@ -720,16 +723,13 @@ def query():
 
         # Execute the query
         sql_table = g.db.execute(session['sql_cmd'])
-        print (1)
+
         #Get primary keys if id not in attributes
         if not ("id" in session["attributes"]):
             #Get primary keys
             p_keys = g.db.execute(session['sql_cmd'])
-            print (1)
             temp_row = Get_primary_key(p_keys)
-            print (1)
             unedited_full_sql_table = g.db.execute(c1)
-            print (1)
             actual_row = Get_primary_key(unedited_full_sql_table)
     except Exception as e:
 

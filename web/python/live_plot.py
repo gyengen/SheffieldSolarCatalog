@@ -83,16 +83,29 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
 
         if fit == 'Gamma':
 
+            hist_list = hist.tolist()
             # Parameters for gamma distribution
-            ag,bg,cg = stats.gamma.fit(hist)  
+            ag,bg,cg = stats.gamma.fit(hist_list)
+
+            # Create legend (maybe accurate)
+            mean = stats.gamma.mean(ag, bg, cg)
+            std = stats.gamma.std(ag, bg, cg)
+
+            legend = 'Gamma ' + 'STD = ' + str(std) + ', ' + 'AVG = ' + str(mean)
 
             # Fit the histogram
             pdf_fit = stats.gamma.pdf(lnspc, ag, bg,cg) 
 
         if fit == 'Beta':
 
+            hist_list = hist.tolist()
             # Parameters for Beta distribution
-            ab,bb,cb,db = stats.beta.fit(hist) 
+            ab,bb,cb,db = stats.beta.fit(hist_list) 
+
+            # Create legend (maybe accurate)
+            mean = stats.beta.mean(ab, bb, cb, db)
+            std = stats.beta.std(ab, bb, cb, db)
+            legend = 'Beta ' + 'STD = ' + str(std) + ', ' + 'AVG = ' + str(mean)
 
             # Fit 
             pdf_fit = stats.beta.pdf(lnspc, ab, bb,cb, db) 
@@ -211,8 +224,16 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
 
     t = np.array(table)
 
-    xl = np.array(t.T[header.index(xl_index)])
-    yl = np.array(t.T[header.index(yl_index)])
+    x = np.array(t.T[header.index(xl_index)])
+    y = np.array(t.T[header.index(yl_index)])
+
+    xl = []
+    yl = []
+
+    for index in range(len(x)):
+        if x[index] != None and y[index] != None:
+            xl.append(x[index])
+            yl.append(y[index])
 
     #Convert strings to dates if required
     if (xl_index == "Date_obs"):
