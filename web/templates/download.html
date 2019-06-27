@@ -83,19 +83,34 @@
 	
 
 
-         <p>Download the ARs:</p>
-            {% for AR_img in AR_paths %}
+         <p>Download the ARs:
+
+            <select class = "AR_download_type">
+               <option value= 'pdf'> Download as PDF </option>
+               <option value= 'png'> Download as PNG </option>
+            </select>
+         </p>
+
+            <div class = "png">
+            {% for AR_img in png_AR_paths %}
                <div class="download_AR_div" style="height:auto">
 	          <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{AR_img}}" class= "download_AR_img"></button>
                </div>
 	    {% endfor %}
+            </div>
 
+            <div class = "pdf" style="display:none">
+            {% for AR_img in pdf_AR_paths %}
+               <div class="download_AR_div" style="height:auto">
+	          <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{png_AR_paths[pdf_AR_paths.index(AR_img)]}}" class= "download_AR_img"></button>
+               </div>
+	    {% endfor %}
+            </div>
          </form>
       </div>
 
 
 
    </body>
-
 
 </html>

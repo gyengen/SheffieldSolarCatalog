@@ -258,6 +258,41 @@ def keyword_check(form, string):
 
     return False
 
+def pdf_image_path(row, directory):
+    '''Build the full path of the observation based on html request to the pdf file.
+
+    Parameters
+    ----------
+        row - HTML table tow
+        directory - directory of the project
+
+    Returns
+    -------
+        Filename of the associated pdf image of the row
+
+    '''
+
+    Noaa_number = row[4]
+    obs_type = row[2]
+    date = row[0]
+    time = row[1]
+
+    fname_AR = ('hmi.ssc.' + str(Noaa_number) + '.' + str(obs_type) + '.' +
+                str(date).replace('-', '') + '_' + str(time).replace(':', '') +
+                '.pdf')
+
+    fname_full = ('hmi.ssc.fulldisk.' + str(obs_type) + '.' +
+
+                  str(date).replace('-', '') + '_' +
+                  str(time).replace(':', '') + '.fits')
+
+    path = '/static/database/img/AR' + str(date) + '/pdf/'
+    AR = path + fname_AR
+
+    full = path + fname_full
+
+    return AR, full
+
 def png_image_path(row, directory):
     '''Build the full path of the observation based on html request to the png file.
 

@@ -148,6 +148,11 @@ $(function () {
       $('#side_menu').css('z-index','100');
       $('#plotting_menu').css('z-index','0');
       $('.download_options').css('z-index','0');
+
+
+            $("#message_log").css("top","-230px");
+            $("#message_log_bar").addClass('table-close');
+
     }
   })
 });
@@ -168,6 +173,12 @@ $(function () {
       $('#plotting_menu').css('z-index','100');
       $('#side_menu').css('z-index','0');
       $('.download_options').css('z-index','0');
+
+
+
+            $("#message_log").css("top","-230px");
+            $("#message_log_bar").addClass('table-close');
+
     }
   })
 });
@@ -331,14 +342,17 @@ $(function () {
   $('#message_log_bar').click(function () {
     if ($(this).hasClass('table-close')) {
       $(this).removeClass('table-close');
-      $('#message_log').animate({
-        top: '50'
-      });
+      $("#message_log").css("top","50px");
+
+      $('#database_button').removeClass('menu-open');
+      $('#side_menu').fadeOut(0);
+
+      $('#plotting_menu').fadeOut(0);
+      $('#plot_button').removeClass('plot-open');
+
     } else {
       $(this).addClass('table-close');
-      $('#message_log').animate({
-        top: '-230px'
-      });
+      $("#message_log").css("top","-230px");
     }
   })
 });
@@ -368,3 +382,16 @@ $(function(){
     });
   });
 });
+
+$(function(){
+  $('.AR_download_type').change(function(){
+    if ($(this).val() == "pdf") {
+      $(".pdf").css('display','block')
+      $(".png").css('display','none')
+    } else {
+      $(".png").css('display','block')
+      $(".pdf").css('display','none')
+    }
+  });
+});
+
