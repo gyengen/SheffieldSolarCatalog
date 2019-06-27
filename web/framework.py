@@ -441,15 +441,26 @@ def download_data():
             NOAA_already_seen.append(x[4])
             rows.append(x)
 
-    png_AR_paths = []
+    full_disk_paths = {}
+    png_AR_paths = {}
+    pdf_AR_paths = {}
     for AR in rows:
-        path_AR, param.path_full = png_image_path(AR, os.getcwd())
-        png_AR_paths.append(path_AR)
 
-    pdf_AR_paths = []
-    for AR in rows:
         path_AR, param.path_full = pdf_image_path(AR, os.getcwd())
-        pdf_AR_paths.append(path_AR)
+        time = str(AR[0]) + "" + str(AR[1])
+        if time in pdf_AR_paths:
+            pdf_AR_paths[time].append(path_AR)
+        else:
+            pdf_AR_paths[time] = [path_AR]
+
+        path_AR, param.path_full = png_image_path(AR, os.getcwd())
+        if time in png_AR_paths:
+            png_AR_paths[time].append(path_AR)
+        else:
+            png_AR_paths[time] = [path_AR]
+        if not (time in full_disk_paths):
+            full_disk_paths[time] = param.path_full
+            
 
 
     # Download the data from the query
@@ -529,14 +540,14 @@ def download_data():
                      dir_path + 'hmi.ssc.full_disk.magnetogram.' + date_time + '.png']
 
 
-            return render_template('download.html', set_date = set_date, fname = fname, png_AR_paths = png_AR_paths, pdf_AR_paths = pdf_AR_paths)
+            return render_template('download.html', set_date = set_date, fname = fname, png_AR_paths = png_AR_paths, pdf_AR_paths = pdf_AR_paths, full_disk_paths = full_disk_paths)
 
         else:
             image_name =  (re.findall("[^/]+$",request.form['download_option']))
             directory = re.findall(".*\/",request.form['download_option'])
             return send_from_directory(directory=os.getcwd() + '/web' +directory[0],filename = image_name[0], as_attachment=True)
 
-    return render_template('download.html', set_date = set_date, fname = '', png_AR_paths = png_AR_paths, pdf_AR_paths = pdf_AR_paths)
+    return render_template('download.html', set_date = set_date, fname = '', png_AR_paths = png_AR_paths, pdf_AR_paths = pdf_AR_paths, full_disk_paths = full_disk_paths)
 
 
 @app.route('/workstation.html', methods=['GET', 'POST'])

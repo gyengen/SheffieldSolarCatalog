@@ -66,22 +66,25 @@
 
          <p>Download the full disk images:
 
-            <select name="full_disk_date">
+            <select name="full_disk_date" class="download_date_options">
                {% for key in set_date %}
                   <option value= "{{key}}"> {{key}} </option>
                {% endfor %}
             </select>
 
-            <select name="full_disk_type">
-                  <option value= 'continuum'> Continuum </option>
-                  <option value= 'magnetogram'> Magnetogram </option>
-            </select>
-
-            <input type="submit" name="download_option" value="Submit">
-
          </p>
-	
+	 {% for key in full_disk_paths %}
+            {%if key == set_date[0].replace(" ","")%}
+            <div class = "{{key.replace(":","")}} date_specific_image">
+            {%else%}
+            <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
+            {% endif %}
 
+               <button class="download_full_disk_button" name="download_option" value="{{full_disk_paths[key]}}"><img src="{{full_disk_paths[key]}}" class= "download_AR_img"></button>
+
+            </div>
+
+	 {% endfor %}
 
          <p>Download the ARs:
 
@@ -90,22 +93,31 @@
                <option value= 'png'> Download as PNG </option>
             </select>
          </p>
+         {% for key in png_AR_paths %}
 
-            <div class = "png">
-            {% for AR_img in png_AR_paths %}
-               <div class="download_AR_div" style="height:auto">
-	          <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{AR_img}}" class= "download_AR_img"></button>
-               </div>
-	    {% endfor %}
-            </div>
+            {%if key == set_date[0].replace(" ","")%}
+            <div class = "{{key.replace(":","")}} date_specific_image">
+            {%else%}
+            <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
+            {% endif %}
 
-            <div class = "pdf" style="display:none">
-            {% for AR_img in pdf_AR_paths %}
-               <div class="download_AR_div" style="height:auto">
-	          <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{png_AR_paths[pdf_AR_paths.index(AR_img)]}}" class= "download_AR_img"></button>
+               <div class = "png" style="display:none">
+                  {% for AR_img in png_AR_paths[key] %}
+                     <div class="download_AR_div">
+	                <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{AR_img}}" class= "download_AR_img"></button>
+                     </div>
+	          {% endfor %}
                </div>
-	    {% endfor %}
+
+               <div class = "pdf">
+                  {% for AR_img in pdf_AR_paths[key] %}
+                     <div class="download_AR_div">
+	                <button class="download_AR_button" name="download_option" value="{{AR_img}}"><img src="{{png_AR_paths[key][pdf_AR_paths[key].index(AR_img)]}}" class= "download_AR_img"></button>
+                     </div>
+	          {% endfor %}
+               </div>
             </div>
+	 {% endfor %}
          </form>
       </div>
 

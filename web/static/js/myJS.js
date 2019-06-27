@@ -395,3 +395,16 @@ $(function(){
   });
 });
 
+
+$(function(){
+  $('.download_date_options').change(function(){
+    $('.date_specific_image').each(function() {
+      $(this).css('display','none')
+    })
+    var x = ("." + $(this).val()).replace(/\s/g, '').replace(/:/g,"")
+    $(x).each(function() {
+      $(this).css('display','block')
+    })
+  });
+});
+

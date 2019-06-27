@@ -299,11 +299,16 @@ def png_image_path(row, directory):
     Parameters
     ----------
         row - HTML table tow
+
         directory - directory of the project
 
     Returns
+
     -------
+
         Filename of the associated png image of the row
+
+
 
     '''
 
@@ -316,10 +321,10 @@ def png_image_path(row, directory):
                 str(date).replace('-', '') + '_' + str(time).replace(':', '') +
                 '.png')
 
-    fname_full = ('hmi.ssc.fulldisk.' + str(obs_type) + '.' +
+    fname_full = ('hmi.ssc.full_disk.' + str(obs_type) + '.' +
 
                   str(date).replace('-', '') + '_' +
-                  str(time).replace(':', '') + '.fits')
+                  str(time).replace(':', '') + '.png')
 
     path = '/static/database/img/AR' + str(date) + '/png/'
     AR = path + fname_AR
@@ -327,7 +332,6 @@ def png_image_path(row, directory):
     full = path + fname_full
 
     return AR, full
-
 
 def html_image_path(row, directory):
     '''Build the full path of the observation based on html request.
