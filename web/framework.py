@@ -582,24 +582,7 @@ def query():
         session['plots'] = []
     # Default commands
     c1 = "SELECT * FROM continuum"
-    c2 = "SELECT * FROM continuum"
-
-    # Get the whole header in the complete table
-    full_sql_table = g.db.execute(c1)
-    table_all, header_all_1 = Create_table(full_sql_table)
-
-    # Save the header
-    session['header_all'] = header_all_1
-
-    # Select the last observation if none saved from old requests
-    if not ("sd" in session):
-        session['sd'], session['st'] = table_all[-1][0], table_all[-1][1]
-        session['ed'], session['et'] = session['sd'], session['st']
-
-    # Initial SQL command, displaying only the last observation if none saved from old requests
-    if not ("sql_cmd" in session):
-        session['sql_cmd'] = "SELECT * FROM continuum " + \
-                  "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "'" 
+    c2 = "SELECT * FROM magnetogram"
 
     # css command
     statistic_height = 0
@@ -726,6 +709,28 @@ def query():
                              " OR (Date_obs = '"    + session['ed'] + "' AND Time_obs <= '" + session['et'] + "'))" + \
                              session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
 
+    # Get the whole header in the complete table dpeending on sunspot type
+    if session['sunspot_type'] == "magnetogram":
+        full_sql_table = g.db.execute(c2)
+    else:
+        full_sql_table = g.db.execute(c1)
+
+    table_all, header_all_1 = Create_table(full_sql_table)
+
+    # Save the header
+    session['header_all'] = header_all_1
+
+    # Select the last observation if none saved from old requests
+    if not ("sd" in session):
+        session['sd'], session['st'] = table_all[-1][0], table_all[-1][1]
+        session['ed'], session['et'] = session['sd'], session['st']
+
+    # Initial SQL command, displaying only the last observation if none saved from old requests
+    if not ("sql_cmd" in session):
+        session['sql_cmd'] = "SELECT * FROM continuum " + \
+                  "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "'" 
+
+
     # Clear sql_table
     sql_table = []
 
@@ -740,7 +745,10 @@ def query():
             #Get primary keys
             p_keys = g.db.execute(session['sql_cmd'])
             temp_row = Get_primary_key(p_keys)
-            unedited_full_sql_table = g.db.execute(c1)
+            if session['sunspot_type'] == "magnetogram":
+                unedited_full_sql_table = g.db.execute(c2)
+            else:
+                unedited_full_sql_table = g.db.execute(c1)
             actual_row = Get_primary_key(unedited_full_sql_table)
     except Exception as e:
 
@@ -839,6 +847,7 @@ def query():
                                                          row[5] == temp_row[5])
 
         else:
+            temp_row = temp_row[selected_row]
             param.row = table_all[actual_row.index(temp_row)]
 
     else:
