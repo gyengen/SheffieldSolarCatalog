@@ -693,13 +693,13 @@ def query():
             if session['sd'] == session['ed'] and session['st'] == session['et']:
                session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
                              " WHERE (Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "')" + \
-                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
             # in case of diffrent times on the same date
             elif session['sd'] == session['ed']:
                session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
                              " WHERE (Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "' AND Time_obs <= '" + session['et'] + "')" + \
-                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
             # in case difffrent dates
             else:
@@ -707,7 +707,7 @@ def query():
                              " WHERE ((Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "')" + \
                              " OR (Date_obs > '" + session['sd'] + "' AND Date_obs < '" + session['ed'] + "')" + \
                              " OR (Date_obs = '"    + session['ed'] + "' AND Time_obs <= '" + session['et'] + "'))" + \
-                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc']
+                             session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
     # Get the whole header in the complete table dpeending on sunspot type
     if session['sunspot_type'] == "magnetogram":
