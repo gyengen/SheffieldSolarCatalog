@@ -40,7 +40,7 @@ class att:
     block_status = [0,0]
 
     # Default sql query command
-    sql_cmd = "SELECT * FROM continuum"
+    sql_cmd = "SELECT * FROM continuum LIMIT 1000"
 
     # start date, end date, start time, end time
     date_formate = '%Y-%m-%d'
@@ -394,7 +394,7 @@ def download_data():
             "<p> - Error occured when retrieving data.<br></p><br>"
 
         # Default sql command if something is wrong
-        session['sql_cmd'] = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum LIMIT 1000"
 
         # Execute the query
         sql_table = g.db.execute(session['sql_cmd'])
@@ -416,7 +416,7 @@ def download_data():
             "<p> - No Data for selected time period. <br></p><br>"
 
         # Default sql command
-        session['sql_cmd'] = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum LIMIT 1000"
 
         # Execute the command
         sql_table = g.db.execute(session['sql_cmd'])
@@ -429,6 +429,10 @@ def download_data():
 
         # Read the lenght of the table
         session['rows'] = len(table)
+
+    if session['sql_cmd'] != "SELECT * FROM continuum LIMIT 1000":
+        full_sql_table = g.db.execute("SELECT * FROM continuum LIMIT 1000")
+        full_table, full_header = Create_table(full_sql_table)
 
     table = np.array(table)
     table[table == None] = -9999 
@@ -500,8 +504,8 @@ def download_data():
 
             # Save the requested data
             np.savetxt(str(os.getcwd()) + '/web/static/database/tmp/' + fname + '.txt',
-                       np.array(table),
-                       header=form % tuple(header),
+                       np.array(full_table),
+                       header=form % tuple(full_header),
                        comments='',
                        delimiter = ' ',
                        fmt = form)
@@ -556,7 +560,7 @@ def query():
     #Create all the session items needed for the code to run if they do not already exist
     if not ("sunspot_type" in session):
         session['block_status'] = [0,0]
-        session['sql_cmd'] = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum LIMIT 1000"
         session['date_formate'] = '%Y-%m-%d'
         session['time_formate'] = '%H:%M:%S'
         session['columns'] = 0
@@ -728,7 +732,7 @@ def query():
     # Initial SQL command, displaying only the last observation if none saved from old requests
     if not ("sql_cmd" in session):
         session['sql_cmd'] = "SELECT * FROM continuum " + \
-                  "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "'" 
+                  "WHERE Date_obs = '" + session['sd'] + "' AND Time_obs = '" + session['st'] + "' LIMIT 1000" 
 
 
     # Clear sql_table
@@ -779,7 +783,7 @@ def query():
             "<p> - No Data for selected time period. <br></p><br>"
 
         # Default sql command
-        session['sql_cmd'] = "SELECT * FROM continuum"
+        session['sql_cmd'] = "SELECT * FROM continuum LIMIT 1000"
 
         # Execute the command
         sql_table = g.db.execute(session['sql_cmd'])
