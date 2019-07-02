@@ -87,7 +87,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             # Parameters for gamma distribution
             ag,bg,cg = stats.gamma.fit(hist_list)
 
-            # Create legend (maybe accurate)
+            # Get values for legend
             mean = stats.gamma.mean(ag, bg, cg)
             std = stats.gamma.std(ag, bg, cg)
 
@@ -102,7 +102,7 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             # Parameters for Beta distribution
             ab,bb,cb,db = stats.beta.fit(hist_list) 
 
-            # Create legend (maybe accurate)
+            # Get values for legend
             mean = stats.beta.mean(ab, bb, cb, db)
             std = stats.beta.std(ab, bb, cb, db)
             legend = 'Beta ' + 'STD = ' + str(round(std,2)) + ', ' + 'AVG = ' + str(round(mean,2))
@@ -172,8 +172,8 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
     else:
         colors = [c] * len(x)
 
+    #Convert strings to dates if required
     if (x_index == "Date_obs" or x_index == "Time_obs") or (y_index == "Date_obs" or y_index == "Time_obs"):
-        #Convert strings to dates if required
         if (x_index == "Date_obs"):
             x = [datetime.strptime(date, '%Y-%m-%d').date() for date in x]
         elif (x_index == "Time_obs"):
@@ -190,9 +190,21 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
             p = figure(tools=TOOLS,x_axis_type="datetime",plot_width=600, plot_height=338)
         elif (y_index == "Date_obs" or y_index == "Time_obs"):
             p = figure(tools=TOOLS,y_axis_type="datetime",plot_width=600, plot_height=338)
-        #Plot the data
-        p.circle(x, y, line_color=None, fill_color=colors, fill_alpha=0.75)
 
+        #Plot the data
+        normalise_axis = abs(max(x) - min(x)) / 100
+
+        if s == 'None':
+            radii = normalise_axis
+
+        else:
+            s = t.T[header.index(s)]
+            scaling = (s - min(s)) / (max(s) - min(s)) * 2
+            radii = normalise_axis * scaling
+
+        p.circle(x, y, radius=radii, line_color=None, fill_color=colors, fill_alpha=0.75)
+        
+    #Neither axis is date/time
     else:
         normalise_axis = abs(max(x) - min(x)) / 100
 
@@ -230,6 +242,7 @@ def Create_live_2D_line_plot(table, header, xl_index, yl_index, line_col):
     xl = []
     yl = []
 
+    #Remove None values from the lists keeping them the same length
     for index in range(len(x)):
         if x[index] != None and y[index] != None:
             xl.append(x[index])
@@ -287,10 +300,22 @@ def Create_live_bivariate_histogram_plot(table, header, v_index, w_index, biv_w_
     v = v.astype(np.double)
     w = w.astype(np.double)
 
+    wl = []
+    vl = []
+
+    # Remove nan values while keeping lists the same sizes
+    for index in range(len(v)):
+        if ~np.isnan(v[index]) and ~np.isnan(w[index]):
+            wl.append(v[index])
+            vl.append(w[index])
+
+    v = vl
+    w = wl
+
     # Normalisation
     v_norm = (v - min(v)) / (max(v) - min(v))
     w_norm = (w - min(w)) / (max(w) - min(w))
-
+    print (w)
     # Initialise the figure window
     p = figure(match_aspect=True, tools=TOOLS, background_fill_color='#440154', plot_width=500, plot_height=500)
     p.grid.visible = False
