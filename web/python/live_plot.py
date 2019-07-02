@@ -315,7 +315,7 @@ def Create_live_bivariate_histogram_plot(table, header, v_index, w_index, biv_w_
     # Normalisation
     v_norm = (v - min(v)) / (max(v) - min(v))
     w_norm = (w - min(w)) / (max(w) - min(w))
-    print (w)
+
     # Initialise the figure window
     p = figure(match_aspect=True, tools=TOOLS, background_fill_color='#440154', plot_width=500, plot_height=500)
     p.grid.visible = False

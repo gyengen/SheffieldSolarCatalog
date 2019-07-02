@@ -438,6 +438,7 @@ def download_data():
     table[table == None] = -9999 
     set_date = np.unique(table[:,0] + ' ' + table[:,1])
 
+    # Find all the unique NOAA identifiers in the requested data
     NOAA_already_seen = []
     rows = []
     for x in table:
@@ -445,23 +446,29 @@ def download_data():
             NOAA_already_seen.append(x[4])
             rows.append(x)
 
+    # Get the image paths for all the AR's and full disks over the time period
     full_disk_paths = {}
     png_AR_paths = {}
     pdf_AR_paths = {}
-    for AR in rows:
 
+    for AR in rows:
+        # Get AR path to pdf
         path_AR, param.path_full = pdf_image_path(AR, os.getcwd())
         time = str(AR[0]) + "" + str(AR[1])
+
         if time in pdf_AR_paths:
             pdf_AR_paths[time].append(path_AR)
         else:
             pdf_AR_paths[time] = [path_AR]
 
+        # Get AR path to png
         path_AR, param.path_full = png_image_path(AR, os.getcwd())
         if time in png_AR_paths:
             png_AR_paths[time].append(path_AR)
         else:
             png_AR_paths[time] = [path_AR]
+
+        # Get full disk if it doesn't yet exist
         if not (time in full_disk_paths):
             full_disk_paths[time] = param.path_full
             
@@ -546,8 +553,11 @@ def download_data():
 
             return render_template('download.html', set_date = set_date, fname = fname, png_AR_paths = png_AR_paths, pdf_AR_paths = pdf_AR_paths, full_disk_paths = full_disk_paths)
 
+        # User selects full disk or AR image
         else:
+            # Get the image name
             image_name =  (re.findall("[^/]+$",request.form['download_option']))
+            # Get the image directory path
             directory = re.findall(".*\/",request.form['download_option'])
             return send_from_directory(directory=os.getcwd() + '/web' +directory[0],filename = image_name[0], as_attachment=True)
 
@@ -705,7 +715,7 @@ def query():
                              " WHERE (Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "' AND Time_obs <= '" + session['et'] + "')" + \
                              session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
-            # in case difffrent dates
+            # in case of difffrent dates
             else:
                session['sql_cmd'] = session['sql_head'] + session['sunspot_type'] + \
                              " WHERE ((Date_obs = '" + session['sd'] + "' AND Time_obs >= '" + session['st'] + "')" + \
@@ -841,6 +851,7 @@ def query():
         if table == table_all:
             param.row = table_all[selected_row]
 
+        # Find row depending by matching first six rows
         elif ("id" in session["attributes"]):
             temp_row = table[selected_row]
             param.row = next(row for row in table_all if row[0] == temp_row[0] and \
@@ -849,7 +860,7 @@ def query():
                                                          row[3] == temp_row[3] and \
                                                          row[4] == temp_row[4] and \
                                                          row[5] == temp_row[5])
-
+        # Find row depending on primary key
         else:
             temp_row = temp_row[selected_row]
             param.row = table_all[actual_row.index(temp_row)]
@@ -860,6 +871,7 @@ def query():
         if table == table_all:
             param.row = table_all[selected_row]
 
+        # Find row depending by matching first six rows
         elif ("id" in session["attributes"]):
             temp_row = table[selected_row]
             param.row = next(row for row in table_all if row[0] == temp_row[0] and \
@@ -868,7 +880,7 @@ def query():
                                                          row[3] == temp_row[3] and \
                                                          row[4] == temp_row[4] and \
                                                          row[5] == temp_row[5])
-
+        # Find row depending on primary key
         else:
             temp_row = temp_row[selected_row]
             param.row = table_all[actual_row.index(temp_row)]
