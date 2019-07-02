@@ -880,7 +880,7 @@ def query():
                                                          row[3] == temp_row[3] and \
                                                          row[4] == temp_row[4] and \
                                                          row[5] == temp_row[5])
-        # Find row depending on primary key
+
         else:
             temp_row = temp_row[selected_row]
             param.row = table_all[actual_row.index(temp_row)]
