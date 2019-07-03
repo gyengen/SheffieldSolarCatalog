@@ -435,8 +435,9 @@ def download_data():
         full_table, full_header = Create_table(full_sql_table)
 
     table = np.array(table)
-    table[table == None] = -9999 
-    set_date = np.unique(table[:,0] + ' ' + table[:,1])
+    table[table == None] = -9999
+    dates = [row[0] + ' ' + row[1] for row in table]
+    set_date = np.unique(dates)
 
     # Find all the unique NOAA identifiers in the requested data
     NOAA_already_seen = []
