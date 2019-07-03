@@ -10,12 +10,12 @@
 		<script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
 		<script src="{{ url_for('static',filename='js/myJS.js') }}"></script>
 		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		{{ att_plot.js_resources|safe }}
-		{{ att_plot.css_resources|safe }}
+		{{ session['js_resources']|safe }}
+		{{ session['css_resources']|safe }}
 		{{ att_visual.js_resources|safe }}
 		{{ att_visual.css_resources|safe }}
 
-	<title>SSC / {{att_visual_full.header_t[3][0]}} / {{att_visual_full.header_t[5][1]}}</title>
+	<title>SSC / {{header_t[3][0]}} / {{header_t[5][1]}}</title>
 	</head>
 
 	<body id = "wrapper_body">
@@ -39,20 +39,20 @@
 			<div class="windowBar" id = "wrapper_image_windowBar">
 				<div class="windowTitle"><p>Full Disk</p></div>
 			</div>
-			<div id="AR_plot"> {{ att_visual_full.visual_div_full|safe }}</div>
+			<div id="AR_plot"> {{ visual_div_full|safe }}</div>
 		</div>
 		
-		{{ att_visual_full.visual_script_full|safe }}
+		{{ visual_script_full|safe }}
 
 		<div id="wrapper_table_block">
 			<div class="windowBar" id = "wrapper_table_windowBar">
 				<div class="windowTitle"><p>Fits Header</p></div>
 			</div>				
 			<table id = "header_table">
-				{%for row in range(att_visual_full.rows)%}
+				{%for row in range(rows)%}
 					<tr>
-						{% for col in range(att_visual_full.columns) %}
-							<td>{{att_visual_full.header_t[row][col]}}</td>
+						{% for col in range(columns) %}
+							<td>{{header_t[row][col]}}</td>
 						{% endfor %}
 					</tr>
 				{% endfor %}

@@ -271,11 +271,11 @@ def extrapolation():
 
     # Fix the broken fits
     hdulist.verify('fix')
-    print (path_AR)
+
     # Save the data
     obs = hdulist[0].data
     header = hdulist[0].header
-
+    print (hdulist[0].data)
     # Close the fits files
     hdulist.close()
 
@@ -358,23 +358,28 @@ def extrapolation():
 def full_disk():
 
     # Full disk visualisation in full screen
-    script, div, header = Create_live_fulldisk(param.path_full,
-                                               param.row, True)
+    script, div, header = Create_live_fulldisk(session['path_full'],
+                                               session['row'], True)
 
     # Save the Bokeh scripts
-    att_visual_full.visual_div_full = div
-    att_visual_full.visual_script_full = script
+    visual_div_full = div
+    visual_script_full = script
 
     # Store the css amd JavaSrcipt resources
     att_visual_full.js_resources = INLINE.render_js()
     att_visual_full.css_resources = INLINE.render_css()
 
     # Additional info for displaying the fits header
-    att_visual_full.header_t = header
-    att_visual_full.rows = len(header)
-    att_visual_full.columns = len(header[0])
+    header_t = header
+    rows = len(header)
+    columns = len(header[0])
 
-    return render_template('full_disk.html')
+    return render_template('full_disk.html',
+                           visual_div_full = visual_div_full,
+                           visual_script_full = visual_script_full,
+                           header_t = header_t,
+                           rows = rows,
+                           columns = columns)
 
 
 @app.route('/download.html', methods=['GET', 'POST'])
@@ -462,7 +467,7 @@ def download_data():
 
     for AR in rows:
         # Get AR path to pdf
-        path_AR, param.path_full = pdf_image_path(AR, os.getcwd())
+        path_AR, path_full = pdf_image_path(AR, os.getcwd())
         time = str(AR[0]) + "" + str(AR[1])
 
         if time in pdf_AR_paths:
@@ -471,7 +476,7 @@ def download_data():
             pdf_AR_paths[time] = [path_AR]
 
         # Get AR path to png
-        path_AR, param.path_full = png_image_path(AR, os.getcwd())
+        path_AR, path_full = png_image_path(AR, os.getcwd())
         if time in png_AR_paths:
             png_AR_paths[time].append(path_AR)
         else:
@@ -479,7 +484,7 @@ def download_data():
 
         # Get full disk if it doesn't yet exist
         if not (time in full_disk_paths):
-            full_disk_paths[time] = param.path_full
+            full_disk_paths[time] = path_full
             
 
 
@@ -858,12 +863,12 @@ def query():
         table_live =table_all
         # Execute the query
         if table == table_all:
-            param.row = table_all[selected_row]
+            row = table_all[selected_row]
 
         # Find row depending by matching first six rows
         elif ("id" in session["attributes"]):
             temp_row = table[selected_row]
-            param.row = next(row for row in table_all if row[0] == temp_row[0] and \
+            row = next(row for row in table_all if row[0] == temp_row[0] and \
                                                          row[1] == temp_row[1] and \
                                                          row[2] == temp_row[2] and \
                                                          row[3] == temp_row[3] and \
@@ -872,18 +877,18 @@ def query():
         # Find row depending on primary key
         else:
             temp_row = temp_row[selected_row]
-            param.row = table_all[actual_row.index(temp_row)]
+            row = table_all[actual_row.index(temp_row)]
 
     else:
         table_live =table_all
         # Execute the query
         if table == table_all:
-            param.row = table_all[selected_row]
+            row = table_all[selected_row]
 
         # Find row depending by matching first six rows
         elif ("id" in session["attributes"]):
             temp_row = table[selected_row]
-            param.row = next(row for row in table_all if row[0] == temp_row[0] and \
+            row = next(row for row in table_all if row[0] == temp_row[0] and \
                                                          row[1] == temp_row[1] and \
                                                          row[2] == temp_row[2] and \
                                                          row[3] == temp_row[3] and \
@@ -892,19 +897,20 @@ def query():
 
         else:
             temp_row = temp_row[selected_row]
-            param.row = table_all[actual_row.index(temp_row)]
+            row = table_all[actual_row.index(temp_row)]
 
+    session['row'] = row
 
     # Define the filename of the associated image
-    session['path_AR'], param.path_full = html_image_path(param.row, os.getcwd())
+    session['path_AR'], session['path_full'] = html_image_path(row, os.getcwd())
 
     # NOAA = str(table[int(request.form['AR_ID'])][4])
     script_html, div_html = Create_live_AR(session['path_AR'],
-                                           param.path_full, table_live, param.row)
+                                           session['path_full'], table_live, row)
 
 
-    script_html_full, div_html_full = Create_live_fulldisk(param.path_full,
-                                                           param.row, False)
+    script_html_full, div_html_full = Create_live_fulldisk(session['path_full'],
+                                                           row, False)
 
     att_visual.visual_div_full = div_html_full
     att_visual.visual_script_full = script_html_full
@@ -1170,7 +1176,7 @@ def query():
         else:
             if len(div_frame_list) != 0:
 
-                df = div_frame_list[len(att_plot.div_frame_list) - 1]
+                df = div_frame_list[len(div_frame_list) - 1]
                 new_div_frame_list = new_div_frame_list.append(df)
 
                 dn = div_minimize_block_list[len(div_minimize_block_list) - 1]

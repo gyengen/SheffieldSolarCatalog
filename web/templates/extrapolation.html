@@ -50,17 +50,17 @@
 				    </td>
 
 				    <td>
-						<input type="text" name="Nz" value="{{ att_visual_ar.Nz }}">
+						<input type="text" name="Nz" value="{{ session['Nz'] }}">
 				    </td>
 
 				    <td>
 				    	<div class = "extrapolate_range_div">
-				 			<input name="slider" class="range-slider__range" type="range" value="{{ att_visual_ar.level }}" min="0" max="{{ att_visual_ar.range_max }}" oninput="document.getElementById('vl').innerHTML = this.value" >
+				 			<input name="slider" class="range-slider__range" type="range" value="{{ session['level'] }}" min="0" max="{{ session['range_max'] }}" oninput="document.getElementById('vl').innerHTML = this.value" >
 				 		</div>
 				 	</td>
 
 				 	<td>
-				 		Date/Time: {{ att_visual_ar.date }}
+				 		Date/Time: {{ session['date'] }}
 				 	</td>
 
 				 </tr>
@@ -71,15 +71,15 @@
 				 	</td>
 
 				 	<td>
-				 		<input type="text" name="zscale" value="{{ att_visual_ar.zscale }}">
+				 		<input type="text" name="zscale" value="{{ session['zscale'] }}">
 				 	</td>
 
 				 	<td>
-				 		Number of selected layer: <label id="vl">{{ att_visual_ar.level }}</label> / {{ att_visual_ar.range_max }}
+				 		Number of selected layer: <label id="vl">{{ session['level'] }}</label> / {{ session['range_max'] }}
 				 	</td>
 
 				 	<td>
-				 		NOAA AR: {{ att_visual_ar.NOAA }}
+				 		NOAA AR: {{ session['NOAA'] }}
 				 	</td>
 
 				 </tr>
@@ -94,11 +94,11 @@
 				 	</td>
 
 				    <td>
-						Approximate altitude: {{ att_visual_ar.level_in_mm }} Mm
+						Approximate altitude: {{ session['level_in_mm'] }} Mm
 				    </td>
 
 				 	<td>
-				 		Instrument: {{ att_visual_ar.Instrument }}
+				 		Instrument: {{ session['Instrument'] }}
 				 	</td>
 
 
@@ -122,11 +122,11 @@
 				</table>				
 			</form>
 
-			<div id="AR_plot">{{ att_visual_ar.visual_div_ar|safe }}</div>
+			<div id="AR_plot">{{ visual_div_ar|safe }}</div>
 
 		</div>
 
-		{{ att_visual_ar.visual_script_ar|safe }}
+		{{ visual_script_ar|safe }}
 
 	</body>
 </html>
