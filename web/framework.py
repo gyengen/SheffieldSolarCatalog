@@ -257,15 +257,21 @@ def index():
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
 
+    if not ('Nz' in session):
+        session['Nz'] = 30
+        session['zscale'] = 1
+        session['level'] = 0
+
     # Make sure that the magnetogram observation is selected
-    path_AR = param.path_AR.replace('continuum', 'magnetogram')
+    path_AR = session['path_AR'].replace('continuum', 'magnetogram')
 
     # Open the fits file, AR
     hdulist = fits.open(path_AR)
 
+
     # Fix the broken fits
     hdulist.verify('fix')
-
+    print (path_AR)
     # Save the data
     obs = hdulist[0].data
     header = hdulist[0].header
@@ -274,13 +280,13 @@ def extrapolation():
     hdulist.close()
 
     # NOAA number of the observation
-    att_visual_ar.NOAA = header['NOAA']
+    session['NOAA'] = header['NOAA']
 
     # Instrument and type
-    att_visual_ar.Instrument = header['TELESCOP'] + ' - ' + header['CONTENT']
+    session['Instrument'] = header['TELESCOP'] + ' - ' + header['CONTENT']
 
     # Date of observation
-    att_visual_ar.date = header['DATE']
+    session['date'] = header['DATE']
 
     # Setup few variables
     extrapolate = True
@@ -291,59 +297,61 @@ def extrapolation():
 
         try:
 
-            if (att_visual_ar.Nz == int(request.form['Nz']) and
-               att_visual_ar.zscale == int(request.form['zscale'])):
+            if (session['Nz'] == int(request.form['Nz']) and
+               session['zscale'] == int(request.form['zscale'])):
                 extrapolate = False
 
             if request.form['submit_button'] == 'Download Data':
                 downloading = True
 
             # Number of equally spaced grid points in the z direction
-            att_visual_ar.Nz = int(request.form['Nz'])
+            session['Nz'] = int(request.form['Nz'])
 
             # Sets the z-scale (1.0 = same scale as the x,y axes)
-            att_visual_ar.zscale = int(request.form['zscale'])
+            session['zscale'] = int(request.form['zscale'])
 
             # Z layer for visualisation
-            att_visual_ar.level = int(request.form['slider'])
+            session['level'] = int(request.form['slider'])
 
             # Z layer for visualisation in Mm
-            att_visual_ar.level_in_mm = format(att_visual_ar.level * 0.35, '.4f')
+            session['level_in_mm'] = format(session['level'] * 0.35, '.4f')
 
         except Exception:
             pass
 
     # Magnetic Field Extrapolation
     if extrapolate is True:
-        att_visual_ar.ex_cube = PFFF(obs, nz=att_visual_ar.Nz,
-                                     zscale=att_visual_ar.zscale)
+        ex_cube = PFFF(obs, nz=session['Nz'],
+                                     zscale=session['zscale'])
 
     if downloading is True:
 
-        hdf5_path, hdf5_fname = generate_hdf5(att_visual_ar.ex_cube,
-                                              att_visual_ar.NOAA,
-                                              att_visual_ar.date)
+        hdf5_path, hdf5_fname = generate_hdf5(ex_cube,
+                                              session['NOAA'],
+                                              session['date'])
 
-        att_visual_ar.path = hdf5_path
-        att_visual_ar.fname = hdf5_fname
+        session['path'] = hdf5_path
+        session['fname'] = hdf5_fname
 
         return redirect(url_for('download_extrapolation'))
 
     # Range Bar maximum value for the HTML
-    att_visual_ar.range_max = int(att_visual_ar.Nz - 1)
+    session['range_max'] = int(session['Nz'] - 1)
 
     # Visualise the active region
-    script, div = Extrapolation_visual(att_visual_ar.ex_cube['Bz'][att_visual_ar.level])
+    script, div = Extrapolation_visual(ex_cube['Bz'][session['level']])
 
     # Save the Bokeh scripts
-    att_visual_ar.visual_div_ar = div
-    att_visual_ar.visual_script_ar = script
+    visual_div_ar = div
+    visual_script_ar = script
 
     # Store the css amd JavaSrcipt resources
     att_visual_ar.js_resources = INLINE.render_js()
     att_visual_ar.css_resources = INLINE.render_css()
 
-    return render_template('extrapolation.html')
+    return render_template('extrapolation.html',
+                           visual_div_ar = visual_div_ar,
+                           visual_script_ar = visual_script_ar)
 
 
 @app.route('/full_disk.html', methods=['GET', 'POST'])
@@ -888,10 +896,10 @@ def query():
 
 
     # Define the filename of the associated image
-    param.path_AR, param.path_full = html_image_path(param.row, os.getcwd())
+    session['path_AR'], param.path_full = html_image_path(param.row, os.getcwd())
 
     # NOAA = str(table[int(request.form['AR_ID'])][4])
-    script_html, div_html = Create_live_AR(param.path_AR,
+    script_html, div_html = Create_live_AR(session['path_AR'],
                                            param.path_full, table_live, param.row)
 
 
