@@ -275,7 +275,7 @@ def extrapolation():
     # Save the data
     obs = hdulist[0].data
     header = hdulist[0].header
-    print (hdulist[0].data)
+
     # Close the fits files
     hdulist.close()
 
@@ -325,7 +325,9 @@ def extrapolation():
                                      zscale=session['zscale'])
 
     if downloading is True:
-
+        if extrapolate is False:
+            ex_cube = PFFF(obs, nz=session['Nz'],
+                                     zscale=session['zscale'])
         hdf5_path, hdf5_fname = generate_hdf5(ex_cube,
                                               session['NOAA'],
                                               session['date'])
@@ -333,7 +335,8 @@ def extrapolation():
         session['path'] = hdf5_path
         session['fname'] = hdf5_fname
 
-        return redirect(url_for('download_extrapolation'))
+        return send_from_directory(directory=hdf5_path,
+                                       filename=hdf5_fname, as_attachment=True)
 
     # Range Bar maximum value for the HTML
     session['range_max'] = int(session['Nz'] - 1)

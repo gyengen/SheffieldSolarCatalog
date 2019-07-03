@@ -163,9 +163,9 @@ def generate_hdf5(cube, noaa, date):
     print(cwd)
 
     rnd = np.random.random_integers(100, 999)
-    path = 'web/temp/'
+    path = cwd + "/" + 'web/static/database/tmp/'
     filename = noaa + '_' + date + '_s' + str(rnd) + '.h5'
-    hf = h5py.File(path + filename, 'w')
+    hf = h5py.File(path + filename, 'a')
     hf.create_dataset('Bx', data=cube['Bx'])
     hf.create_dataset('By', data=cube['By'])
     hf.create_dataset('Bz', data=cube['Bz'])
