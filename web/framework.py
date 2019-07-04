@@ -262,6 +262,9 @@ def extrapolation():
         session['zscale'] = 1
         session['level'] = 0
 
+    if not ('path_AR' in session) or session['path_AR'] == "":
+        return redirect("/workstation.html")
+
     # Make sure that the magnetogram observation is selected
     path_AR = session['path_AR'].replace('continuum', 'magnetogram')
 
@@ -359,6 +362,9 @@ def extrapolation():
 
 @app.route('/full_disk.html', methods=['GET', 'POST'])
 def full_disk():
+
+    if not ('path_full' in session) or session['path_full'] == "":
+        return redirect("/workstation.html")
 
     # Full disk visualisation in full screen
     script, div, header = Create_live_fulldisk(session['path_full'],
