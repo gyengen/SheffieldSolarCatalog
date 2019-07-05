@@ -7,7 +7,7 @@ def Bokehscript(att_plot, div, script):
     div_frame = '''
                     <div class="bokeh_plot draggable_window z-position" id = "''' + str(att_plot.plot_times) + '''">
                     <input type="hidden" name="bokeh" id = "plot''' + str(att_plot.plot_times) + '''" value = "''' + str(att_plot.plot_times) + '''">
-                        <div class="windowBar" id = "bokeh_plot_windowBar">
+                        <div class="windowBar''' + att_plot.plot_type.replace(" ", "") + '''" id = "bokeh_plot_windowBar">
                             <div class="control_buttons close_button" id="bokeh_plot_close_button''' + str(att_plot.plot_times) + '''"></div>
                             <div class="control_buttons minimum_button" id="bokeh_plot_minimum_button''' + str(att_plot.plot_times) + '''"></div>
                             <div class="windowTitle">

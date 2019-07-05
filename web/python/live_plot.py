@@ -612,7 +612,7 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     image_penumbra = np.array(hdulist[2].data, dtype="f4")
     b_mask = np.array(hdulist[3].data, dtype="f4")
     l_mask = np.array(hdulist[4].data, dtype="f4")
-    
+
     if "magnetogram" in path_AR:
         obs_type = 'mag'
 
@@ -672,7 +672,6 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
     # Define custom tools for this plot
     y1, x1 = 0, 0
     y2, x2 = np.shape(obs)[0], np.shape(obs)[1]
-
 
     # Setup the dimensions
     plot_width = 300

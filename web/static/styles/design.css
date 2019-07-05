@@ -216,7 +216,47 @@ table.extrapolation_table input[type="text"]
 
 .windowBar{
     border-bottom: 1px solid #9e9e9e;
-    width: 90%;
+    width: 100%;
+    height: 18px;
+    cursor: all-scroll;
+    background-color: #e9ebee;
+    margin: 0;
+    padding: 0;
+}
+
+.windowBarBivariateHistogram{
+    border-bottom: 1px solid #9e9e9e;
+    width: 500px;
+    height: 18px;
+    cursor: all-scroll;
+    background-color: #e9ebee;
+    margin: 0;
+    padding: 0;
+}
+
+.windowBarHistogramPlot{
+    border-bottom: 1px solid #9e9e9e;
+    width: 584.55px;
+    height: 18px;
+    cursor: all-scroll;
+    background-color: #e9ebee;
+    margin: 0;
+    padding: 0;
+}
+
+.windowBarLinePlot{
+    border-bottom: 1px solid #9e9e9e;
+    width: 600px;
+    height: 18px;
+    cursor: all-scroll;
+    background-color: #e9ebee;
+    margin: 0;
+    padding: 0;
+}
+
+.windowBarScatterPlot{
+    border-bottom: 1px solid #9e9e9e;
+    width: 600px;
     height: 18px;
     cursor: all-scroll;
     background-color: #e9ebee;
