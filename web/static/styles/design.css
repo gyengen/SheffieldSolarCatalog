@@ -216,7 +216,7 @@ table.extrapolation_table input[type="text"]
 
 .windowBar{
     border-bottom: 1px solid #9e9e9e;
-    width: 100%;
+    width: 90%;
     height: 18px;
     cursor: all-scroll;
     background-color: #e9ebee;
