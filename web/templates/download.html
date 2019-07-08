@@ -46,60 +46,60 @@
 		onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + 			'&check_keywords=yes&area=default');"/>
       </div>
 
-
-      <div id = "download_frame" class = "hidden">
+      <div class = "hidden">
+         <div id = "download_frame">
          
-         <form method="post">
+            <form method="post">
 
-         <p>Download all the data:</p>
-            <div id = "download_data">
-               <input type="submit" name="download_option" value="SQL" class="button-sql">
-            </div>
+            <p>Download all the data:</p>
+               <div id = "download_data">
+                  <input type="submit" name="download_option" value="SQL" class="button-sql">
+               </div>
 
-         <p>Download the data table:</p>
+            <p>Download the data table:</p>
 
-            <div id = "download_data">
-               <input type="submit" name="download_option" value="HDF5" class="button-hdf5">
-               <input type="submit" name="download_option" value="CSV" class="button-csv">
-               <input type="submit" name="download_option" value="TXT" class="button-txt">
-            </div>
+               <div id = "download_data">
+                  <input type="submit" name="download_option" value="HDF5" class="button-hdf5">
+                  <input type="submit" name="download_option" value="CSV" class="button-csv">
+                  <input type="submit" name="download_option" value="TXT" class="button-txt">
+               </div>
 
-         <p>Download the full disk images:
+            <p>Download the full disk images:
 
-            <select name="full_disk_date" class="download_date_options">
-               {% for key in set_date %}
-                  <option value= "{{key}}"> {{key}} </option>
-               {% endfor %}
-            </select>
+               <select name="full_disk_date" class="download_date_options">
+                  {% for key in set_date %}
+                     <option value= "{{key}}"> {{key}} </option>
+                  {% endfor %}
+               </select>
 
-         </p>
-	 {% for key in full_disk_paths %}
-            {%if key == set_date[0].replace(" ","")%}
-            <div class = "{{key.replace(":","")}} date_specific_image">
-            {%else%}
-            <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
-            {% endif %}
+            </p>
+	    {% for key in full_disk_paths %}
+               {%if key == set_date[0].replace(" ","")%}
+                  <div class = "{{key.replace(":","")}} date_specific_image">
+               {%else%}
+                  <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
+               {% endif %}
 
-               <button class="download_full_disk_button" name="download_option" value="{{full_disk_paths[key]}}"><img src="{{full_disk_paths[key]}}" class= "download_AR_img"></button>
+                  <button class="download_full_disk_button" name="download_option" value="{{full_disk_paths[key]}}"><img src="{{full_disk_paths[key]}}" class= "download_AR_img"></button>
 
-            </div>
+               </div>
 
-	 {% endfor %}
+	    {% endfor %}
 
-         <p>Download the ARs:
+            <p>Download the ARs:
 
-            <select class = "AR_download_type">
-               <option value= 'pdf'> Download as PDF </option>
-               <option value= 'png'> Download as PNG </option>
-            </select>
-         </p>
-         {% for key in png_AR_paths %}
+               <select class = "AR_download_type">
+                  <option value= 'pdf'> Download as PDF </option>
+                  <option value= 'png'> Download as PNG </option>
+               </select>
+            </p>
+            {% for key in png_AR_paths %}
 
-            {%if key == set_date[0].replace(" ","")%}
-            <div class = "{{key.replace(":","")}} date_specific_image">
-            {%else%}
-            <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
-            {% endif %}
+               {%if key == set_date[0].replace(" ","")%}
+                  <div class = "{{key.replace(":","")}} date_specific_image">
+               {%else%}
+                  <div class = "{{key.replace(":","")}} date_specific_image" style="display:none">
+               {% endif %}
 
                <div class = "png" style="display:none">
                   {% for AR_img in png_AR_paths[key] %}
@@ -117,8 +117,9 @@
 	          {% endfor %}
                </div>
             </div>
-	 {% endfor %}
-         </form>
+	    {% endfor %}
+            </form>
+         </div>
       </div>
 
 
