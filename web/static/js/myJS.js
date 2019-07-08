@@ -373,7 +373,7 @@ $(function(){
       if (b.style.zIndex == '') {
           b.style.zIndex = 1
       }
-      return (parseInt(a.style.zIndex,10)) > (parseInt(b.style.zIndex,10));
+      return (parseInt(a.style.zIndex,10) < parseInt(b.style.zIndex,10)) ? -1 : (parseInt(a.style.zIndex,10) > parseInt(b.style.zIndex,10)) ? 1 : 0;
     });
     var i = 1
     $.each(list, function(index,value) {
