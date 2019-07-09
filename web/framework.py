@@ -626,12 +626,12 @@ def query():
 
     # Check the request method
     if request.method == 'POST':
-        #Reset the row number to not cause errors
-        session['ARID'] = 0
         # clear the error message
         session['error_message'] = ''
 
         if 'sunspot_type' in request.form:
+            #Reset the row number to not cause errors
+            session['ARID'] = 0
 
             # Define the investigated period
             session['sd'] = request.form['start_date']
