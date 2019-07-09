@@ -778,7 +778,7 @@ def query():
         sql_table = g.db.execute(session['sql_cmd'])
 
         #Get primary keys if id not in attributes
-        if not ("id" in session["attributes"]):
+        if not ("id" in session['attributes']) or len(session['attributes']) == 0:
             #Get primary keys
             p_keys = g.db.execute(session['sql_cmd'])
             temp_row = Get_primary_key(p_keys)
@@ -868,45 +868,24 @@ def query():
         selected_row = 0
 
     # Define the selected row
-    if session['sunspot_type'] == 'magnetogram':
-        table_live =table_all
-        # Execute the query
-        if table == table_all:
-            row = table_all[selected_row]
+    table_live =table_all
+    # Execute the query
+    if table == table_all:
+        row = table_all[selected_row]
 
-        # Find row depending by matching first six rows
-        elif ("id" in session["attributes"]):
-            temp_row = table[selected_row]
-            row = next(row for row in table_all if row[0] == temp_row[0] and \
-                                                         row[1] == temp_row[1] and \
-                                                         row[2] == temp_row[2] and \
-                                                         row[3] == temp_row[3] and \
-                                                         row[4] == temp_row[4] and \
-                                                         row[5] == temp_row[5])
-        # Find row depending on primary key
-        else:
-            temp_row = temp_row[selected_row]
-            row = table_all[actual_row.index(temp_row)]
-
+    # Find row depending by matching first six rows
+    elif ("id" in session['attributes']):
+        temp_row = table[selected_row]
+        row = next(row for row in table_all if row[0] == temp_row[0] and \
+                                               row[1] == temp_row[1] and \
+                                               row[2] == temp_row[2] and \
+                                               row[3] == temp_row[3] and \
+                                               row[4] == temp_row[4] and \
+                                               row[5] == temp_row[5])
+    # Find row depending on primary key
     else:
-        table_live =table_all
-        # Execute the query
-        if table == table_all:
-            row = table_all[selected_row]
-
-        # Find row depending by matching first six rows
-        elif ("id" in session["attributes"]):
-            temp_row = table[selected_row]
-            row = next(row for row in table_all if row[0] == temp_row[0] and \
-                                                         row[1] == temp_row[1] and \
-                                                         row[2] == temp_row[2] and \
-                                                         row[3] == temp_row[3] and \
-                                                         row[4] == temp_row[4] and \
-                                                         row[5] == temp_row[5])
-
-        else:
-            temp_row = temp_row[selected_row]
-            row = table_all[actual_row.index(temp_row)]
+        temp_row = temp_row[selected_row]
+        row = table_all[actual_row.index(temp_row)]
 
     session['row'] = row
 
@@ -1227,8 +1206,13 @@ def query():
 
     # Render the front end
 
-    if 'deleted_plots' in request.cookies:
-        resp = make_response(render_template('workstation.html',
+    if 'deleted_plots' in request.cookies and request.method == 'POST':
+        resp = make_response(redirect("/workstation.html"))
+        resp.set_cookie('deleted_plots', '', expires=0)
+        return resp
+
+    elif 'deleted_plots' in request.cookies:
+        resp = make_response(render_template('/workstation.html',
                            table=table,
                            data=data,
                            header=header,
@@ -1243,6 +1227,10 @@ def query():
                            hist_plot_options = hist_plot_options))
         resp.set_cookie('deleted_plots', '', expires=0)
         return resp
+
+    elif request.method == 'POST':
+        return redirect("/workstation.html")
+
     else:
         return render_template('workstation.html',
                            table=table,

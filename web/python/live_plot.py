@@ -712,7 +712,8 @@ def Create_live_AR(path_AR, path_full, table, selected_row):
                plot_height=plot_height,
                x_range=(rx1, rx2),
                y_range=(ry1, ry2),
-               toolbar_location="right")
+               toolbar_location="right",
+               output_backend="webgl")
 
     p.select(BoxSelectTool).select_every_mousemove = False
     p.select(LassoSelectTool).select_every_mousemove = False
@@ -935,7 +936,8 @@ def Create_live_fulldisk(full_path, selected_row, full):
                x_range=(0, np.shape(obs)[0]),
                y_range=(0, np.shape(obs)[1]),
                match_aspect=True,
-               toolbar_location="left")
+               toolbar_location="left",
+               output_backend="webgl")
 
     # Plot the full disk image
     l1 = p.image(source=data, image='image', x='x', y='y',
