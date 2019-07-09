@@ -1206,13 +1206,8 @@ def query():
 
     # Render the front end
 
-    if 'deleted_plots' in request.cookies and request.method == 'POST':
-        resp = make_response(redirect("/workstation.html"))
-        resp.set_cookie('deleted_plots', '', expires=0)
-        return resp
-
-    elif 'deleted_plots' in request.cookies:
-        resp = make_response(render_template('/workstation.html',
+    if 'deleted_plots' in request.cookies:
+        resp = make_response(render_template('workstation.html',
                            table=table,
                            data=data,
                            header=header,
@@ -1227,10 +1222,6 @@ def query():
                            hist_plot_options = hist_plot_options))
         resp.set_cookie('deleted_plots', '', expires=0)
         return resp
-
-    elif request.method == 'POST':
-        return redirect("/workstation.html")
-
     else:
         return render_template('workstation.html',
                            table=table,
