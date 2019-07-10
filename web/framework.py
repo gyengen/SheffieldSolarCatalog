@@ -821,6 +821,7 @@ def query():
                                          "biv_w": biv_w,
                                          "biv_w_bin": biv_w_bin})
 
+        #Redirect the user back to this page to stop them creating more graphs on refresh
         resp = make_response(redirect("/workstation.html"))
         resp.set_cookie('deleted_plots', '', expires=0)
         return resp
@@ -857,7 +858,7 @@ def query():
         sql_table = g.db.execute(session['sql_cmd'])
 
         #Get primary keys if id not in attributes
-        if not ("id" in session['attributes']) or len(session['attributes']) == 0:
+        if not ("id" in session['attributes']) or not len(session['attributes']) == 0:
             #Get primary keys
             p_keys = g.db.execute(session['sql_cmd'])
             temp_row = Get_primary_key(p_keys)
