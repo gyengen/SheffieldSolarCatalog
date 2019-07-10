@@ -1002,8 +1002,8 @@ def query():
     # Display the plot(s)
     for plot in session['plots']:
         plot_status = 0
-        global script, div
         # Define some local variables
+        div = ''
         script = ''
         active_bokeh = []
 
