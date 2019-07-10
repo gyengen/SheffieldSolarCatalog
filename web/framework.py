@@ -746,6 +746,85 @@ def query():
                              " OR (Date_obs = '"    + session['ed'] + "' AND Time_obs <= '" + session['et'] + "'))" + \
                              session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
+
+        #remove plots the user closed
+        if 'deleted_plots' in request.cookies:
+            #Get the plots to remove and sperate them into a list
+            deleted_plots = (request.cookies.get('deleted_plots')).split(',')
+            deleted_plots.remove('')
+            #Order the plots so that they are removed in descending order so as not to interfere with
+            #the rest of the deletions
+            deleted_plots = list(map(int, deleted_plots))
+            deleted_plots.sort(reverse = True)
+            #Remove deleted plots
+            for plot in deleted_plots:
+                if len(session['plots']) >= plot:
+                    del session['plots'][plot-1]
+        
+
+
+        #If the user has tried to add a plot add the information to create it to the plots list in
+        #sessions
+
+        if keyword_check(request.form, 'plot_type') is True:
+            # plot attributes for line plot
+            xl = request.form['xl']
+            yl = request.form['yl']
+            line_col = request.form['line_col']
+
+            # plot attributes for scatter plot
+            x = request.form['x']
+            y = request.form['y']
+            s = request.form['s']
+            c = request.form['c']
+
+            # plot attributes for histogram plot
+            v = request.form['v']
+            density = request.form['histogram_den']
+            fit = request.form['histogram_fit']
+            color = request.form['histogram_col']
+            bin_n = request.form['histogram_bin']
+
+            # plot attributes for bivariate histogram plot
+            biv_v = request.form['biv_v']
+            biv_w = request.form['biv_w']
+            biv_w_bin = request.form['biv_w_bin']
+
+            #Save the information to create a line plot if that is what the user tried to add
+            if request.form['plot_type'] == 'line':
+                session['plots'].append({"plot_type": "Line Plot",
+                                         "xl": xl,
+                                         "yl": yl,
+                                         "line_col":line_col})
+
+            #Save the information to create a scatter plot if that is what the user tried to add
+            elif request.form['plot_type'] == 'scatter_2d':
+                session['plots'].append({"plot_type": "Scatter Plot",
+                                         "x": x,
+                                         "y": y,
+                                         "s": s,
+                                         "c": c})
+
+            #Save the information to create a histogram if that is what the user tried to add
+            elif request.form['plot_type'] == 'histogram': 
+                session['plots'].append({"plot_type": "Histogram Plot",
+                                         "v": v,
+                                         "density": density,
+                                         "fit": fit,
+                                         "color": color,
+                                         "bin_n": bin_n})
+
+            #Save the information to create a Bivariate Histogram if that is what the user tried to add
+            elif request.form['plot_type'] == 'biv_hist':
+                session['plots'].append({"plot_type": "Bivariate Histogram",
+                                         "biv_v": biv_v,
+                                         "biv_w": biv_w,
+                                         "biv_w_bin": biv_w_bin})
+
+        resp = make_response(redirect("/workstation.html"))
+        resp.set_cookie('deleted_plots', '', expires=0)
+        return resp
+
     # Get the whole header in the complete table dpeending on sunspot type
     if session['sunspot_type'] == "magnetogram":
         full_sql_table = g.db.execute(c2)
@@ -908,81 +987,6 @@ def query():
 
     att_visual.js_resources = INLINE.render_js()
     att_visual.css_resources = INLINE.render_css()
-
-    #remove plots the user closed
-    if 'deleted_plots' in request.cookies:
-        #Get the plots to remove and sperate them into a list
-        deleted_plots = (request.cookies.get('deleted_plots')).split(',')
-        deleted_plots.remove('')
-        #Order the plots so that they are removed in descending order so as not to interfere with
-        #the rest of the deletions
-        deleted_plots = list(map(int, deleted_plots))
-        deleted_plots.sort(reverse = True)
-        #Remove deleted plots
-        for plot in deleted_plots:
-            if len(session['plots']) >= plot:
-                del session['plots'][plot-1]
-        
-
-
-    #If the user has tried to add a plot add the information to create it to the plots list in
-    #sessions
-
-    if keyword_check(request.form, 'plot_type') is True:
-        # plot attributes for line plot
-        xl = request.form['xl']
-        yl = request.form['yl']
-        line_col = request.form['line_col']
-
-        # plot attributes for scatter plot
-        x = request.form['x']
-        y = request.form['y']
-        s = request.form['s']
-        c = request.form['c']
-
-        # plot attributes for histogram plot
-        v = request.form['v']
-        density = request.form['histogram_den']
-        fit = request.form['histogram_fit']
-        color = request.form['histogram_col']
-        bin_n = request.form['histogram_bin']
-
-        # plot attributes for bivariate histogram plot
-        biv_v = request.form['biv_v']
-        biv_w = request.form['biv_w']
-        biv_w_bin = request.form['biv_w_bin']
-
-        #Save the information to create a line plot if that is what the user tried to add
-        if request.form['plot_type'] == 'line':
-            session['plots'].append({"plot_type": "Line Plot",
-                                                         "xl": xl,
-                                                         "yl": yl,
-                                                         "line_col":line_col})
-
-        #Save the information to create a scatter plot if that is what the user tried to add
-        elif request.form['plot_type'] == 'scatter_2d':
-            session['plots'].append({"plot_type": "Scatter Plot",
-                                                         "x": x,
-                                                         "y": y,
-                                                         "s": s,
-                                                         "c": c})
-
-        #Save the information to create a histogram if that is what the user tried to add
-        elif request.form['plot_type'] == 'histogram': 
-            session['plots'].append({"plot_type": "Histogram Plot",
-                                                         "v": v,
-                                                         "density": density,
-                                                         "fit": fit,
-                                                         "color": color,
-                                                         "bin_n": bin_n})
-
-        #Save the information to create a Bivariate Histogram if that is what the user tried to add
-        elif request.form['plot_type'] == 'biv_hist':
-            session['plots'].append({"plot_type": "Bivariate Histogram",
-                                                         "biv_v": biv_v,
-                                                         "biv_w": biv_w,
-                                                         "biv_w_bin": biv_w_bin})
-
     
     #Create variables needed to display the plots
     js_resources = ''
@@ -1205,46 +1209,21 @@ def query():
     hist_plot_options = [x for x in general_plot_options if x != "Date_obs" and x != "Time_obs"]
 
     # Render the front end
-
-    if 'deleted_plots' in request.cookies and request.method == 'POST':
-        resp = make_response(redirect("/workstation.html"))
-        resp.set_cookie('deleted_plots', '', expires=0)
-        return resp
-
-    elif 'deleted_plots' in request.cookies:
-        resp = make_response(render_template('/workstation.html',
-                           table=table,
-                           data=data,
-                           header=header,
-                           info=info,
-                           statistic_height=statistic_height,
-                           js_resources = js_resources,
-                           css_resources = css_resources,
-                           div_frame_list = div_frame_list,
-                           div_minimize_block_list = div_minimize_block_list,
-                           bokeh_script_list = bokeh_script_list,
-                           general_plot_options = general_plot_options,
-                           hist_plot_options = hist_plot_options))
-        resp.set_cookie('deleted_plots', '', expires=0)
-        return resp
-
-    elif request.method == 'POST':
-        return redirect("/workstation.html")
-
-    else:
-        return render_template('workstation.html',
-                           table=table,
-                           data=data,
-                           header=header,
-                           info=info,
-                           statistic_height=statistic_height,
-                           js_resources = js_resources,
-                           css_resources = css_resources,
-                           div_frame_list = div_frame_list,
-                           div_minimize_block_list = div_minimize_block_list,
-                           bokeh_script_list = bokeh_script_list,
-                           general_plot_options = general_plot_options,
-                           hist_plot_options = hist_plot_options)
+    resp = make_response(render_template('/workstation.html',
+                         table=table,
+                         data=data,
+                         header=header,
+                         info=info,
+                         statistic_height=statistic_height,
+                         js_resources = js_resources,
+                         css_resources = css_resources,
+                         div_frame_list = div_frame_list,
+                         div_minimize_block_list = div_minimize_block_list,
+                         bokeh_script_list = bokeh_script_list,
+                         general_plot_options = general_plot_options,
+                         hist_plot_options = hist_plot_options))
+    resp.set_cookie('deleted_plots', '', expires=0)
+    return resp
 
 
 
