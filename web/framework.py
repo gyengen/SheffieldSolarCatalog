@@ -747,22 +747,6 @@ def query():
                              session['sql_values'] + ' ORDER BY ' + session['order'] + ' ' + session['order_asc'] + " LIMIT 1000"
 
 
-        #remove plots the user closed
-        if 'deleted_plots' in request.cookies:
-            #Get the plots to remove and sperate them into a list
-            deleted_plots = (request.cookies.get('deleted_plots')).split(',')
-            deleted_plots.remove('')
-            #Order the plots so that they are removed in descending order so as not to interfere with
-            #the rest of the deletions
-            deleted_plots = list(map(int, deleted_plots))
-            deleted_plots.sort(reverse = True)
-            #Remove deleted plots
-            for plot in deleted_plots:
-                if len(session['plots']) >= plot:
-                    del session['plots'][plot-1]
-        
-
-
         #If the user has tried to add a plot add the information to create it to the plots list in
         #sessions
 
@@ -827,9 +811,7 @@ def query():
             session['ARID'] = selected_row
 
         #Redirect the user back to this page to stop them creating more graphs on refresh
-        resp = make_response(redirect("/workstation.html"))
-        resp.set_cookie('deleted_plots', '', expires=0)
-        return resp
+        return redirect("/workstation.html")
 
     # Get the whole header in the complete table dpeending on sunspot type
     if session['sunspot_type'] == "magnetogram":
@@ -989,6 +971,20 @@ def query():
 
     att_visual.js_resources = INLINE.render_js()
     att_visual.css_resources = INLINE.render_css()
+
+    #remove plots the user closed
+    if 'deleted_plots' in request.cookies:
+        #Get the plots to remove and sperate them into a list
+        deleted_plots = (request.cookies.get('deleted_plots')).split(',')
+        deleted_plots.remove('')
+        #Order the plots so that they are removed in descending order so as not to interfere with
+        #the rest of the deletions
+        deleted_plots = list(map(int, deleted_plots))
+        deleted_plots.sort(reverse = True)
+        #Remove deleted plots
+        for plot in deleted_plots:
+            if len(session['plots']) >= plot:
+                del session['plots'][plot-1]
     
     #Create variables needed to display the plots
     js_resources = ''
