@@ -323,14 +323,10 @@ def extrapolation():
             pass
 
     # Magnetic Field Extrapolation
-    if extrapolate is True:
-        ex_cube = PFFF(obs, nz=session['Nz'],
+    ex_cube = PFFF(obs, nz=session['Nz'],
                                      zscale=session['zscale'])
 
     if downloading is True:
-        if extrapolate is False:
-            ex_cube = PFFF(obs, nz=session['Nz'],
-                                     zscale=session['zscale'])
         hdf5_path, hdf5_fname = generate_hdf5(ex_cube,
                                               session['NOAA'],
                                               session['date'])
