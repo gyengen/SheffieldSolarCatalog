@@ -821,6 +821,11 @@ def query():
                                          "biv_w": biv_w,
                                          "biv_w_bin": biv_w_bin})
 
+        if keyword_check(request.form, 'AR_ID') is True:
+            # The index of the selected row
+            selected_row = int(request.form['AR_ID'])
+            session['ARID'] = selected_row
+
         #Redirect the user back to this page to stop them creating more graphs on refresh
         resp = make_response(redirect("/workstation.html"))
         resp.set_cookie('deleted_plots', '', expires=0)
@@ -858,7 +863,7 @@ def query():
         sql_table = g.db.execute(session['sql_cmd'])
 
         #Get primary keys if id not in attributes
-        if not ("id" in session['attributes']) or not len(session['attributes']) == 0:
+        if not ("id" in session['attributes']) and not len(session['attributes']) == 0:
             #Get primary keys
             p_keys = g.db.execute(session['sql_cmd'])
             temp_row = Get_primary_key(p_keys)
@@ -937,11 +942,7 @@ def query():
     info = Query_info(table)
 
     # Create the AR and Full disk plots
-    if keyword_check(request.form, 'AR_ID') is True:
-        # The index of the selected row
-        selected_row = int(request.form['AR_ID'])
-        session['ARID'] = selected_row
-    elif ('ARID' in session):
+    if ('ARID' in session):
         selected_row = session['ARID']
     else:
         session['ARID'] = 0
