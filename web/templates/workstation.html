@@ -13,7 +13,13 @@
       <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js" async></script>
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
       <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
-
+      {% if session['error_message'] != '' %}
+         <script>
+            $(window).on('load',function(){
+               $('#error-modal').modal('show');
+            });
+         </script>
+      {% endif %}
 
       <title>SSC - Workstation</title>
    </head>
@@ -153,6 +159,33 @@
                         <div id="type1_header">
 
                            <h6>Coming soon.</h6>
+
+                        </div>
+                     </div>
+
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+
+                  </div><!-- /.modal-content -->
+               </div><!-- /.modal -->
+            </div>
+
+            <!-- Error Modal-->
+            <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="error-modal-label" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="error-modal-label">An error occured!</h4>
+
+                     </div>
+
+                     <div class="modal-body">
+                        <div id="type1_header">
+
+                           {{ session['error_message']|safe }}
 
                         </div>
                      </div>
@@ -815,17 +848,6 @@
 	    	      <p>Number of active regions: {{ info[0] }}</p> 
 	    	      <p>Timespan: {{ info[0] }}</p> 
 	    	   </div>
-	    	</div>
-
-	    	<div class="message_log_messages">
-	    	   {% if session['error_message'] != '' %}
-	    	      <div style="color: red; margin-left:50px; font-size: 15px;">
-	    	         {{ session['error_message']|safe }}
-	    	      </div>
-	    	   {% else %}
-	    	      <div style="color: white; margin-left:50px; font-size: 15px;">No error.</div>
-	    	   {% endif %}
-
 	    	</div>
 	     </div>
 
