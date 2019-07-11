@@ -110,8 +110,8 @@ def Create_live_histogram_plot(table, header, hist_index, density, fit, bin_n, c
             # Fit 
             pdf_fit = stats.beta.pdf(lnspc, ab, bb,cb, db) 
 
-    # Convert the DPF to Frequency
-    if density == 'no': pdf_fit = pdf_fit * total * d_bin
+        # Convert the DPF to Frequency
+        if density == 'no': pdf_fit = pdf_fit * total * d_bin
 
     # Plot window initialisation
     p = figure(tools=TOOLS, plot_width=650, plot_height=350, y_range=(0, max(histv) * 1.5), sizing_mode='scale_both')
