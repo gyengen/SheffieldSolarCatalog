@@ -274,11 +274,10 @@ def extrapolation():
 
     # Fix the broken fits
     hdulist.verify('fix')
-
     # Save the data
-    obs = hdulist[0].data
+    obs = np.array(hdulist[0].data, dtype="f4")
     header = hdulist[0].header
-
+    obs[np.isnan(obs)] = -100
     # Close the fits files
     hdulist.close()
 

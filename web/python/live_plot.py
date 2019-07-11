@@ -375,6 +375,8 @@ def Generate_position_data(hdulist, hdulist_full):
 def subpanel_live_plot(p, obs, table, selected_row):
     ''' Live histogram below the AR'''
 
+    obs = obs[~np.isnan(obs)]
+
     # Initialise the subpanel
     k = figure(tools="save",
                plot_width=300,
