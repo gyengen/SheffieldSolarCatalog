@@ -121,5 +121,11 @@
 		{{ visual_script_ar|safe }}
 
 	</body>
+        {% if not ('cookiesChecked' in request.cookies)%}
+          <script>
+            alert("This site uses cookies\nTo see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section"); 
+            document.cookie ="cookiesChecked=True"
+          </script>
+        {% endif %}
 </html>
 						
