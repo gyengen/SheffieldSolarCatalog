@@ -308,12 +308,19 @@ def extrapolation():
 
             # Number of equally spaced grid points in the z direction
             session['Nz'] = int(request.form['Nz'])
+            
 
             # Sets the z-scale (1.0 = same scale as the x,y axes)
             session['zscale'] = int(request.form['zscale'])
 
-            # Z layer for visualisation
+            # Z layer for visualisation6
             session['level'] = int(request.form['slider'])
+
+            if session['level'] > session['Nz']:
+                session['level'] = 0
+
+            if session['Nz'] < 1:
+                session['Nz'] = 30
 
             # Z layer for visualisation in Mm
             session['level_in_mm'] = format(session['level'] * 0.35, '.4f')
