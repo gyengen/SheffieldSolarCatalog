@@ -277,7 +277,7 @@ def extrapolation():
     # Save the data
     obs = np.array(hdulist[0].data, dtype="f4")
     header = hdulist[0].header
-    obs[np.isnan(obs)] = -100
+    obs[np.isnan(obs)] = 0
     # Close the fits files
     hdulist.close()
 
