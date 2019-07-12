@@ -1623,12 +1623,8 @@ body
 /* ---------------------- MENU PROPERTIES*/
 .mytext
     {
-        color: #ff0000;
         width:600px;
         font-weight: bold;
     }
 
-tbody:hover tr:hover td
-    {
-        color: #ff0000;
-    }
+
