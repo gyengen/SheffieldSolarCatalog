@@ -30,15 +30,8 @@
 			</div>
 		</div>
 
-		<div id = "search">
-			<input type="text" id="text" value="e.g. sunspots, ssc, etc..." class="search_input"/>
-			<input type="button" id="btn" value="Search" class="search_button" onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + '&check_keywords=yes&area=default');"/>
-		</div>
 
 		<div id="wrapper_image_full">
-			<div class="windowBar" id = "wrapper_image_windowBar">
-				<div class="windowTitle"><p>Full Disk</p></div>
-			</div>
 			<div id="AR_plot"> {{ visual_div_full|safe }}</div>
 		</div>
 		
