@@ -18,6 +18,15 @@
       {{ att_visual.js_resources|safe }}
       {{ att_visual.css_resources|safe }}
 
+      {% if not ('cookiesChecked' in request.cookies)%}
+         <script>
+            $(window).on('load',function(){
+               $('#cookie-modal').modal('show');
+               document.cookie ="cookiesChecked=True"
+            });            
+         </script>
+      {% endif %}
+
       <title>SSC - Download</title>
    </head>
 
@@ -125,10 +134,4 @@
 
 
    </body>
-   {% if not ('cookiesChecked' in request.cookies)%}
-      <script>
-         alert("This site uses cookies\nTo see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section"); 
-         document.cookie ="cookiesChecked=True"
-      </script>
-   {% endif %}
 </html>

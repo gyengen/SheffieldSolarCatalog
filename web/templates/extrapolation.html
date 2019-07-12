@@ -11,7 +11,14 @@
 		<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		{{ att_visual_ar.js_resources|safe }}
 		{{ att_visual_ar.css_resources|safe }}
-
+                {% if not ('cookiesChecked' in request.cookies)%}
+                  <script>
+                    $(window).on('load',function(){
+                      $('#cookie-modal').modal('show');
+                      document.cookie ="cookiesChecked=True"
+                    });            
+                  </script>
+                {% endif %}
 		<title> SSC / Magnetic Extrapolation </title>
 	</head>
 
@@ -121,11 +128,5 @@
 		{{ visual_script_ar|safe }}
 
 	</body>
-        {% if not ('cookiesChecked' in request.cookies)%}
-          <script>
-            alert("This site uses cookies\nTo see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section"); 
-            document.cookie ="cookiesChecked=True"
-          </script>
-        {% endif %}
 </html>
 						

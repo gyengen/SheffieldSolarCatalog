@@ -13,6 +13,16 @@
       <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js" async></script>
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
       <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
+
+      {% if not ('cookiesChecked' in request.cookies)%}
+         <script>
+            $(window).on('load',function(){
+               $('#cookie-modal').modal('show');
+               document.cookie ="cookiesChecked=True"
+            });            
+         </script>
+      {% endif %}
+
       {% if session['error_message'] != '' %}
          <script>
             $(window).on('load',function(){
@@ -159,6 +169,34 @@
                         <div id="type1_header">
 
                            <h6>Coming soon.</h6>
+
+                        </div>
+                     </div>
+
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+
+                  </div><!-- /.modal-content -->
+               </div><!-- /.modal -->
+            </div>
+
+            <!-- Cookie Modal-->
+            <div class="modal fade" id="cookie-modal" tabindex="-1" role="dialog" aria-labelledby="cookie-modal-label" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="cookie-modal-label">Quick Guidance</h4>
+
+                     </div>
+
+                     <div class="modal-body">
+                        <div id="type1_header">
+
+                           <p>This site uses cookies</p>
+                           <p>To see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section</p>
 
                         </div>
                      </div>
@@ -881,15 +919,7 @@
 	     {% endfor %}
 
 	  </div>
-
    </body>
-
-   {% if not ('cookiesChecked' in request.cookies)%}
-      <script>
-         alert("This site uses cookies\nTo see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section"); 
-         document.cookie ="cookiesChecked=True"
-      </script>
-   {% endif %}
 
    <script>
    laydate.render({

@@ -3,6 +3,14 @@
     <head>
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
         <title>SSC - Welcome</title>
+        {% if not ('cookiesChecked' in request.cookies)%}
+          <script>
+             $(window).on('load',function(){
+                $('#cookie-modal').modal('show');
+                document.cookie ="cookiesChecked=True"
+             });            
+          </script>
+        {% endif %}
     </head>
 
     <body>
@@ -43,7 +51,7 @@
 
 			    <div align="center"><p><strong>Project Under Development</strong></p>
 			  
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/mQsCY67zb_4?rel=0&controls=0&showinfo=0&modestbranding=1" frameborder="0" ></iframe></div>
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/mQsCY67zb_4?modestbranding=1&rel=0&controls=0&showinfo=0" frameborder="0" ></iframe></div>
 
                             <p>SSC is an open-source and free software for solar physics. The project provides a real-time comprehensive data analysis environment that allows researchers within the field of solar physics to carry out their tasks with the minimal effort. At this stage of development, the project generates sunspot data based on SDO observations. The program is fully automated and real-time. Later, the database will be extended by other solar features, such as pores, faculea or coronal hole. Follow the link <a href="/">Get Started</a> to open the database or click on the <a href="/">Documentation</a> to read the detailed descrition of the applied methodology.</p>
 
@@ -189,13 +197,6 @@
     
 
 </body>
-
-   {% if not ('cookiesChecked' in request.cookies)%}
-      <script>
-         alert("This site uses cookies\nTo see our cookie policy and how to disable them got to: https://ssc.shef.ac.uk/ and read the technical information section"); 
-         document.cookie ="cookiesChecked=True"
-      </script>
-   {% endif %}
 
     <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static',filename='js/jquery-ui.js') }}"></script>
