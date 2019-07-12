@@ -1201,6 +1201,31 @@ def query():
     general_plot_options = [x for x in header if x != "Obs_type" and x != "Fea_type" ]
     hist_plot_options = [x for x in general_plot_options if x != "Date_obs" and x != "Time_obs"]
 
+    # Get the last five lines of the log
+    log = ""
+    with open(os.getcwd() + '/cron.log', 'rb') as f:
+        f.seek(-2, os.SEEK_END)
+        while f.read(1) != b'\n':
+            f.seek(-2, os.SEEK_CUR)
+        f.seek(-2, os.SEEK_CUR)
+        while f.read(1) != b'\n':
+            f.seek(-2, os.SEEK_CUR)
+        f.seek(-2, os.SEEK_CUR)
+        while f.read(1) != b'\n':
+            f.seek(-2, os.SEEK_CUR)
+        f.seek(-2, os.SEEK_CUR)
+        while f.read(1) != b'\n':
+            f.seek(-2, os.SEEK_CUR)
+        f.seek(-2, os.SEEK_CUR)
+        while f.read(1) != b'\n':
+            f.seek(-2, os.SEEK_CUR)
+        # Format them to be displayed on page
+        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+
     # Render the front end
     resp = make_response(render_template('/workstation.html',
                          table=table,
@@ -1214,7 +1239,8 @@ def query():
                          div_minimize_block_list = div_minimize_block_list,
                          bokeh_script_list = bokeh_script_list,
                          general_plot_options = general_plot_options,
-                         hist_plot_options = hist_plot_options))
+                         hist_plot_options = hist_plot_options,
+                         log = log))
     resp.set_cookie('deleted_plots', '', expires=0)
     return resp
 
