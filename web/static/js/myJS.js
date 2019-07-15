@@ -409,42 +409,6 @@ $(function(){
 });
 
 $(function(){
-  $('AR_button').click(function(){
-    if ( $('#AR-modal').length ) {
-      $('#AR-modal').modal('show');
-    }
-    else {
-      $("#error-modal").after(`<div class="modal fade" id="AR-modal" tabindex="-1" role="dialog" aria-labelledby="AR-modal-label" aria-hidden="true">
-               <div class="modal-dialog" style="width:80%">
-                  <div class="modal-content">
-                     <div class="modal-header">
-
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="AR-modal-label">Extrapolation</h4>
-
-                     </div>
-
-                     <div class="modal-body">
-                        <div id="type1_header">
-
-                           <iframe style = "width:100%; height:100%;"src = "https://ssc.shef.ac.uk/extrapolation.html"></iframe>
-
-                        </div>
-                     </div>
-
-                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                     </div>
-
-                  </div><!-- /.modal-content -->
-               </div><!-- /.modal -->
-            </div>`)
-      $('#AR-modal').modal('show');
-    }
-  });
-});
-
-$(function(){
   $('#AR_button').click(function(){
     if ( $('#AR-modal').length ) {
       $('#AR-modal').modal('show');
@@ -456,7 +420,7 @@ $(function(){
                      <div class="modal-header">
 
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="AR-modal-label">Extrapolation</h4>
+                        <h4 class="modal-title" id="AR-modal-label">` + appConfig.AR + `</h4>
 
                      </div>
 
@@ -492,7 +456,7 @@ $(function(){
                      <div class="modal-header">
 
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="Full-disk-modal-label">Full Disk</h4>
+                        <h4 class="modal-title" id="Full-disk-modal-label">` + appConfig.Full_disk + `</h4>
 
                      </div>
 

@@ -973,6 +973,10 @@ def query():
     script_html_full, div_html_full = Create_live_fulldisk(session['path_full'],
                                                            row, False)
 
+    #Create titles for extrapolation and full disk modals
+    Full_disk_title = "Fulldisk on " + str(row[0]) + " at " + str(row[1])
+    AR_title = "AR " + str(row[4]) + " on " + str(row[0]) + " at " + str(row[1])
+
     att_visual.visual_div_full = div_html_full
     att_visual.visual_script_full = script_html_full
 
@@ -1254,7 +1258,9 @@ def query():
                          bokeh_script_list = bokeh_script_list,
                          general_plot_options = general_plot_options,
                          hist_plot_options = hist_plot_options,
-                         log = log))
+                         log = log,
+                         Full_disk_title = Full_disk_title,
+                         AR_title = AR_title))
     resp.set_cookie('deleted_plots', '', expires=0)
     return resp
 
