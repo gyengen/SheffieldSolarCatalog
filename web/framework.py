@@ -457,6 +457,9 @@ def download_data():
     if session['sql_cmd'] != "SELECT * FROM continuum LIMIT 1000":
         full_sql_table = g.db.execute("SELECT * FROM continuum LIMIT 1000")
         full_table, full_header = Create_table(full_sql_table)
+    else:
+        full_table = table
+        full_header = header
 
     table = np.array(table)
     table[table == None] = -9999
@@ -530,7 +533,6 @@ def download_data():
                                        filename=fname + '.h5', as_attachment=True)
             
         elif request.form['download_option'] == 'TXT':
-            print(tuple(header))
             # Define the string format
             form = '%10s %10s %10s %10s %7s %4s %8s %8s %8s %9s %8s %8s %8s %7s %7s %14s %14s %14s %14s %14s %14s'
 
@@ -1187,7 +1189,6 @@ def query():
             for x in range(0, session['list_length']):
 
                 # Define the corners of the window
-                print(x)
                 left = x
                 top = x * 350
                 session['position_left'].append(left)
