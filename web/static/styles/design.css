@@ -968,6 +968,11 @@ body
         overflow-x: hidden;
 
     }
+
+#wrapper_body.Fit_modal
+    {
+        background: none;
+    }
 /* ----------------------MENU BAR PROPERTIES*/
 #wrapper_menu_bar
     {   
@@ -1618,6 +1623,11 @@ body
     width: 50%;
     display: block;
     margin-left: 21%;
+}
+
+iframe {
+    border: none;
+    outline: none;
 }
 
 /* ---------------------- MENU PROPERTIES*/
