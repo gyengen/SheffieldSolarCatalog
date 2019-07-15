@@ -257,11 +257,13 @@ def index():
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
 
+    #Create default session values if required
     if not ('Nz' in session):
         session['Nz'] = 30
         session['zscale'] = 1
         session['level'] = 0
 
+    #If no AR set redirect to workstation to guareente one will be set
     if not ('path_AR' in session) or session['path_AR'] == "":
         return redirect("/workstation.html")
 
@@ -316,9 +318,11 @@ def extrapolation():
             # Z layer for visualisation6
             session['level'] = int(request.form['slider'])
 
+            #Make sure session level cannot be > Nz to stop errors
             if session['level'] > session['Nz']:
                 session['level'] = 0
 
+            #Stop Nz being able to be put to negatives
             if session['Nz'] < 1:
                 session['Nz'] = 30
 
@@ -365,6 +369,7 @@ def extrapolation():
 @app.route('/full_disk.html', methods=['GET', 'POST'])
 def full_disk():
 
+    #If no Full sun set redirect to workstation to guareente one will be set
     if not ('path_full' in session) or session['path_full'] == "":
         return redirect("/workstation.html")
 
@@ -454,6 +459,7 @@ def download_data():
         # Read the lenght of the table
         session['rows'] = len(table)
 
+    #Get full table and full headers for text download
     if session['sql_cmd'] != "SELECT * FROM continuum LIMIT 1000":
         full_sql_table = g.db.execute("SELECT * FROM continuum LIMIT 1000")
         full_table, full_header = Create_table(full_sql_table)
