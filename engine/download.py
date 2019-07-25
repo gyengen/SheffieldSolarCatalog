@@ -67,7 +67,7 @@ def get_sharp(date_of_obs, interval, email):
         raw_sharp - raw_sharp sunpy maps'''
 
     # Define the path
-    path = str(Path(__file__).parent.parent) + '/data/AR/'
+    path = str(Path(__file__).parent.parent) + '/web/static/data/AR/'
 
     # Name of the series
     series = 'hmi.Mharp_720s'
@@ -129,7 +129,7 @@ def get_data(date_of_obs, interval, email):
              'hmi.m_45s' + '[' + date_of_obs + '_TAI/' + interval + ']']
 
     # Define the path
-    path = str(Path(__file__).parent.parent) + '/data/obs/'
+    path = str(Path(__file__).parent.parent) + '/web/static/data/obs/'
 
     try:
         # Query and download
