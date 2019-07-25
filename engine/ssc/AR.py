@@ -8,6 +8,7 @@ AR.py
 
 
 import matplotlib.pyplot as plt
+import matplotlib
 from astropy import units as u
 import engine.ssc.sunspot.coordinates as coor
 import matplotlib.cm as mcm
@@ -138,7 +139,7 @@ class Sunspot_groups(object):
             hdu.writeto(fname, overwrite=True, output_verify='silentfix')
 
     def save(self):
-
+        matplotlib.use("Agg")
         if self.obs_type == 'continuum':
             cmap = scm.get_cmap(name='yohkohsxtal')
             color = 'k'
