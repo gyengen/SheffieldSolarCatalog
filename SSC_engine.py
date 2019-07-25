@@ -31,9 +31,7 @@ import logging
 import smtplib
 import multiprocessing
 import sys
-import os
-import gc
-import subprocess
+
 
 
 __author__ = ["Gyenge, Norbert"]
@@ -90,7 +88,7 @@ def get_log(LOG_FORMAT='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
 
     return log
 
-def run_in_cmd_line(logger):
+def run_process(logger):
     if (datetime.today() - start_iteration_date).days >= 3:
         logger = get_log()
     p = multiprocessing.Process(target=run.start, args=(datetime.now(), logger, lag, email,))
@@ -108,7 +106,7 @@ try:
     sched = BlockingScheduler(misfire_grace_time = 20)
 
     # Scheduler setup
-    sched.add_job(run_in_cmd_line, 'interval', [logger],minutes=interval, next_run_time=datetime.now())
+    sched.add_job(run_process, 'interval', [logger],minutes=interval, next_run_time=datetime.now())
 
     # Scheduler start
     sched.start()
