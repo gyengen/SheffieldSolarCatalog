@@ -29,8 +29,12 @@ from datetime import datetime
 import engine.running as run
 import logging
 import smtplib
+import multiprocessing
 import sys
 import os
+import gc
+import subprocess
+
 
 __author__ = ["Gyenge, Norbert"]
 __email__ = ["n.g.gyenge@sheffield.ac.uk"]
@@ -40,7 +44,7 @@ __email__ = ["n.g.gyenge@sheffield.ac.uk"]
 # STEP 1: Interval-based scheduling. This method schedules jobs to be run on
 # selected intervals (in minutes).
 
-interval = 60
+interval = 10
 
 # STEP 2: Lag-time. The downloaded observations cannot be real-time because
 # the JSOC and the ShARC services need time for publising data The lag-time
@@ -86,27 +90,25 @@ def get_log(LOG_FORMAT='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
 
     return log
 
-
-def start_engine():
-
-    # This function will be scheduled
-    rt = run.start(datetime.now(), logger, lag, email)
-
-    # Record the running time
-    logging.info('Running time: ' + str(rt) + ' minute(s)\n')
+def run_in_cmd_line(logger):
+    if (datetime.today() - start_iteration_date).days >= 3:
+        logger = get_log()
+    p = multiprocessing.Process(target=run.start, args=(datetime.now(), logger, lag, email,))
+    p.start()
+    p.join()
 
 
 # Start the engine
 try:
-
-    # Logging setup
+    global start_iteration_date
+    start_iteration_date = datetime.today()
     logger = get_log()
 
     # Scheduler definiton
-    sched = BlockingScheduler()
+    sched = BlockingScheduler(misfire_grace_time = 20)
 
     # Scheduler setup
-    sched.add_job(start_engine, 'interval', minutes=interval, next_run_time=datetime.now())
+    sched.add_job(run_in_cmd_line, 'interval', [logger],minutes=interval, next_run_time=datetime.now())
 
     # Scheduler start
     sched.start()

@@ -5,7 +5,7 @@ running.py
 
 
 ----------------------------------------------------------------------------'''
-
+import gc
 import engine.initialisation as ini  # Observation initialization
 import engine.ssc.visual.plot as plt # For full disk visualisation
 import engine.download as get        # Getting data
@@ -20,7 +20,7 @@ __author__ = ["Gyenge, Norbert"]
 __email__ = ["n.g.gyenge@sheffield.ac.uk"]
 
 
-def start(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
+def start(start_time,logger, lag=360, email='scc@sheffield.ac.uk'):
 
     # Module 1: Download and load observation data from JSOC
     date = get.real_time_service(lag=lag)
@@ -77,6 +77,4 @@ def start(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
         logging.info('Observations are not available.')
 
     # Return the running time
-    return datetime.now() - start_time
-
-
+    logging.info('Running time: ' + str(datetime.now() - start_time) + ' minute(s)\n')

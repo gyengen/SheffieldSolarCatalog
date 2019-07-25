@@ -185,6 +185,7 @@ class Sunspot_groups(object):
         # Tight layout and save pdf figure
         file_name = util.fname(date, self.obs_type, self.NOAA, 'pdf')
         plt.savefig(file_name, bbox_inches='tight', dpi=600)
+        plt.close()
 
     def append_sql(self):
 
