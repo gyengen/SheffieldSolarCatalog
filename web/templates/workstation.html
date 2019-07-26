@@ -69,9 +69,9 @@
             <li id="message_log_bar"><a><img src="static/icons/terminal.png" class='icon_im'><br>Console</a></li>
 
             <li><a id="download_button"
-                   onclick="openInNewTab('download.html');">
-                   <img src="static/icons/download.png" class='icon_im'><br>Download</a>
-
+               <a href="" data-toggle="modal" data-target="#download-modal">
+                  <img src="static/icons/download.png" class='icon_im'><br>Download
+               </a>
             </li>
 
             <li id ='sftp'><a href=""><img src="static/icons/ftp.png" class='icon_im'><br>SFTP</a></li>
@@ -224,6 +224,32 @@
                         <div id="type1_header">
 
                            {{ session['error_message']|safe }}
+
+                        </div>
+                     </div>
+
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+
+                  </div><!-- /.modal-content -->
+               </div><!-- /.modal -->
+            </div>
+
+            <div class="modal fade" id="download-modal" tabindex="-1" role="dialog" aria-labelledby="download-modal-label" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="download-modal-label">Quick Guidance</h4>
+
+                     </div>
+
+                     <div class="modal-body">
+                        <div id="type1_header">
+
+                           <iframe style = "width:100%; height:100%;"src = "https://ssc.shef.ac.uk/download.html"></iframe>
 
                         </div>
                      </div>
