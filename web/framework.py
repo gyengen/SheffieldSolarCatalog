@@ -19,7 +19,7 @@ from pathlib import Path
 import sqlite3
 import json
 import os
-import datetime
+from datetime import datetime
 import sys
 import string
 import uuid
@@ -224,6 +224,8 @@ class download:
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
 
 # Add the defined classes to the global namespace
 app.add_template_global(att, 'att')
@@ -932,6 +934,26 @@ def query():
 
     # Obtain the basic info (number of elements etc...) of the table
     info = Query_info(table)
+
+    #Get number of NOAA's in query
+    unique_NOAA = []
+    for x in table:
+        if not (x[4] in unique_NOAA):
+            unique_NOAA.append(x[4])
+
+    info.append(len(unique_NOAA))
+
+    #Get time frame of query
+    dates = [el[0] for el in table]
+    times = [el[1] for el in table]
+
+    date_time = []
+    for x in range(len(dates)):
+        date_time.append(dates[x] + " " + times[x])
+
+    date_time = [datetime.strptime(el,"%Y-%m-%d %H:%M:%S") for el in date_time]
+    time_frame = max(date_time) - min(date_time)
+    info.append(time_frame)
 
     # Create the AR and Full disk plots
     if ('ARID' in session):

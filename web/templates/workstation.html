@@ -14,22 +14,22 @@
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
       <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
 
-      {% if not ('cookiesChecked' in request.cookies)%}
+      {%- if not ('cookiesChecked' in request.cookies)%}
          <script>
             $(window).on('load',function(){
                $('#cookie-modal').modal('show');
                document.cookie ="cookiesChecked=True"
             });            
          </script>
-      {% endif %}
+      {%- endif %}
 
-      {% if session['error_message'] != '' %}
+      {%- if session['error_message'] != '' %}
          <script>
             $(window).on('load',function(){
                $('#error-modal').modal('show');
             });
          </script>
-      {% endif %}
+      {%- endif %}
 
       <title>SSC - Workstation</title>
    </head>
@@ -116,7 +116,7 @@
 
                               </tr>
 
-                              {% for i in range(5,21) %}
+                              {%- for i in range(5,21) %}
                                  <tr>
 
                                     <td>{{ session['header_all'][i] }}: </td>
@@ -138,7 +138,7 @@
                                     </td>
 
                                  </tr>
-                              {% endfor %}
+                              {%- endfor %}
 
                            </table>
                         </div>
@@ -306,13 +306,13 @@
 	    	                    id="sunspot_type"
    	                            style="text-align: center;width: 100px; color:black;">
 
-	    	               {%if session['sunspot_type'] == 'magnetogram' %}
+	    	               {%-if session['sunspot_type'] == 'magnetogram' %}
 	    	                  <option value="continuum">Continuum</option>
 	    	                  <option value="magnetogram" selected="selected">Magnetogram</option>
-	    	               {%elif session['sunspot_type'] == 'continuum' %}
+	    	               {%-elif session['sunspot_type'] == 'continuum' %}
 	    	                  <option value="continuum" selected="selected">Continuum</option>
 	    	                  <option value="magnetogram">Magnetogram</option>				
-	    	               {% endif %} 
+	    	               {%- endif %} 
 
 	    	            </select>
 	    	         </td>
@@ -329,15 +329,15 @@
 	    	            <select name="order_by"
 	    	                    id="c_order_by"
 	    	                    style="text-align: center;width: 100px; color:black;">
-	    	               {%for name in session['header_all']%}
+	    	               {%-for name in session['header_all']%}
 
-	    	                  {%if name == session['order']%}
+	    	                  {%-if name == session['order']%}
 	    	                     <option value="{{ name }}" selected="selected"> {{ name }} </option>
-	    	                  {%else%}
+	    	                  {%-else%}
 	    	                     <option value="{{ name }}"> {{ name }} </option>
-	    	                  {% endif %}
+	    	                  {%- endif %}
 
-	    	               {% endfor %}
+	    	               {%- endfor %}
 	    	            </select>
 	    	         </td>
 	    	      </tr>
@@ -363,7 +363,7 @@
 
 	    	      </table>
 	    	         <table width="98%">
-	    	            {% for i in range(5,21,2) %}
+	    	            {%- for i in range(5,21,2) %}
 	    	               <tr>
 	    	                  <td class="side_menu_header">
 	    	                     {{ session['header_all'][i] }} 
@@ -387,7 +387,7 @@
 	    	                            checked="checked" />
 	    	                  </td>
 	    	               </tr>
-	    	            {% endfor %}		
+	    	            {%- endfor %}		
 	    	         </table>
 					
 	    	         <table width="96%" style="margin-top: 10px;">
@@ -472,13 +472,13 @@
     		               <td>
     		                  <select name="v">
     		                     <option value=None> None </option>
-    		                     {%for name in hist_plot_options%}
-    		                        {%if name == v%}
+    		                     {%-for name in hist_plot_options%}
+    		                        {%-if name == v%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
-    		                     {% endfor %}
+    		                        {%- endif %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>
 
@@ -547,15 +547,15 @@
     		                  <select name="biv_v">
 
     		                     <option value=None> None </option>
-    		                     {%for name in hist_plot_options%}
+    		                     {%-for name in hist_plot_options%}
 
-    		                        {%if name == v%}
+    		                        {%-if name == v%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>
 
@@ -569,15 +569,15 @@
 
     		                     <option value=None> None </option>
 
-    		                     {%for name in hist_plot_options%}
+    		                     {%-for name in hist_plot_options%}
   
-    		                        {%if name == v%}
+    		                        {%-if name == v%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>
 
@@ -606,15 +606,15 @@
     		               <td>
     		                  <select name="xl">
     		                     <option value=None> None </option>
-    		                     {%for name in general_plot_options%}
+    		                     {%-for name in general_plot_options%}
 
-    		                        {%if name == xl%}
+    		                        {%-if name == xl%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>
 
@@ -626,15 +626,15 @@
     		               <td>
     		                  <select name="yl">
     		                     <option value=None> None </option>
-    		                     {%for name in general_plot_options%}
+    		                     {%-for name in general_plot_options%}
 
-    		                        {%if name == yl%}
+    		                        {%-if name == yl%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>	
 
@@ -668,14 +668,14 @@
     		                  <select name="x">
     		                     <option value=None> None </option>
 
-    		                     {%for name in general_plot_options%}
-    		                        {%if name == x%}
+    		                     {%-for name in general_plot_options%}
+    		                        {%-if name == x%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>
 
@@ -688,14 +688,14 @@
     		                  <select name="y">
     		                     <option value=None> None </option>
 
-    		                     {%for name in general_plot_options%}
-    		                        {%if name == y%}
+    		                     {%-for name in general_plot_options%}
+    		                        {%-if name == y%}
     		                           <option value="{{ name }}" selected="selected"> {{ name }} </option>
-    		                        {%else%}
+    		                        {%-else%}
     		                           <option value="{{ name }}"> {{ name }} </option>
-    		                        {% endif %}
+    		                        {%- endif %}
 
-    		                     {% endfor %}
+    		                     {%- endfor %}
     		                  </select>
     		               </td>	
 
@@ -750,12 +750,12 @@
     		</div>-->
              </div>
 
-             {% for num in range(session['list_length']) %}
+             {%- for num in range(session['list_length']) %}
                 <div style="position: relative;
                            top: {{ session['position_top'][num] }}px;
                            left: {{ session['position_left'][num] }}px;"> {{ div_frame_list[num]|safe }}
                 </div>
-             {% endfor %}
+             {%- endfor %}
 
              <div class="draggable_window z-position" id="wrapper_image">
                 <div class="windowBar" id = "wrapper_image_windowBar">
@@ -814,55 +814,55 @@
                          <thead>
                             <tr>
 
-                               {%for name in header%}
+                               {%-for name in header%}
                                   <th> {{ name }} </th>
-                               {% endfor %}
+                               {%- endfor %}
 
                             </tr>
                          </thead>
 
                          <tbody>
 
-                            {%for row in range(session['rows'])%}
+                            {%-for row in range(session['rows'])%}
                                <tr>
-                                  {% for col in range(session['columns']) %}
+                                  {%- for col in range(session['columns']) %}
 
-                                     {% if col == 4 %}
+                                     {%- if col == 4 %}
                                         <form method="post">
                                            <td>
                                               <button name="AR_ID" type="submit" value={{row}}>
 
-                                                 {% if row == session['ARID'] %}
+                                                 {%- if row == session['ARID'] %}
                                                     <div id="selected_row">
                                                        {{table[row][col]}}
                                                     </div>
-                                                 {% else %}
+                                                 {%- else %}
                                                     <div id="buttom_color">
                                                        {{table[row][col]}}
                                                     </div>	
-                                                 {% endif %}
+                                                 {%- endif %}
 
                                               </button>
                                            </td>
                                         </form>
                                      
-                                     {% else %}
+                                     {%- else %}
                                         <td>
 
-                                           {% if row == session['ARID'] %}
+                                           {%- if row == session['ARID'] %}
                                               <div id="selected_row">
                                                  {{ table[row][col] }}
                                               </div>
-                                           {% else %}
+                                           {%- else %}
                                               <div id="unselected_row">
                                                  {{ table[row][col] }}
                                               </div>
-                                           {% endif %}
+                                           {%- endif %}
 
                                         </td>
-                                     {% endif %}
+                                     {%- endif %}
 
-                                  {% endfor %}
+                                  {%- endfor %}
                                </tr>
 
                             {% endfor %}
@@ -883,8 +883,8 @@
 	    	      <strong>Query information</strong><br>
 	    	      <p>Number of rows: {{ info[0] }}</p> 
 	    	      <p>Number of columns: {{ info[1] }}</p> 
-	    	      <p>Number of active regions: {{ info[0] }}</p> 
-	    	      <p>Timespan: {{ info[0] }}</p> 
+	    	      <p>Number of active regions: {{ info[2] }}</p> 
+	    	      <p>Timespan: {{ info[3] }}</p> 
 	    	   </div>
 	    	</div>
                 <div class="message_log_messages">
@@ -908,15 +908,15 @@
 	           <p>Full Disk</p>
 	        </div>
  
-	        {% for div_minimize_block in div_minimize_block_list %}
+	        {%- for div_minimize_block in div_minimize_block_list %}
 	           {{ div_minimize_block|safe }}
-	        {% endfor %}
+	        {%- endfor %}
 
 	     </div>
 
-	     {% for bokeh_script in bokeh_script_list %}
+	     {%- for bokeh_script in bokeh_script_list %}
 	        {{ bokeh_script|safe }}
-	     {% endfor %}
+	     {%- endfor %}
 
 	  </div>
    </body>
