@@ -198,7 +198,7 @@ def Create_live_2D_scatter_plot(table, header, x_index, y_index, c, s):
             normalise_axis = (abs(max(x) - min(x)) / 100)
 
         if normalise_axis == 0:
-            normalise_axis = 0.1
+            normalise_axis = 0.01
 
         if s == 'None':
             radii = normalise_axis
