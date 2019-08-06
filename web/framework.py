@@ -1260,11 +1260,11 @@ def query():
         while f.read(1) != b'\n':
             f.seek(-2, os.SEEK_CUR)
         # Format them to be displayed on page
-        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
-        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
-        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
-        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
-        log = log + "<p>"+f.readline().decode()+"<br></p><br>"
+        log = log + "<p>"+f.readline().decode()+"<br></p>"
+        log = log + "<p>"+f.readline().decode()+"<br></p>"
+        log = log + "<p>"+f.readline().decode()+"<br></p>"
+        log = log + "<p>"+f.readline().decode()+"<br></p>"
+        log = log + "<p>"+f.readline().decode()+"<br></p>"
 
     # Render the front end
     resp = make_response(render_template('/workstation.html',
