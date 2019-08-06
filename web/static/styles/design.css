@@ -1116,6 +1116,7 @@ body
         text-align: right;
         font-weight: bold;
         padding: 10px 15px;
+        padding-left: 0;
     }
 
 #wrapper_table td
