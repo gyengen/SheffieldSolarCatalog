@@ -211,9 +211,6 @@ table.extrapolation_table input[type="text"]
 }*/
 
 
-
-
-
 .windowBar{
     border-bottom: 1px solid #9e9e9e;
     width: 100%;
@@ -1090,6 +1087,8 @@ body
 }
 
 #wrapper_table_block{
+    box-shadow: 2px 2px 5px;
+    background-color: #ffffff;
     height: 40vw;
     width: 71vw;
     left: 14.5vw;
@@ -1195,6 +1194,7 @@ body
 
 #wrapper_image_full
     {
+        box-shadow: 2px 2px 5px;
         background-color: #ffffff;
         width: 71vw;
         height: 68vw;
@@ -1206,6 +1206,7 @@ body
 
 #wrapper_image2
     {
+        box-shadow: 2px 2px 5px;
         background-color: #ffffff;
         width: 35vw;
         height: 35vw;
@@ -1218,7 +1219,8 @@ body
 
 #wrapper_image
     {
-
+        box-shadow: 2px 2px 5px;
+        background-color: #ffffff;
         width: 35vw;
         height: 35vw;
         font-size: 11px;
@@ -1235,6 +1237,8 @@ body
 }
 
 .bokeh_plot{
+    box-shadow: 2px 2px 5px;
+    background-color: #ffffff;
     position: absolute;
     width: 50vw;
     height: 30vw;
