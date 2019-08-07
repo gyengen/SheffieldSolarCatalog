@@ -1,0 +1,84 @@
+<html>
+   <!-- Use CSS -->
+   <head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/design.css') }}">
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/jquery-ui.min.css') }}">
+      <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css" type="text/css">
+      <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js" async></script>
+      <script src="{{ url_for('static',filename='js/laydate.js') }}" async></script>
+      <script src="{{ url_for('static',filename='js/jquery-1.12.4.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/jquery-ui.js') }}" async></script>
+      <script src="{{ url_for('static',filename='js/myJS.js') }}" async></script>
+      <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js" async></script>
+      <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
+      <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
+
+      {%- if not ('cookiesChecked' in request.cookies)%}
+         <script>
+            $(window).on('load',function(){
+               $('#cookie-modal').modal('show');
+               document.cookie ="cookiesChecked=True"
+            });            
+         </script>
+      {%- endif %}
+
+      <title>SSC - Workstation</title>
+   </head>
+
+   <body id = "wrapper_body">
+
+      <div class = "loader">
+         <div class = "blob-r"></div>
+         <div class = "blob-c"></div>
+         <div class = "blob-l"></div>
+         <div class = "blob-m">Please wait.</div>
+      </div>
+
+      <div id="fixedheader">
+         <div id="wrap_header">
+               <div class='logo'>
+                  <a href="https://ssc.shef.ac.uk/">
+                     <img class="logo_pic" src="/static/logos/ssc.png" />
+                  </a>
+               </div>
+         </div>
+      </div>
+
+      <div id = "search">
+         <input type="text" id="text" value="Search Documentation, type keyword or variable name." onFocus="this.value=''" class="search_input"/>
+         <input type="button" id="btn" value="Search" class="search_button"
+		onClick="javascript: window.open('../static/docs/build/html/search.html?q=' + document.getElementById('text').value + 			'&check_keywords=yes&area=default');"/>
+      </div>
+
+      <div class = "hidden">
+         <div id = "file_body">
+         
+            <form method="post">
+
+               {% if above_directory != "" %}
+                  <a href="{{above_directory}}">Go up a level</a>
+               {% endif %}
+
+               {% if directories != [] %}
+                  <p>All directories:</p>
+                  {% for directory in directories %}
+                     <a href="{{cwd}}/{{directory}}">{{directory}}</a>
+                  {% endfor %}
+               {% endif%}
+
+               {% if files != [] %}
+                  <p>All files:</p>
+                  {% for file in files %}
+                     <input type="submit" name="file" value="{{file}}">
+                  {% endfor %}
+               {% endif%}
+
+            </form>
+         </div>
+      </div>
+
+
+
+   </body>
+</html>

@@ -256,6 +256,48 @@ def index():
     # The index page is static but handled by Flask
     return render_template('index.html')
 
+@app.route('/SSC/', methods=['GET', 'POST'])
+def SSC():
+    cwd = os.getcwd()
+    if 'file' in request.form:
+        return send_from_directory(directory=os.getcwd() + '/',filename = request.form['file'], as_attachment=True)
+    lst = os.listdir(cwd+"/")
+    directories = []
+    files = []
+    for element in lst:
+        if os.path.isfile(cwd+"/"+element):
+            files.append(element)
+        else:
+            directories.append(element)
+
+    return render_template("file_search.html", directories=directories, files=files, above_directory = "", cwd = "/SSC")
+
+@app.route('/SSC/<path:path>', methods=['GET', 'POST'])
+def SSC_path(path):
+    cwd = os.getcwd()
+    if 'file' in request.form:
+        return send_from_directory(directory=os.getcwd() + '/' +path,filename = request.form['file'], as_attachment=True)
+
+    try: lst = os.listdir(cwd+"/"+path)
+    except OSError:
+        return ("error")
+    directories = []
+    files = []
+    for element in lst:
+        if os.path.isfile(cwd+"/"+path+"/"+element):
+            files.append(element)
+        else:
+            directories.append(element)
+
+    above_directory = re.split("[^/]*$","/SSC/"+path)
+    if above_directory[0].endswith("/"): above_directory[0] = above_directory[0][:-1]
+
+    return render_template("file_search.html",
+                           directories=directories,
+                           files=files,
+                           above_directory=above_directory[0],
+                           cwd = "/SSC"+"/"+path)
+
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
 
