@@ -12,7 +12,7 @@
       <script src="{{ url_for('static',filename='js/myJS.js') }}" async></script>
       <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js" async></script>
       <script type="text/javascript"> $(window).load(function() {$('.loader').fadeOut('fast');}); </script>
-      <script type="text/javascript"> $(document).ready(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
+      <script type="text/javascript"> $(window).load(function () {$('div.hidden').fadeIn(1).removeClass('hidden');});</script>
 
       {%- if not ('cookiesChecked' in request.cookies)%}
          <script>
