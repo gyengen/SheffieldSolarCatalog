@@ -256,12 +256,19 @@ def index():
     # The index page is static but handled by Flask
     return render_template('index.html')
 
+# Function needed as without it the user will get undefined page error for /SSC/ as SSC_path only works if request URL is /SSC/anything
 @app.route('/SSC/', methods=['GET', 'POST'])
 def SSC():
     cwd = os.getcwd()
+
+    # Send the user the file they requested
     if 'file' in request.form:
         return send_from_directory(directory=os.getcwd() + '/',filename = request.form['file'], as_attachment=True)
+
+    # Get all subdirectories and files for top directory (demons directory)
     lst = os.listdir(cwd+"/")
+
+    # Sort between files and directories
     directories = []
     files = []
     for element in lst:
@@ -275,12 +282,17 @@ def SSC():
 @app.route('/SSC/<path:path>', methods=['GET', 'POST'])
 def SSC_path(path):
     cwd = os.getcwd()
+
+    # Send the user the file they requested
     if 'file' in request.form:
         return send_from_directory(directory=os.getcwd() + '/' +path,filename = request.form['file'], as_attachment=True)
 
+    # Get all subdirectories and files for current directory (current directory is demon directory + url path after SSS/)
     try: lst = os.listdir(cwd+"/"+path)
     except OSError:
         return ("error")
+
+    # Sort between files and directories
     directories = []
     files = []
     for element in lst:
@@ -289,6 +301,7 @@ def SSC_path(path):
         else:
             directories.append(element)
 
+    # Get URL for above directory (go one layer up)
     above_directory = re.split("[^/]*$","/SSC/"+path)
     if above_directory[0].endswith("/"): above_directory[0] = above_directory[0][:-1]
 
