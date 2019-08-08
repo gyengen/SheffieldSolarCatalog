@@ -263,21 +263,18 @@ def SSC():
 
     # Send the user the file they requested
     if 'file' in request.form:
-        return send_from_directory(directory=os.getcwd() + '/',filename = request.form['file'], as_attachment=True)
+        return send_from_directory(directory=os.getcwd() + '/web/static/database',filename = request.form['file'], as_attachment=True)
 
     # Get all subdirectories and files for top directory (demons directory)
-    lst = os.listdir(cwd+"/")
+    lst = os.listdir(cwd+"/web/static/database/")
 
     # Sort between files and directories
     directories = []
-    files = []
     for element in lst:
-        if os.path.isfile(cwd+"/"+element):
-            files.append(element)
-        else:
+        if os.path.isdir(cwd+"/web/static/database/"+element):
             directories.append(element)
 
-    return render_template("file_search.html", directories=directories, files=files, above_directory = "", cwd = "/SSC")
+    return render_template("file_search.html", directories=directories, files=[], above_directory = "", cwd = "/SSC")
 
 @app.route('/SSC/<path:path>', methods=['GET', 'POST'])
 def SSC_path(path):
@@ -285,10 +282,10 @@ def SSC_path(path):
 
     # Send the user the file they requested
     if 'file' in request.form:
-        return send_from_directory(directory=os.getcwd() + '/' +path,filename = request.form['file'], as_attachment=True)
+        return send_from_directory(directory=os.getcwd() + '/web/static/database/' +path,filename = request.form['file'], as_attachment=True)
 
     # Get all subdirectories and files for current directory (current directory is demon directory + url path after SSS/)
-    try: lst = os.listdir(cwd+"/"+path)
+    try: lst = os.listdir(cwd+"/web/static/database/"+path)
     except OSError:
         return ("error")
 
@@ -296,7 +293,7 @@ def SSC_path(path):
     directories = []
     files = []
     for element in lst:
-        if os.path.isfile(cwd+"/"+path+"/"+element):
+        if os.path.isfile(cwd+"/web/static/database/"+path+"/"+element):
             files.append(element)
         else:
             directories.append(element)
@@ -309,7 +306,7 @@ def SSC_path(path):
                            directories=directories,
                            files=files,
                            above_directory=above_directory[0],
-                           cwd = "/SSC"+"/"+path)
+                           cwd = "/SSC/web/static/database/"+"/"+path)
 
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
