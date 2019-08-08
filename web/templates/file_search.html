@@ -70,9 +70,11 @@
                {% if files != [] %}
                   <p>All files:</p>
                   {% for file in files %}
-                     <input type="submit" name="file" value="{{file}}">
+                     <input type="checkbox" name="{{file}}" value="{{file}}">{{file}}
                   {% endfor %}
                {% endif%}
+
+               <br><input type="submit" value="Download">
 
             </form>
          </div>

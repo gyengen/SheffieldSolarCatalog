@@ -20,10 +20,10 @@ import sqlite3
 import json
 import os
 from datetime import datetime
-import sys
 import string
 import uuid
 import re
+import zipfile
 
 monkey.patch_all()
 
@@ -261,6 +261,9 @@ def index():
 def SSC():
     cwd = os.getcwd()
 
+    #Remove temp files older than a day
+    os.system('find ' + str(os.getcwd()) + '/web/static/database/tmp/ -type f -mtime +1 -exec rm {} \;')
+
     # Get all subdirectories and files for top directory (demons directory)
     lst = os.listdir(cwd+"/web/static/database/")
 
@@ -276,9 +279,19 @@ def SSC():
 def SSC_path(path):
     cwd = os.getcwd()
 
-    # Send the user the file they requested
-    if 'file' in request.form:
-        return send_from_directory(directory=os.getcwd() + '/web/static/database/' +path,filename = request.form['file'], as_attachment=True)
+    #Remove temp files older than a day
+    os.system('find ' + str(os.getcwd()) + '/web/static/database/tmp/ -type f -mtime +1 -exec rm {} \;')
+
+    # Send the user the file(s) they requested
+    if len(request.form) == 1:
+        return send_from_directory(directory=cwd + '/web/static/database/' +path,filename = next(iter(request.form)), as_attachment=True)
+
+    if len(request.form) != 0:
+        zipid = str(uuid.uuid4())[:8]
+        zf = zipfile.ZipFile(cwd+"/web/static/database/tmp/"+str(zipid),"x")
+        for elem in request.form: zf.write(cwd + '/web/static/database/' +path+"/"+elem)
+        zf.close()
+        return send_from_directory(directory=cwd + '/web/static/database/tmp',filename = str(zipid), as_attachment=True)
 
     # Get all subdirectories and files for current directory (current directory is demon directory + url path after SSS/)
     try: lst = os.listdir(cwd+"/web/static/database/"+path)
