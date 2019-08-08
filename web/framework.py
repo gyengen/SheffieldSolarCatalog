@@ -261,10 +261,6 @@ def index():
 def SSC():
     cwd = os.getcwd()
 
-    # Send the user the file they requested
-    if 'file' in request.form:
-        return send_from_directory(directory=os.getcwd() + '/web/static/database',filename = request.form['file'], as_attachment=True)
-
     # Get all subdirectories and files for top directory (demons directory)
     lst = os.listdir(cwd+"/web/static/database/")
 
@@ -306,7 +302,7 @@ def SSC_path(path):
                            directories=directories,
                            files=files,
                            above_directory=above_directory[0],
-                           cwd = "/SSC/web/static/database/"+"/"+path)
+                           cwd = "/SSC/"+path)
 
 @app.route('/extrapolation.html', methods=['GET', 'POST'])
 def extrapolation():
