@@ -257,7 +257,7 @@ def index():
     return render_template('index.html')
 
 # Function needed as without it the user will get undefined page error for /SSC/ as SSC_path only works if request URL is /SSC/anything
-@app.route('/SSC/', methods=['GET', 'POST'])
+@app.route('/SSC', methods=['GET', 'POST'])
 def SSC():
     cwd = os.getcwd()
 
