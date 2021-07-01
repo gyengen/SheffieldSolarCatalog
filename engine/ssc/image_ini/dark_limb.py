@@ -5,7 +5,7 @@ import copy as c
 __author__ = ["Norbert Gyenge"]
 __email__  = "n.g.gyenge@sheffield.ac.uk"
 
-def limb_darkening_correct(observation, limb_cut=True):
+def limb_darkening_correct(observation, limb_cut=False):
 	"""Calculate limb darkening function for specified wavelength
 	and use to remove limb darkening effects from input image.
 	The limb darkening function uses a 5th ordern polynomial
@@ -18,8 +18,9 @@ def limb_darkening_correct(observation, limb_cut=True):
 		observation - SunPy Map object
 			SDO observation
 
-		limb_cut - Default: True
-			Background (r>1) values will be repleaced by np.nan
+		limb_cut - boolean or floating point number: Default: False
+			if False: no cut
+			If float:  Background (r>limb_cut) values will be repleaced by np.nan
 
 	Returns
 	-------
@@ -74,13 +75,15 @@ def limb_darkening_correct(observation, limb_cut=True):
 	dist_grid = np.sqrt(x_2 + y_2)
 	dist_grid = dist_grid / radius
 
+	dist_grid[dist_grid > 1] = np.nan
+
 	e1 = 1 - ul - vl + ul * np.cos(np.arcsin(dist_grid))
 	e2 = vl * (np.cos(np.arcsin(dist_grid)) ** 2)
 	limbfilt = e1 + e2
 
 	observation._data = observation.data / limbfilt
 
-	if limb_cut is True:
-		observation.data[dist_grid > 1] = np.nan
+	if limb_cut is not False:
+		observation.data[dist_grid > limb_cut] = np.nan
 
 	return observation

@@ -21,11 +21,13 @@ def sunspot_contours(initialized_obs, sharp, mpix):
     -------
     '''
 
-    # Find the continuum image
+    # Find the continuum and the magnetogram index
     continuum_index = util.index(initialized_obs, 'continuum')
+    magnetogram_index = util.index(initialized_obs, 'magnetogram')
 
-    # Find the magnetogram image
+    # Find the continuum and the magnetogram image
     continuum = initialized_obs[continuum_index]
+    magnetogram = initialized_obs[magnetogram_index]
 
     # Initalisation of arrays
     Active_Regions = []
@@ -41,10 +43,11 @@ def sunspot_contours(initialized_obs, sharp, mpix):
                                     ar[0].header['CRPIX2']], dtype=int)
 
             top_right = np.array([(ar[0].header['CRPIX1'] +
-                                   ar[0].header['CRSIZE1']),
+                                   ar[0].header['CRSIZE1']) - 1,
                                   (ar[0].header['CRPIX2'] +
-                                   ar[0].header['CRSIZE2'])], dtype=int)
+                                   ar[0].header['CRSIZE2'] - 1)], dtype=int)
 
+            # Getting NOAA number from obs header
             NOAA_num = str(ar[0].header['NOAA_AR'])
 
             # Mask the boundaries AR
@@ -61,28 +64,45 @@ def sunspot_contours(initialized_obs, sharp, mpix):
                 # Rotate the mask as well
                 boundary_mask = np.rot90(boundary_mask, 2)
 
-            # Save some info for later
-            corner = [bottom_left, top_right]
-
             # Cut the original observations
-            c_sub = continuum.submap(bottom_left * u.pixel,
-                                     top_right * u.pixel)
+            c_sub = continuum.submap(bottom_left=bottom_left * u.pixel, top_right=top_right * u.pixel)
+            m_sub = magnetogram.submap(bottom_left=bottom_left * u.pixel, top_right=top_right * u.pixel)
 
-            # Scaleing and normalization, c_sub sub is numpy array from here
+            # Scaleing and normalization, c_sub sub is numpy array from here, only IC
             c_sub = pix.scaling_ic(c_sub.data)
+            m_sub = abs(m_sub.data)
 
-            # Simple method to estimate the active region/quiet sun threshold
-            full_disk = pix.scaling_ic(continuum.data)
-            TH = pix.Initial_threshold(full_disk, sg=3)
+            # Boundary max for magnetogram to find the quite sun regions
+            TH_mag = np.nanstd(m_sub)
+            m_sub[m_sub > 1 * TH_mag] = np.nan
+            m_sub[m_sub <= 1 * TH_mag] = 1
 
-            # Initial binary mask (1 if pixel > TH and 0 else)
-            fea_ini = con.Morphological_Snakes_mask(c_sub, TH)
+            # Initial Threshold pixel intensity
+            TH = np.nanmean(m_sub * c_sub) + 5 * np.nanstd(m_sub * c_sub)
 
-            # Morphological_Snakes for finding the boundary of the sunspots
-            AR_mask = con.Morphological_Snakes(c_sub, fea_ini)
+            #import pdb; pdb.set_trace()
+
+            #import matplotlib.pyplot as plt
+            #plt.plot(test[2000, 2000:]); plt.show()
+            #plt.imshow(); plt.show()
+
+            # Find penumbra
+            penumbra = con.Morphological_Snakes(c_sub, TH)
+
+            # umbra only, cut penumbra
+            c_sub = c_sub * penumbra
+
+            # Replace zeros with np nan
+            c_sub[c_sub == 0] = np.nan
+
+            # Initial Threshold pixel intensity
+            TH = np.nanmean(c_sub) + 1 * np.nanstd(c_sub)
+
+            # Find umbra
+            umbra = con.Morphological_Snakes(c_sub, TH)
 
             # Apply the boundary mask
-            AR_mask = [AR_mask[0] * boundary_mask, AR_mask[1] * boundary_mask]
+            AR_mask = [penumbra * boundary_mask, umbra * boundary_mask]
 
             # Create contours from binary masks
             AR_contours = con.MS_contours(AR_mask, mpix)
@@ -91,7 +111,7 @@ def sunspot_contours(initialized_obs, sharp, mpix):
             AR_contours = con.size_filter(AR_contours, mpix)
 
             # Create the Active Region Object
-            ARO = AR.Sunspot_groups(NOAA_num, AR_mask, AR_contours, corner)
+            ARO = AR.Sunspot_groups(NOAA_num, AR_mask, AR_contours, [bottom_left, top_right])
 
             # Define a new array for th AROs
             Active_Regions.append(ARO)

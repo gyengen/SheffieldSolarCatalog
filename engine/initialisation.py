@@ -8,7 +8,7 @@ engine.py
 
 from engine.ssc.image_ini import *
 import numpy as np
-import sunpy.instr.aia
+#import sunpy.instr.aia
 
 
 def standard_multitype_ini(observations):
@@ -38,18 +38,18 @@ def standard_multitype_ini(observations):
 
             # Limb darkening correction, only HIM white lighe image
             if obs.measurement == 'continuum':
-                obs = dark_limb.limb_darkening_correct(obs, limb_cut=False)
+                obs = dark_limb.limb_darkening_correct(obs, limb_cut=0.99)
 
             # Longitudinal magnetic field to Bz estimation
-            #if obs.measurement == 'magnetogram':
-                #obs = blbz.LOS2Bz(obs)
+            if obs.measurement == 'magnetogram':
+                obs = blbz.LOS2Bz(obs)
 
             # Cut the limb and replace outlimb region with np.nan
             obs = cut.solar_limb(obs)
 
-        if obs.detector == 'AIA':
+        #if obs.detector == 'AIA':
             # Processes a level 1 AIAMap into a level 1.5 AIAMap
-            obs = sunpy.instr.aia.aiaprep(obs)
+            #obs = sunpy.instr.aia.aiaprep(obs)
 
         # Append the new maps
         initialized_observations.append(obs)

@@ -40,26 +40,33 @@ def LOS2Bz(observation):
     nx, ny = observation.dimensions
 
     # Range of the ROI; full disk
-    SkyCoord = observation.pixel_to_world([0 * u.pix, nx], [0 * u.pix, ny])
-    r_x, r_y = SkyCoord.x ,SkyCoord.y
+    obs_corner =  observation.pixel_to_world([0 * u.pix, nx] * u.pix, [0 * u.pix, ny] * u.pix)
+
+    r_x, r_y = obs_corner.Tx ,obs_corner.Ty
+
+    # Convert from float to int
+    r_x = r_x.astype('int')
+    r_y = r_y.astype('int')
 
     # Create an arcsec grid.
-    xv, yv = np.meshgrid(np.linspace(r_x[0].value, r_x[1].value, nx.value),
-                         np.linspace(r_y[0].value, r_y[1].value, ny.value), indexing='xy')
+    xv, yv = np.meshgrid(np.linspace(r_x[0].value, r_x[1].value, nx.value.astype('int')),
+                         np.linspace(r_y[0].value, r_y[1].value, ny.value.astype('int')), indexing='xy')
+
+    # add units
     xv = xv * u.arcsec
     yv = yv * u.arcsec
 
     # Calculate each pixel's heliographics coordinate.
-    c = SkyCoord(xv, yv, frame=wcs_to_celestial_frame(observation.wcs))
-    c = c.heliographic_stonyhurst
+    co = SkyCoord(xv, yv, frame=wcs_to_celestial_frame(observation.wcs)).heliographic_stonyhurst
 
     # Create latitude and longitude mask and convert them to radians
-    b_mask = np.radians(c.lat).value
-    l_mask = np.radians(c.lon).value
+    b_mask = np.radians(co.lat).value
+    l_mask = np.radians(co.lon).value
 
     # Bz estimation for each pixel
     f0 = np.cos(b0) * np.cos(b_mask) * np.cos(l_mask - l0)
     f1 = np.sin(b0) * np.sin(b_mask)
-    observation.data = observation.data / (f0 + f1)
+
+    observation._data = observation.data / (f0 + f1)
 
     return observation

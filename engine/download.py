@@ -1,59 +1,65 @@
 from datetime import timedelta, datetime
+import astropy.io.fits as pyfits
 from pathlib import Path
+import multiprocessing
+import itertools
 import sunpy.map
 import drms
-import pyfits
 
 
-def real_time_service(lag):
+def cadance():
+    ''' Define the observation cadance. Min cadance is 60 minutes and 
+    Max cadance is 1 minute.
+
+    Parameters
+    ----------
+        step - int: in minutes or hours. This number will be divided by 
+            the number of cores.
+
+    Returns
+    -------
+        int - cadance'''
+
+
+    # Define core number, -1 for the web interface
+    cores = multiprocessing.cpu_count()
+
+    # Define max and min cadance
+    if cores > 1:
+        cores = cores - 1
+
+    if cores > 60:
+        cores = 60
+
+    return str(int(60 / cores))
+
+
+def date_convert(date_in, lag):
     '''The function defines the name of the downloadable observation.
 
     Parameters
     ----------
         lag - The time difference between the date of observation and
-        the date of engine start
+        the date of engine start,
+            False: Service is not real time 
 
     Returns
     -------
         String - The name of the observation'''
 
     # Define the date of the observation
-    sd = datetime.today() - timedelta(days=lag)
 
-    # Date format conversion
-    YMD = sd.strftime("%Y") + '.' + sd.strftime("%m") + '.' + sd.strftime("%d")
+    if lag:
+        x = datetime.today() - timedelta(days=lag)
+
+    else:
+        x = date_in
 
     # Create the name of the observation
-    observation_date = YMD + '_' + sd.strftime("%H") + ':' + sd.strftime("%M")
-
-    return observation_date
+    return x.strftime("%Y") + '.' + x.strftime("%m") + '.' + x.strftime("%d") + '_' + x.strftime("%H") + ':' + x.strftime("%M") + ':00'
 
 
-def drms_query(query, email, path):
-    '''This module sends the query to the JSOC server and starts the downloand.
-
-    Parameters
-    ----------
-        query - Query strint to the JSOC server
-        email - The registred email address
-
-    Returns
-    -------
-        The filename of the downloaded file with absolute path'''
-
-    # Logging into JSOC database and requesting files
-    client = drms.Client(verbose=False)
-
-    # Send the Query
-    q = client.export(query, method='url_quick', protocol='fits', email=email)
-
-    # Downloading the images.
-    obs = q.download(path)
-
-    return obs
-
-
-def get_sharp(date_of_obs, interval, email):
+def get_sharp(date_of_obs, lag=False):
 
     '''This module download the Sharp data.
 
@@ -66,33 +72,43 @@ def get_sharp(date_of_obs, interval, email):
     -------
         raw_sharp - raw_sharp sunpy maps'''
 
+    date_of_obs = date_convert(date_of_obs, lag)
+
     # Define the path
     path = str(Path(__file__).parent.parent) + '/web/static/data/AR/'
 
     # Name of the series
     series = 'hmi.Mharp_720s'
+
     # query_string used to search for file
-    # Want query_string to look like 'Mharp_720s[]2018.05.06_TAI/12m@12m'
-    q = series + '[]' + '[' + date_of_obs + '_TAI/' + interval +']' + '{bitmap}'
+    # Want query_string to look like 'hmi.Mharp_720s[]2018.05.06_TAI/12m@12m'
+    s_query = series + '[]' + '[' + date_of_obs + '_TAI/' + '12m@12m' +']' + '{bitmap}'
+
+    # Logging into JSOC database and requesting files
+    c_sharp = drms.Client(verbose=False)
+
+    # Send the Query
+    req_sa = c_sharp.export(s_query, method='url_quick',protocol='fits', email='scc@sheffield.ac.uk')
+
+    req_sa.wait(timeout=None, sleep=10, retries_notfound=60, verbose=False)
+
+    # Save the filename and path
+    file_list = req_sa.download(path)
+
+    # Convert the Pandas dataframe to list
+    file_list = file_list.loc[:]['download'].tolist()
 
     try:
-        # Save the filename and path
-        file_list = drms_query(q, email, path)
-
-        # Convert the Pandas dataframe to list
-        file_list = file_list.loc[:]['download'].tolist()
 
         # Read the HARP information
-        HARP=[]
-        for file in file_list: HARP.append(pyfits.open(file))
+        return [pyfits.open(file) for file in file_list]
 
-        return HARP
+    except Exception:
 
-    except:
         return False
 
 
-def get_data(date_of_obs, interval, email):
+def get_data(date_of_obs, lag=False):
 
     '''
 
@@ -124,30 +140,43 @@ def get_data(date_of_obs, interval, email):
     defaults to midnight. Currently downloading Continuum and Magnetogram
     observations.'''
 
+    date_of_obs = date_convert(date_of_obs, lag)
+    cd = cadance()
+
     # Building Query string, using 45s observations
-    query = ['hmi.ic_45s' + '[' + date_of_obs + '_TAI/' + interval + ']',
-             'hmi.m_45s' + '[' + date_of_obs + '_TAI/' + interval + ']']
+    d_query = ['hmi.ic_45s' + '[' + date_of_obs + '_TAI/' + '1h@' + cd + 'm' + ']',
+              'hmi.m_45s'  + '[' + date_of_obs + '_TAI/' + '1h@' + cd + 'm' + ']']
 
     # Define the path
     path = str(Path(__file__).parent.parent) + '/web/static/data/obs/'
 
+
+    # Logging into JSOC database and requesting files
+    c_data = drms.Client(verbose=False)
+
+    # Send the Query
+    req_ic = c_data.export(d_query[0], method='url_quick',
+                           protocol='fits', email='n.g.gyenge@gmail.com')
+
+    req_ic.wait(timeout=None, sleep=10, retries_notfound=60, verbose=False)
+
+    req_ma = c_data.export(d_query[1], method='url_quick',
+                           protocol='fits', email='scc@sheffield.ac.uk')
+
+    req_ma.wait(timeout=None, sleep=10, retries_notfound=60, verbose=False)
+
+    # Downloading the images.
+    filename = [req_ic.download(path), req_ma.download(path)]
+
+    # Reorganise observations: [[ic1, mag1], [ic2, mag2], ...]
+    filename = [[filename[0]['download'][i], filename[1]['download'][i]]
+                for i in range(len(filename[0]))]
+
     try:
-        # Query and download
-        file_list = []
-        for q in query:
 
-            # Download the observation and save the filename
-            filename = drms_query(q, email, path)
+        # Loading observations.
+        return [sunpy.map.Map(obs) for obs in filename]
 
-            # Append a list of filanames
-            file_list.append(str(filename.loc[0]['download']))
+    except Exception: 
 
-        # Loading observations. This is done as the downloading variable
-        # contains a table with data
-        observations = sunpy.map.Map(file_list)
-
-        return observations
-
-    except:
         return False
-

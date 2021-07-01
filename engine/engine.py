@@ -20,10 +20,10 @@ __author__ = ["Gyenge, Norbert"]
 __email__ = ["n.g.gyenge@sheffield.ac.uk"]
 
 
-def engine(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
+def engine(start_time, logger, date_in, lag=360, email='scc@sheffield.ac.uk'):
 
     # Module 1: Download and load observation data from JSOC
-    date = get.real_time_service(lag=lag)
+    date = get.real_time_service(date_in, lag=lag)
 
     full_disk = get.get_data(date_of_obs=date, interval='1m@1m', email=email)
     logging.info('Observations downloaded.')
@@ -56,7 +56,7 @@ def engine(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
                 AR.input(img, obs_type)
 
                 # Append the database with the new information
-                AR.append_sql()
+                #AR.append_sql()
 
                 # Create figures and save png and pdf files
                 AR.save()
@@ -65,10 +65,10 @@ def engine(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
                 AR.savefits()
 
             # Create the full disk image
-            ssc.visual.plot.HMI_full_disk_plot(Active_Regions, img)
+            #ssc.visual.plot.HMI_full_disk_plot(Active_Regions, img)
 
             # Create the full disk image in fits format
-            ssc.tools.fits.HMI_full_disk_fits(Active_Regions, img)
+            #ssc.tools.fits.HMI_full_disk_fits(Active_Regions, img)
 
             logging.info(obs_type + ' data.')
 
@@ -77,7 +77,11 @@ def engine(start_time, logger, lag=360, email='scc@sheffield.ac.uk'):
         logging.info('Observations are not available.')
 
     # Return the running time
-    return int(time.time() - start_time)
+    # return int(time.time() - start_time)
 
 
-rt = engine(time.time(), logging.getLogger(__name__))
+for year in range(2010,2018):
+    for month in range(1,12):
+        for day in range(1,28):
+            date_in = [year, month, day]
+            engine(time.time(), logging.getLogger(__name__), date_in)

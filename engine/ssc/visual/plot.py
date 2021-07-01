@@ -9,7 +9,8 @@ plot.py
 import matplotlib.pyplot as plt
 from astropy import units as u
 import matplotlib.cm as mcm
-import sunpy.cm as scm
+#import sunpy.cm as scm
+import sunpy.visualization.colormaps as scm
 import engine.ssc.tools.util as util
 
 __author__ = "Norbert Gyenge"
@@ -19,7 +20,7 @@ __email__ = "n.g.gyenge@sheffield.ac.uk"
 def HMI_full_disk_plot(Active_Regions, img):
 
     if img.measurement == 'continuum':
-        c = scm.get_cmap(name='yohkohsxtal')
+        c = mcm.get_cmap(name='yohkohsxtal')
         color = 'k'
 
     elif img.measurement == 'magnetogram':
@@ -69,8 +70,10 @@ def HMI_full_disk_plot(Active_Regions, img):
         b_corner = img.pixel_to_world(bl_x * u.pix, bl_y * u.pix)
 
         # Draw the rectangle around the ARs
-        img.draw_rectangle(b_corner, width=t_corner.Tx - b_corner.Tx,
-                           height=t_corner.Ty - b_corner.Ty, color='b', lw=0.5)
+        #img.draw_rectangle(b_corner, width=t_corner.Tx - b_corner.Tx, height=t_corner.Ty - b_corner.Ty, color='b', lw=0.5)
+
+        img.draw_quadrangle(b_corner, width=t_corner.Tx - b_corner.Tx,
+                           height=t_corner.Ty - b_corner.Ty, lw=0.5)
 
         # Add the NOAA number at the corner of the box
         plt.annotate(str(AR.NOAA), xy=(tl_x, tl_y),

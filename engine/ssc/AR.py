@@ -17,12 +17,35 @@ import engine.ssc.sunspot.pixel as pix
 import engine.ssc.sunspot.area as area
 import engine.ssc.sunspot.sql as sql
 import engine.ssc.tools.util as util
-import sunpy.cm as scm
+#import sunpy.cm as scm
 import numpy as np
 
+import sunpy.visualization.colormaps as scm
 
 __author__ = "Norbert Gyenge"
 __email__ = "n.g.gyenge@sheffield.ac.uk"
+
+
+
+import pdb
+import sys
+class ForkedPdb(pdb.Pdb):
+    """A Pdb subclass that may be used
+    from a forked multiprocessing child
+
+
+    ForkedPdb().set_trace()
+
+    """
+    def interaction(self, *args, **kwargs):
+        _stdin = sys.stdin
+        try:
+            sys.stdin = open('/dev/stdin')
+            pdb.Pdb.interaction(self, *args, **kwargs)
+        finally:
+            sys.stdin = _stdin
+
+
 
 
 class Sunspot_groups(object):
@@ -44,7 +67,7 @@ class Sunspot_groups(object):
     def savefits(self):
 
         # Cut the ROI
-        sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
+        sub = self.img.submap(bottom_left=self.ROI[0] * u.pixel, top_right=self.ROI[1] * u.pixel)
 
         # Define the filename the
         fname = util.fname(str(sub.date).split('.')[0],
@@ -56,7 +79,7 @@ class Sunspot_groups(object):
         # Separate umbra and penumbra data
         for ctype in ['umbra', 'penumbra']:
 
-            if ctype is 'umbra':
+            if ctype == 'umbra':
 
                 # The coordinates of the umbra
                 sunspots = self.SC[0]
@@ -64,7 +87,7 @@ class Sunspot_groups(object):
                 # Create the initial umbra mask
                 umbra_mask = np.zeros(np.shape(self.MASK[0]), dtype=int)
 
-            if ctype is 'penumbra':
+            if ctype == 'penumbra':
 
                 # The coordinates of the penumbra
                 sunspots = self.SC[1]
@@ -86,11 +109,11 @@ class Sunspot_groups(object):
                 spot = np.where(spot != 0, i + 1, 0)
 
                 # Append the umbra mask, every spot has an id number
-                if ctype is 'umbra':
+                if ctype == 'umbra':
                     umbra_mask = umbra_mask + spot
 
                 # Append the penumbra mask
-                if ctype is 'penumbra':
+                if ctype == 'penumbra':
                     penumbra_mask = penumbra_mask + spot
 
         # Create the fits header first
@@ -103,14 +126,13 @@ class Sunspot_groups(object):
             skip = ['xtension', 'source', 'keycomments',
                     'lutquery', 'distcoef', 'rotcoef',
                     'codever0', 'codever1', 'codever2',
-                    'codever3', 'history', 'comment']
+                    'codever3', 'history', 'comment', 'blank']
 
             # Filter out the unnecessary fields
-            bad_header = key in skip
+            bad_header = key not in skip
 
             # Add the useful elements to the header
-            if bad_header is not True:
-                hdr[key] = value
+            if bad_header: hdr[key] = value
 
         # Additional fields, the associated NOAA number and source
         hdr['source'] = 'Sheffield Solar Catalog'
@@ -141,15 +163,16 @@ class Sunspot_groups(object):
     def save(self):
         matplotlib.use("Agg")
         if self.obs_type == 'continuum':
-            cmap = scm.get_cmap(name='yohkohsxtal')
+            cmap = plt.get_cmap(name='yohkohsxtal')
             color = 'k'
 
         elif self.obs_type == 'magnetogram':
             cmap = mcm.Greys
             color = 'w'
 
-        # Cut the ROI
-        sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
+        # Cut the ROI submap
+        sub = self.img.submap(bottom_left=self.ROI[0] * u.pixel,
+                              top_right=self.ROI[1] * u.pixel)
 
         # Plot the figure
         plt.figure(figsize=(8, 6))
@@ -185,25 +208,30 @@ class Sunspot_groups(object):
 
         # Tight layout and save pdf figure
         file_name = util.fname(date, self.obs_type, self.NOAA, 'pdf')
+
+        #ForkedPdb().set_trace()
+
         plt.savefig(file_name, bbox_inches='tight', dpi=600)
         plt.close()
 
     def append_sql(self):
 
         # Cut the ROI
-        sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
+        sub = self.img.submap(bottom_left=self.ROI[0] * u.pixel,
+                              top_right=self.ROI[1] * u.pixel)
 
         # Separate umbra and penumbra data
         for ctype in ['umbra', 'penumbra']:
 
-            if ctype is 'umbra':
+            if ctype == 'umbra':
                 sunspots = self.SC[0]
 
-            if ctype is 'penumbra':
+            if ctype == 'penumbra':
                 sunspots = self.SC[1]
 
-            # Cut the ROI
-            sub = self.img.submap(self.ROI[0] * u.pixel, self.ROI[1] * u.pixel)
+            # Cut the ROI      
+            sub = self.img.submap(bottom_left=self.ROI[0] * u.pixel,
+                                  top_right=self.ROI[1] * u.pixel)
 
             # Loop over the individual sunspots
             for i, spot_position in enumerate(sunspots):
@@ -217,25 +245,26 @@ class Sunspot_groups(object):
                 sm = np.where(spot != 0, 1, 0)
 
                 # Save the date
-                date = [str(self.img.date).split()[0],
-                        str(self.img.date).split()[1].split('.')[0]]
+                date = [str(self.img.date.iso).split()[0],
+                        str(self.img.date.iso).split()[1].split('.')[0]]
 
                 # Reorder the coordinates for the area and coordinate functions
                 rx = (self.ROI[0][0], self.ROI[1][0]) * u.pixel
                 ry = (self.ROI[0][1], self.ROI[1][1]) * u.pixel
 
                 # Estimate the area
-                a, self.HG_mask = area.AreaC(self.img, rx, ry, sm)
+                res = area.AreaC(self.img, rx, ry, sm)
+                suns_ar, self.HG_mask = res[0], res[1]
 
                 # Calculate the spot's coordinate
-                c = coor.Sunspot_coord(self.img, rx, ry, sm)
+                coordinate = coor.Sunspot_coord(self.img, rx, ry, sm)
 
                 # Calculate the photon flux
-                p = pix.Data_statistic(spot)
+                statistics = pix.Data_statistic(spot)
 
                 # Concatenation the data and return
                 row = sql.create_row(i, self.NOAA,[self.obs_type, ctype],
-                                     date, a, c, p)
+                                     date, suns_ar, coordinate, statistics)
 
                 # Append the sql database with the new row of data
                 sql.sunspot_continuum_table(row)

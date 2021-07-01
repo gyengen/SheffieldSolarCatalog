@@ -43,7 +43,7 @@ def HMI_full_disk_fits(Active_Regions, img, scale):
         skip = ['xtension', 'source', 'keycomments',
                 'lutquery', 'distcoef', 'rotcoef',
                 'codever0', 'codever1', 'codever2',
-                'codever3', 'history', 'comment']
+                'codever3', 'history', 'comment', 'blank']
 
         # Filter out the unnecessary fields
         bad_header = key in skip
